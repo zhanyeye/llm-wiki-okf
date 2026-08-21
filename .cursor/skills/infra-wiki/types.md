@@ -1,6 +1,24 @@
-# 选 type 与目录
+# 选 type、目录与 frontmatter
 
-同一内容只放一个目录，其它地方用链接。frontmatter 见 `AGENTS.md`。文件名短 kebab 英文；中文只在 `title`。占位符用 `<cluster>`、`<namespace>`、`<path>`，不要编造内网主机名或密钥。
+同一内容只放一个目录，其它地方用链接。文件名短 kebab 英文；中文只在 `title`。占位符用 `<cluster>`、`<namespace>`、`<path>`，不要编造内网主机名或密钥。
+
+## 目录与 type
+
+| type | 目录 | 放什么 |
+|------|------|--------|
+| `Registry` | `wiki/资源注册表/` | 资源、入口、环境、负责人、依赖、告警。不存凭证，只写申请途径和找谁 |
+| `Architecture` | `wiki/系统与架构/` | 系统说明、拓扑、请求/数据链路、依赖关系 |
+| `Runbook` | `wiki/操作手册/` | 申请、部署、变更、扩缩容、回滚；网关、DNS、证书、防火墙等配置说明 |
+| `Playbook` | `wiki/故障排查/` | 按症状的排查、止损、升级路径 |
+| `Decision` | `wiki/架构决策记录/` | 选型背景、方案权衡、影响与约束 |
+| `FAQ` | `wiki/常见问题/` | 短问答、工具速查、报错释义 |
+| `Policy` | `wiki/规范与约束/` | 命名、权限、变更、安全、CI 适配规范 |
+| `Incident` | `wiki/案例与复盘/` | 故障、变更、演练的复盘与行动项 |
+| `Curriculum` | `wiki/技能地图/` | 能力范围、学习路径、技能矩阵 |
+| `Onboarding` | `wiki/新人上手/` | 接手清单、权限申请、首周任务 |
+| `Automation` | `wiki/自动化脚本/` | 脚本说明、参数、权限、输入输出与风险 |
+
+按场景选 type：
 
 | 情况 | type | 目录 |
 |------|------|------|
@@ -16,7 +34,41 @@
 | 接手清单、首周任务 | `Onboarding` | `wiki/新人上手/` |
 | 脚本参数、权限、风险 | `Automation` | `wiki/自动化脚本/` |
 
-`domain`：`landscape` `images` `k8s` `cicd` `network` `database` `storage` `middleware` `troubleshooting`。
+- wiki 根只有 `index.md` 和 `log.md`。它们是保留名，不加 `type`。根 `index.md` 可有 `okf_version: "0.2"`。写法见 [index-log.md](index-log.md)。
+- 每个非保留 `.md` 必须有可解析的 YAML frontmatter，且含非空 `type`，与上表一致。
+- 链接：跨目录用 bundle 绝对路径 `[MinIO](/系统与架构/minio.md)`；同目录 index 条目用 `./file.md`。
+- 断链允许暂时存在（尚未写的知识）；lint 会警告。
+
+`domain` 取值：`landscape` | `images` | `k8s` | `cicd` | `network` | `database` | `storage` | `middleware` | `troubleshooting`。
+
+## Frontmatter
+
+```yaml
+---
+type: Runbook
+title: 人类可读标题
+description: 一句话摘要。
+domain: storage
+tags: [oncall, disk]
+status: draft
+owner: infra-storage
+scope: [prod]
+services: [minio]
+generated: { by: human:name-or-agent/model, at: 2026-08-21T00:00:00Z }
+verified: { by: human:name, at: 2026-08-21T00:00:00Z }
+stale_after: 2027-02-17
+sources: []
+---
+```
+
+- Actor：`human:<id>` / `<agent>/<model>` / `process:<name>`。人工确认必须用 `human:`。
+- 新页用 `status: draft`；过目后改 `stable`。缺省视为 `stable`。
+- `stale_after` 默认生成日后 180 天。
+- 无 `verified` ⇒ unverified。不要假装已人工确认。
+- `Registry` 页不写密码、token、密钥。
+- 允许额外 key；不要删除你不认识的字段。
+
+## 固定正文标题
 
 正文用该 type 的固定 `#` 标题（按序，勿改名）。命令放代码块。`Registry` 不写密码、token、密钥。
 

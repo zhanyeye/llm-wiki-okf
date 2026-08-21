@@ -31,7 +31,7 @@
 - 同目录概念：`./disk-full.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：bundle 绝对路径 `/系统与架构/minio.md`。
 - 有页必有一条；删页或改 `title`/`description` 时同步改条目。
 - 尚无概念页：只保留 `# 标题` 和一句话；**第一篇写入时**再加 `## 页面` 和条目。
-- 不要把 schema、domain 列表、Skill 说明写进 index（那是 README / `AGENTS.md`）。
+- 不要把 schema、domain 列表、Skill 说明写进 index（那是 README / Skill `types.md`）。
 
 ### 故障排查/index.md
 

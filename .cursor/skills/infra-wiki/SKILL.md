@@ -13,17 +13,17 @@ description: >-
 
 `wiki/` 是要持续维护的知识库。对话不是知识库；值班结论和有用的综合要写回页面。
 
-查询只走 [query.md](query.md)，**不要**先通读 `AGENTS.md`。选目录、写 frontmatter 时再读 [types.md](types.md)；字段细则在 `AGENTS.md` 的 Frontmatter 节。写入后按 [index-log.md](index-log.md) 更新 `index.md` 与 `log.md`。
+查询只走 [query.md](query.md)，**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库。选目录、写 frontmatter 时再读 [types.md](types.md)（含完整字段与固定标题）。写入后按 [index-log.md](index-log.md) 更新 `index.md` 与 `log.md`。
 
 ## 路由
 
 | 用户意图 | 读 |
 |----------|-----|
 | 查、排障、东西在哪、怎么做 | [query.md](query.md) |
-| 工单/纪要/故障结论入库 | [ingest.md](ingest.md) + [index-log.md](index-log.md) |
-| 故障关闭、复盘、值班结束 | [ingest.md](ingest.md) + [index-log.md](index-log.md) |
-| 把旧文档迁进 wiki | [ingest.md](ingest.md) + [index-log.md](index-log.md) |
-| 从零写一页 | [author.md](author.md) + [index-log.md](index-log.md) |
+| 工单/纪要/故障结论入库 | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
+| 故障关闭、复盘、值班结束 | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
+| 把旧文档迁进 wiki | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
+| 从零写一页 | [author.md](author.md) + [types.md](types.md) + [index-log.md](index-log.md) |
 | 更新 index / log | [index-log.md](index-log.md) |
 | 体检、过期、断链 | [lint.md](lint.md) |
 
