@@ -17,7 +17,6 @@ TYPE_DIR = {
     "Registry": "资源注册表",
     "Architecture": "系统与架构",
     "Runbook": "操作手册",
-    "Configuration": "操作手册",
     "Playbook": "故障排查",
     "Decision": "架构决策记录",
     "FAQ": "常见问题",

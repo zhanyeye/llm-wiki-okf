@@ -1,5 +1,5 @@
 ---
-type: Configuration
+type: Runbook
 title: 绿区转发代理
 description: 绿区 Nginx / HAProxy 转发配置的适用范围、参数与变更验证。
 domain: network

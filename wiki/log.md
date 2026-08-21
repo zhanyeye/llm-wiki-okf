@@ -2,6 +2,7 @@
 
 ## 2026-08-21
 
+* **Update**: [绿区转发代理](/操作手册/green-zone-proxy.md) 的 `type` 改为 `Runbook`；不再使用 `Configuration`。
 * **Update**: 按 [OKF Quickstart](https://okf.md/quickstart/) 规范各层 `index.md` 与本 `log.md`。
 * **Initialization**: 建立 11 个分组与示例页。
 * **Creation**: 写入 [MinIO](/系统与架构/minio.md)。
