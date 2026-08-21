@@ -8,4 +8,4 @@
 4. **保留模板标题**；命令放可复制代码块；写清何时用 / 何时不用。
 5. 占位符用 `<cluster>`、`<namespace>`、`<path>`。不要编造内网主机名或密钥。
 6. `Registry`：只写申请途径和找谁。
-7. 按 [ingest.md](ingest.md) 更新 index、log，并跑 lint。
+7. 按 [index-log.md](index-log.md) 更新分组 `index.md` 与 `wiki/log.md`，再跑 lint。

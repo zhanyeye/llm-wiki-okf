@@ -27,9 +27,9 @@
 | `Onboarding` | `wiki/新人上手/` | 接手清单、权限申请、首周任务 |
 | `Automation` | `wiki/自动化脚本/` | 脚本说明、参数、权限、输入输出与风险 |
 
-- wiki 根只有 `index.md` 和 `log.md`。它们是保留名，不加 `type`。根 `index.md` 可有 `okf_version: "0.2"`。
+- wiki 根只有 `index.md` 和 `log.md`。它们是保留名，不加 `type`。根 `index.md` 可有 `okf_version: "0.2"`。写法见 [`.cursor/skills/infra-wiki/index-log.md`](.cursor/skills/infra-wiki/index-log.md)。
 - 每个非保留 `.md` 必须有可解析的 YAML frontmatter，且含非空 `type`，与上表一致。
-- 链接用 bundle 绝对路径：`[MinIO](/系统与架构/minio.md)`。
+- 链接：跨目录用 bundle 绝对路径 `[MinIO](/系统与架构/minio.md)`；同目录 index 条目用 `./file.md`。
 - 文件名短 kebab：`disk-full.md`。中文只在 `title`。
 - 断链允许暂时存在（尚未写的知识）；lint 会警告。
 
@@ -80,8 +80,8 @@ sources: []
 1. 阅读 `raw/` 中对应材料（若有）；不要修改 raw。
 2. 选 type 与目录；套对应模板。
 3. 一篇来源可以改多页。保持交叉引用一致。
-4. 更新所在目录 `index.md`、必要时根 `index.md` 与 `故障排查/index.md`。
-5. 在 [`wiki/log.md`](wiki/log.md) 顶部日期下追加 `**Creation**` 或 `**Update**`（日期 `YYYY-MM-DD`，最新日在上）。
+4. 按 Skill [`index-log.md`](.cursor/skills/infra-wiki/index-log.md) 更新所在目录 `index.md`、必要时根 `index.md` 与 `故障排查/index.md`。
+5. 在 [`wiki/log.md`](wiki/log.md) 当日 `## YYYY-MM-DD` 节顶部追加一条：`* **Creation**:` 或 `* **Update**:`（ASCII 冒号，一篇一链，最新日在上）。
 
 ## 体检
 

@@ -31,6 +31,13 @@ TYPE_DIR = {
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 TYPE_RE = re.compile(r"^type:\s*[\"']?([A-Za-z][A-Za-z0-9]*)[\"']?\s*$", re.M)
 STALE_RE = re.compile(r"^stale_after:\s*[\"']?(\d{4}-\d{2}-\d{2})[\"']?\s*$", re.M)
+LOG_DATE_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$", re.M)
+LOG_ENTRY_RE = re.compile(
+    r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*: "
+)
+LOG_BAD_COLON_RE = re.compile(
+    r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*："
+)
 
 
 def split_frontmatter(text: str) -> tuple[str | None, str]:
@@ -77,6 +84,23 @@ def resolve_link(src: Path, href: str) -> Path | None:
     return target
 
 
+def lint_log(rel: str, text: str, fm: str | None, errors: list[str], warnings: list[str]) -> None:
+    if fm is not None:
+        errors.append(f"{rel}: log.md must not have frontmatter")
+    dates = LOG_DATE_RE.findall(text)
+    if not dates:
+        errors.append(f"{rel}: needs ## YYYY-MM-DD headings")
+    elif dates != sorted(dates, reverse=True):
+        errors.append(f"{rel}: date headings must be newest first")
+    for line in text.splitlines():
+        if LOG_BAD_COLON_RE.match(line):
+            errors.append(f"{rel}: use ASCII colon after **Verb**, not fullwidth ：")
+        elif line.startswith("* **") and not LOG_ENTRY_RE.match(line):
+            warnings.append(
+                f"{rel}: entry should be '* **Creation**: ...' ({line[:60]})"
+            )
+
+
 def main() -> int:
     errors: list[str] = []
     warnings: list[str] = []
@@ -88,6 +112,8 @@ def main() -> int:
 
     md_files = iter_md(WIKI)
     existing = {p.resolve() for p in md_files}
+    dir_indexes: dict[Path, str] = {}
+    concepts: list[Path] = []
 
     for path in md_files:
         text = path.read_text(encoding="utf-8")
@@ -96,17 +122,18 @@ def main() -> int:
         fm, _body = split_frontmatter(text)
 
         if name == "log.md":
-            if fm is not None:
-                errors.append(f"{rel}: log.md must not have frontmatter")
+            lint_log(rel, text, fm, errors, warnings)
             continue
 
         if name == "index.md":
+            dir_indexes[path.parent.resolve()] = text
             if path.parent == WIKI:
                 if fm is None or "okf_version:" not in fm:
                     errors.append(f"{rel}: root index.md needs okf_version in frontmatter")
             elif fm is not None:
                 errors.append(f"{rel}: directory index.md must not have frontmatter")
         else:
+            concepts.append(path)
             if fm is None:
                 errors.append(f"{rel}: missing YAML frontmatter")
                 continue
@@ -139,6 +166,15 @@ def main() -> int:
                 warnings.append(f"{rel}: broken link ({raw_href})")
             elif target.suffix == ".md" and resolved not in existing and not target.exists():
                 warnings.append(f"{rel}: broken link ({raw_href})")
+
+    for concept in concepts:
+        idx_text = dir_indexes.get(concept.parent.resolve())
+        idx_rel = rel_posix(concept.parent / "index.md")
+        if idx_text is None:
+            warnings.append(f"{rel_posix(concept)}: directory missing index.md")
+            continue
+        if concept.name not in idx_text:
+            warnings.append(f"{idx_rel}: missing entry for {concept.name}")
 
     for line in errors:
         print(f"error: {line}")
