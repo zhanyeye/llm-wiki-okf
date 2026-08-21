@@ -61,7 +61,7 @@ sources: []
 - `Registry` 页不写密码、token、密钥。
 - 允许额外 key；不要删除你不认识的字段。
 
-模板在 [`templates/`](templates/)，按 type 各一份。正文用模板里的固定标题。占位符用 `<cluster>`、`<namespace>`、`<path>`；不要编造看起来真实的内网主机名或密钥。
+正文用 [types.md](.cursor/skills/infra-wiki/types.md) 里该 type 的固定标题。占位符用 `<cluster>`、`<namespace>`、`<path>`；不要编造看起来真实的内网主机名或密钥。
 
 ## 查询
 
@@ -77,7 +77,7 @@ sources: []
 ## 入库
 
 1. 阅读 `raw/` 中对应材料（若有）；不要修改 raw。
-2. 选 type 与目录；套对应模板。
+2. 选 type 与目录；按 [types.md](.cursor/skills/infra-wiki/types.md) 的固定标题写正文。
 3. 一篇来源可以改多页。保持交叉引用一致。
 4. 按 Skill [`index-log.md`](.cursor/skills/infra-wiki/index-log.md) 更新所在目录 `index.md`、必要时根 `index.md` 与 `故障排查/index.md`。
 5. 在 [`wiki/log.md`](wiki/log.md) 当日 `## YYYY-MM-DD` 节顶部追加一条：`* **Creation**:` 或 `* **Update**:`（ASCII 冒号，一篇一链，最新日在上）。

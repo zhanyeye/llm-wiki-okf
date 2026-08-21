@@ -1,6 +1,6 @@
 # 基础设施知识库
 
-团队基础设施知识库。人和 Agent 读同一套 Markdown。本仓库是框架和模板；`wiki/` 分组已建好，概念页待入库。
+团队基础设施知识库。人和 Agent 读同一套 Markdown。本仓库是框架；`wiki/` 分组已建好，概念页待入库。
 
 组织方式来自两处：
 
@@ -26,7 +26,6 @@
 │   ├── 技能地图/
 │   ├── 新人上手/
 │   └── 自动化脚本/
-├── templates/                    # 按 OKF type 的正文模板
 ├── scripts/okf_lint.py           # wiki 体检
 ├── AGENTS.md                     # Agent 写 wiki 的 schema
 └── .cursor/skills/infra-wiki/    # Ingest / Query / Lint
@@ -37,7 +36,7 @@
 | --- | --- | --- |
 | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。Agent **只读、不改、不删**。 |
 | [`wiki/`](wiki/) | **Agent** | 编译后的知识。人读、提问、过目确认（`verified`）；不要把一次性结论只留在聊天里。 |
-| [`AGENTS.md`](AGENTS.md)、[`templates/`](templates/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 目录、模板、Ingest / Query / Lint 约定。 |
+| [`AGENTS.md`](AGENTS.md)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 目录、查/写/入库/体检约定。正文标题见 Skill `types.md`。 |
 
 
 
@@ -58,7 +57,7 @@
 ```text
 把 raw/ 里这份工单入库。
 这次故障结案，结论写进 wiki。
-按模板补一页绿区转发代理操作说明。
+补一页绿区转发代理操作说明。
 ```
 
 ### Query（查询）
@@ -106,7 +105,7 @@ python scripts/okf_lint.py
 
 | 阶段              | 做什么                           |
 | --------------- | ----------------------------- |
-| **Phase 0（当前）** | 框架、模板、schema、Skill、校验脚本 |
+| **Phase 0（当前）** | 框架、schema、Skill、校验脚本 |
 | **Phase 1**     | 按痛点补操作手册、故障排查、资源注册表           |
 | **Phase 2**     | 存量文档落入 11 个目录、打 domain、互相链接   |
 | **Phase 3**     | 补齐系统与架构、技能地图、新人上手、自动化脚本       |

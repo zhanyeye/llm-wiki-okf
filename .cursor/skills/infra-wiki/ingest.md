@@ -3,7 +3,7 @@
 把 `raw/`、对话里的故障结论、或要迁入的旧文档写成 wiki 页。
 
 1. 有 raw 就读；**不要改 raw。** 密钥、token、kubeconfig 不要抄进 wiki。
-2. 读 [types.md](types.md) 选 type/目录，套 `templates/` 对应文件。
+2. 读 [types.md](types.md) 选 type/目录，按该 type 的固定标题写正文。
 3. **故障结论：** 必写 `Incident`。步骤以后还能用 → 再写或改 `Playbook` / `Runbook`。把 `wiki/故障排查/index.md` 里对应「待入库」改成链接。
 4. **迁旧文档：** 按标题选 type，补 frontmatter（`status: draft`），链到已有 Architecture / Registry，不要另建平行副本。
 5. 一篇来源可以改多页。链接用 `/系统与架构/minio.md` 这种 bundle 路径。
