@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Lint wiki/ as an OKF-style markdown bundle. Stdlib only. UTF-8 paths."""
+"""Lint the OKF knowledge surface at repo root. Stdlib only. UTF-8 paths.
+
+Scans only root index.md / log.md and the 11 type directories (allowlist).
+Does not treat README.md, AGENTS.md, raw/, scripts/, etc. as concept pages.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +13,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-WIKI = ROOT / "wiki"
+BUNDLE = ROOT
 
 RESERVED = {"index.md", "log.md"}
 
@@ -26,6 +30,8 @@ TYPE_DIR = {
     "Onboarding": "新人上手",
     "Automation": "自动化脚本",
 }
+
+KNOWLEDGE_DIRS = frozenset(TYPE_DIR.values())
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 TYPE_RE = re.compile(r"^type:\s*[\"']?([A-Za-z][A-Za-z0-9]*)[\"']?\s*$", re.M)
@@ -55,12 +61,23 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
     return rest[:end], rest[end + 4 :]
 
 
-def iter_md(wiki: Path) -> list[Path]:
-    return sorted(p for p in wiki.rglob("*.md") if p.is_file())
+def iter_md(bundle: Path) -> list[Path]:
+    """Only root index/log and files under the 11 knowledge directories."""
+    out: list[Path] = []
+    for name in RESERVED:
+        p = bundle / name
+        if p.is_file():
+            out.append(p)
+    for dirname in sorted(KNOWLEDGE_DIRS):
+        d = bundle / dirname
+        if not d.is_dir():
+            continue
+        out.extend(sorted(p for p in d.rglob("*.md") if p.is_file()))
+    return out
 
 
 def rel_posix(path: Path) -> str:
-    return path.relative_to(WIKI).as_posix()
+    return path.relative_to(BUNDLE).as_posix()
 
 
 def resolve_link(src: Path, href: str) -> Path | None:
@@ -71,11 +88,11 @@ def resolve_link(src: Path, href: str) -> Path | None:
     if not href:
         return None
     if href.startswith("/"):
-        target = WIKI / href.lstrip("/")
+        target = BUNDLE / href.lstrip("/")
     else:
         target = (src.parent / href).resolve()
         try:
-            target.relative_to(WIKI.resolve())
+            target.relative_to(BUNDLE.resolve())
         except ValueError:
             return target
     if target.is_dir():
@@ -105,11 +122,16 @@ def main() -> int:
     warnings: list[str] = []
     today = dt.date.today()
 
-    if not WIKI.is_dir():
-        print("error: wiki/ not found", file=sys.stderr)
+    root_index = BUNDLE / "index.md"
+    if not root_index.is_file():
+        print("error: root index.md not found", file=sys.stderr)
         return 2
 
-    md_files = iter_md(WIKI)
+    for dirname in sorted(KNOWLEDGE_DIRS):
+        if not (BUNDLE / dirname).is_dir():
+            errors.append(f"missing knowledge directory: {dirname}/")
+
+    md_files = iter_md(BUNDLE)
     existing = {p.resolve() for p in md_files}
     dir_indexes: dict[Path, str] = {}
     concepts: list[Path] = []
@@ -121,12 +143,14 @@ def main() -> int:
         fm, _body = split_frontmatter(text)
 
         if name == "log.md":
+            if path.parent != BUNDLE:
+                errors.append(f"{rel}: log.md must live at bundle root")
             lint_log(rel, text, fm, errors, warnings)
             continue
 
         if name == "index.md":
             dir_indexes[path.parent.resolve()] = text
-            if path.parent == WIKI:
+            if path.parent == BUNDLE:
                 if fm is None or "okf_version:" not in fm:
                     errors.append(f"{rel}: root index.md needs okf_version in frontmatter")
             elif fm is not None:
@@ -145,10 +169,10 @@ def main() -> int:
             if expected_dir is None:
                 errors.append(f"{rel}: unknown type {typ!r}")
             else:
-                parent = path.parent.relative_to(WIKI).as_posix()
+                parent = path.parent.relative_to(BUNDLE).as_posix()
                 if parent != expected_dir:
                     errors.append(
-                        f"{rel}: type {typ} should live under wiki/{expected_dir}/"
+                        f"{rel}: type {typ} should live under {expected_dir}/"
                     )
             sm = STALE_RE.search(fm)
             if sm:

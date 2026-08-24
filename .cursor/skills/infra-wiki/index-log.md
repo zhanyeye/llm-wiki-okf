@@ -8,8 +8,8 @@
 
 | 位置 | frontmatter | 列什么 |
 |------|-------------|--------|
-| `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 11 个分组目录 |
-| `wiki/<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
+| 根 `index.md` | 仅允许 `okf_version: "0.2"` | 11 个分组目录 |
+| `<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
 
 根 index **只在增删/改名分组时**改。日常入库只改被写入的那个分组 `index.md`；故障相关再看 `故障排查/index.md`。
 
@@ -39,7 +39,7 @@
 
 ## log.md（变更日志）
 
-仅 `wiki/log.md`。无 frontmatter。追加式，**不要改写或删除**旧条目。
+仅根 `log.md`。无 frontmatter。追加式，**不要改写或删除**旧条目。
 
 ```markdown
 # 更新日志
