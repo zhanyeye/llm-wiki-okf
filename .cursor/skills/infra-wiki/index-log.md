@@ -8,10 +8,11 @@
 
 | 位置 | frontmatter | 列什么 |
 |------|-------------|--------|
-| 根 `index.md` | 仅允许 `okf_version: "0.2"` | 11 个分组目录 |
-| `<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
+| `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 11 个分组目录 |
+| `wiki/<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
+| 仓根 `index.md` | **禁止** frontmatter；**禁止**列 11 分组 | 只链 `wiki/` / `raw/` / `script/`（仓地图，lint 不扫） |
 
-根 index **只在增删/改名分组时**改。日常入库只改被写入的那个分组 `index.md`；故障相关再看 `故障排查/index.md`。
+`wiki/index.md` **只在增删/改名分组时**改。日常入库只改被写入的那个分组 `index.md`；故障相关再看 `wiki/故障排查/index.md`。
 
 ### 结构（必须）
 
@@ -39,7 +40,7 @@
 
 ## log.md（变更日志）
 
-仅根 `log.md`。无 frontmatter。追加式，**不要改写或删除**旧条目。
+仅 `wiki/log.md`。无 frontmatter。追加式，**不要改写或删除**旧条目。仓库根不放 `log.md`。
 
 ```markdown
 # 更新日志

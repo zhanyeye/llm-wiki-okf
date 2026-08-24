@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Lint the OKF knowledge surface at repo root. Stdlib only. UTF-8 paths.
+"""Lint the OKF knowledge surface under wiki/. Stdlib only. UTF-8 paths.
 
-Scans only root index.md / log.md and the 11 type directories (allowlist).
-Does not treat README.md, AGENTS.md, raw/, scripts/, etc. as concept pages.
+Scans only wiki/index.md, wiki/log.md and the 11 type directories (allowlist).
+Does not treat repo-root index.md, README.md, AGENTS.md, raw/, script/, etc.
+as concept pages.
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BUNDLE = ROOT
+BUNDLE = ROOT / "wiki"
 
 RESERVED = {"index.md", "log.md"}
 
@@ -62,7 +63,7 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
 
 
 def iter_md(bundle: Path) -> list[Path]:
-    """Only root index/log and files under the 11 knowledge directories."""
+    """Only wiki index/log and files under the 11 knowledge directories."""
     out: list[Path] = []
     for name in RESERVED:
         p = bundle / name
@@ -122,14 +123,18 @@ def main() -> int:
     warnings: list[str] = []
     today = dt.date.today()
 
+    if not BUNDLE.is_dir():
+        print("error: wiki/ not found", file=sys.stderr)
+        return 2
+
     root_index = BUNDLE / "index.md"
     if not root_index.is_file():
-        print("error: root index.md not found", file=sys.stderr)
+        print("error: wiki/index.md not found", file=sys.stderr)
         return 2
 
     for dirname in sorted(KNOWLEDGE_DIRS):
         if not (BUNDLE / dirname).is_dir():
-            errors.append(f"missing knowledge directory: {dirname}/")
+            errors.append(f"missing knowledge directory: wiki/{dirname}/")
 
     md_files = iter_md(BUNDLE)
     existing = {p.resolve() for p in md_files}
@@ -144,7 +149,7 @@ def main() -> int:
 
         if name == "log.md":
             if path.parent != BUNDLE:
-                errors.append(f"{rel}: log.md must live at bundle root")
+                errors.append(f"{rel}: log.md must live at wiki/")
             lint_log(rel, text, fm, errors, warnings)
             continue
 
@@ -152,7 +157,7 @@ def main() -> int:
             dir_indexes[path.parent.resolve()] = text
             if path.parent == BUNDLE:
                 if fm is None or "okf_version:" not in fm:
-                    errors.append(f"{rel}: root index.md needs okf_version in frontmatter")
+                    errors.append(f"{rel}: wiki/index.md needs okf_version in frontmatter")
             elif fm is not None:
                 errors.append(f"{rel}: directory index.md must not have frontmatter")
         else:
@@ -172,7 +177,7 @@ def main() -> int:
                 parent = path.parent.relative_to(BUNDLE).as_posix()
                 if parent != expected_dir:
                     errors.append(
-                        f"{rel}: type {typ} should live under {expected_dir}/"
+                        f"{rel}: type {typ} should live under wiki/{expected_dir}/"
                     )
             sm = STALE_RE.search(fm)
             if sm:
