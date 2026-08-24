@@ -1,6 +1,6 @@
 # query
 
-**只读本文件与 wiki。** 查询时禁止：通读 `AGENTS.md`；读 `raw/`；`Glob`/`Read` 整个 `wiki/`；读 `ingest.md` / `types.md` / `index-log.md` / `author.md`（写入时再读）；把仓根 `index.md` / `README.md` / `script/` 当正文。
+**只读本文件与 wiki。** 查询时禁止：通读 `AGENTS.md`；读 `raw/`；`Glob`/`Read` 整个 `wiki/`；读 `ingest.md` / `types.md` / `index-log.md` / `author.md`（写入时再读）；把仓根 `index.md` / `README.md` / `script/` / `tools/` 当正文。
 
 1. 读 `wiki/index.md`（不是仓库根 `index.md`）。
 2. 只知道现象 → **必须**打开 `wiki/故障排查/index.md`。

@@ -10,4 +10,4 @@
 6. 按 [index-log.md](index-log.md) 更新被改目录的 `index.md`、必要时 `wiki/index.md` 与 `故障排查/index.md`。
 7. 按 [index-log.md](index-log.md) 在 `wiki/log.md` 当日节顶部追加一条（一篇一链，`**Creation**:` / `**Update**:`，ASCII 冒号，最新日在上）。
 8. `generated.by`：人 `human:<id>`；Agent `agent/<model>`。`stale_after` 默认 180 天后。
-9. 跑 `python script/okf_lint.py`，先修 error；对 warning 决定是补页、改链，还是保留尚未写的断链。再看：矛盾陈述、孤儿页、故障排查 index 仍为「待入库」但已有正文的项。
+9. 跑 `python tools/okf-lint/okf_lint.py`，先修 error；对 warning 决定是补页、改链，还是保留尚未写的断链。再看：矛盾陈述、孤儿页、故障排查 index 仍为「待入库」但已有正文的项。

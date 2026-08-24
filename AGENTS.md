@@ -8,9 +8,9 @@
 |----|------|------------|
 | **知识面（OKF）** | [`wiki/`](wiki/)（`index.md`、`log.md`、11 个分组） | 查询入口；写入只发生在这里。正文须自洽，不依赖打开 `raw/` |
 | **来源面** | [`raw/`](raw/) | **只读**。不要改、不要删。经 `sources` 写 `raw/...` 溯源 |
-| **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
+| **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
 
-仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。可执行脚本放 [`script/`](script/)；用法说明放 `wiki/自动化脚本/`。
+仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/自动化脚本/`。
 
 分享请 **clone 整仓**，不要只拷 `wiki/`。
 

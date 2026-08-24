@@ -5,7 +5,7 @@
 组织方式来自两处：
 
 - [Karpathy / llm-wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)：`raw/` 与 `wiki/` 分离。人投放来源、提问；Agent 把知识编译进 wiki 并持续维护。wiki 是可复利的产物，对话不是。
-- [Google Cloud Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)：用各层 `index.md` 做**渐进式索引**（progressive disclosure）。先读 `wiki/index.md` 看有哪些分组，再读分组 index，最后打开 2–5 篇正文。每页 YAML frontmatter（`type` 等）和 `script/okf_lint.py` 是配套约定。[OKF — The Markdown Spec for Humans and AI Agents](https://okf.md/)
+- [Google Cloud Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)：用各层 `index.md` 做**渐进式索引**（progressive disclosure）。先读 `wiki/index.md` 看有哪些分组，再读分组 index，最后打开 2–5 篇正文。每页 YAML frontmatter（`type` 等）和 `tools/okf-lint/okf_lint.py` 是配套约定。[OKF — The Markdown Spec for Humans and AI Agents](https://okf.md/)
 
 **分享请 clone 整仓**（含 `wiki/` 与 `raw/`），不要只拷 `wiki/`。知识页须自洽；`sources` 只做溯源。
 
@@ -13,7 +13,7 @@
 
 ```
 .
-├── index.md                      # 仓地图：只链 wiki / raw / script
+├── index.md                      # 仓地图：wiki / raw / script / tools
 ├── wiki/                         # OKF 知识图：Agent 维护
 │   ├── index.md                  # 知识入口：只列分组（可有 okf_version）
 │   ├── log.md                    # 追加式变更日志
@@ -29,7 +29,12 @@
 │   ├── 新人上手/
 │   └── 自动化脚本/               # 说明文档；.py 在 script/
 ├── raw/                          # 人维护：只读来源
-├── script/                       # 可执行脚本（含 okf_lint.py）
+├── script/                       # 运维可执行脚本
+├── tools/                        # 维护本仓的框架工具
+│   ├── index.md                  # 工具总览
+│   └── okf-lint/                 # wiki 体检
+│       ├── README.md
+│       └── okf_lint.py
 ├── AGENTS.md                     # 能力索引；细则在 Skill
 └── .cursor/skills/infra-wiki/    # Ingest / Query / Lint
 ```
@@ -38,7 +43,7 @@
 | --- | --- | --- | --- |
 | **知识面** | [`wiki/`](wiki/) | **Agent** | 编译后的知识。人读、提问、过目确认（`verified`）。 |
 | **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。Agent **只读、不改、不删**。 |
-| **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。可执行代码在 `script/`，用法写在 `wiki/自动化脚本/`。 |
+| **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/自动化脚本/`（运维）或 `tools/*/README.md`（框架）。 |
 
 ## 在 Code Agent 中使用
 
@@ -74,7 +79,7 @@ Helm 部署失败怎么排查？
 检查 frontmatter、`type` 与目录是否一致、断链、过期、index/log 是否跟上。Agent 对话里说「体检一下 wiki」，或本地执行：
 
 ```bash
-python script/okf_lint.py
+python tools/okf-lint/okf_lint.py
 ```
 
 ## wiki 分组

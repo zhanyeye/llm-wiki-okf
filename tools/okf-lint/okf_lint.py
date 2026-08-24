@@ -2,8 +2,8 @@
 """Lint the OKF knowledge surface under wiki/. Stdlib only. UTF-8 paths.
 
 Scans only wiki/index.md, wiki/log.md and the 11 type directories (allowlist).
-Does not treat repo-root index.md, README.md, AGENTS.md, raw/, script/, etc.
-as concept pages.
+Does not treat repo-root index.md, README.md, AGENTS.md, raw/, script/,
+tools/, etc. as concept pages.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 BUNDLE = ROOT / "wiki"
 
 RESERVED = {"index.md", "log.md"}

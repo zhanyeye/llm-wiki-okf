@@ -11,11 +11,11 @@ description: >-
 
 # infra-wiki
 
-`wiki/` 是要持续维护的知识库。对话不是知识库；值班结论和有用的综合要写回页面。仓根 `index.md` 只是仓地图；不要把 `README.md` / `AGENTS.md` / `raw/` / `script/` 当知识正文。
+`wiki/` 是要持续维护的知识库。对话不是知识库；值班结论和有用的综合要写回页面。仓根 `index.md` 只是仓地图；不要把 `README.md` / `AGENTS.md` / `raw/` / `script/` / `tools/` 当知识正文。
 
 查询只走 [query.md](query.md)，**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库。选目录、写 frontmatter 时再读 [types.md](types.md)。写入后按 [index-log.md](index-log.md) 更新 `wiki/` 下的 `index.md` 与 `log.md`。
 
-可执行脚本在 `script/`；用法、权限、风险写在 `wiki/自动化脚本/`。
+运维脚本在 `script/`；框架工具在 `tools/`（一个工具一个子目录，总览见 `tools/index.md`）。运维用法写在 `wiki/自动化脚本/`。
 
 ## 路由
 

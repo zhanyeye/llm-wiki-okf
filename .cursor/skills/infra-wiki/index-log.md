@@ -10,7 +10,7 @@
 |------|-------------|--------|
 | `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 11 个分组目录 |
 | `wiki/<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
-| 仓根 `index.md` | **禁止** frontmatter；**禁止**列 11 分组 | 只链 `wiki/` / `raw/` / `script/`（仓地图，lint 不扫） |
+| 仓根 `index.md` | **禁止** frontmatter；**禁止**列 11 分组 | 只链 `wiki/` / `raw/` / `script/` / `tools/`（仓地图，lint 不扫） |
 
 `wiki/index.md` **只在增删/改名分组时**改。日常入库只改被写入的那个分组 `index.md`；故障相关再看 `wiki/故障排查/index.md`。
 
