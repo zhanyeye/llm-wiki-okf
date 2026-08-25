@@ -35,7 +35,7 @@ description: >-
 
 ## 硬规则
 
-- `raw/` 默认只读，禁止修改。**例外**：`raw/wiki/` 通道仅允许写 `catalog.yaml`、`snapshots/`、清理 `inbox.md`（见 [ingest-wiki.md](ingest-wiki.md)）。
+- `raw/` 默认只读，禁止修改。**例外**：`raw/wiki/` 通道仅允许写 `catalog.yaml`、`archive/`、清理 `inbox.md`（见 [ingest-wiki.md](ingest-wiki.md)）。
 - 先读 `wiki/index.md` 和相关分组 `index.md`，再打开正文。不要一次加载整库。
 - 每个概念一篇 `.md`，YAML frontmatter 必有 `type`，且与 [types.md](types.md) 一致。知识页必须放在 `wiki/` 对应分组，不要写在仓库根。`title` / `description` 必须中文；文件名才用英文 kebab。
 - `wiki/index.md` / `wiki/log.md` 是保留名，不加 `type`。格式见 [index-log.md](index-log.md)。仅 `wiki/index.md` 可有 `okf_version: "0.2"`。
@@ -43,4 +43,4 @@ description: >-
 - 写入后按 [index-log.md](index-log.md) 更新分组 `index.md` 与 `wiki/log.md`（新分组才改 wiki 根 index）。禁止跳过。
 - `Registry` 不写密码、token、kubeconfig。raw/对话里的密钥不要抄进 wiki。
 - wiki 里没有的集群名、地址、步骤不要编。
-- `sources` 用仓内路径 `raw/...`；查询不读 raw。
+- `sources`：公司 wiki 用原始 URL；其它来源用仓内路径 `raw/...`。查询不读 raw。
