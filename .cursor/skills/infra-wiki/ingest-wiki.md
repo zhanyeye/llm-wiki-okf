@@ -67,11 +67,11 @@ raw/wiki/archive/<pageId>/
 
 1. **只读本条** `archive/<pageId>/page.md` 与 `images/`。
 2. 非运维知识（人事、行政等）→ `status: skipped`，`note` 写原因，不写知识页。
-3. 否则按 [types.md](types.md) 选 type/目录；`title` / `description` **中文**；固定中文章节；`status: draft`。
+3. 否则按 [types.md](types.md) 选 type/目录；文件名与 `title` **中文**；固定中文章节；`status: draft`。
 4. `sources`：**只写原始 wiki URL**（可多条 URL）。**禁止**写 `raw/wiki/archive/...`。正文须自洽，查询不读 raw。
-5. **图片**：鉴权 URL **禁止**写进仓根 `wiki/` 正文。Agent 看 `archive/<pageId>/images/`；对理解有用的图拷到知识页旁（如 `wiki/操作手册/minio.md` + `wiki/操作手册/minio/topology.png`），正文用 `![](./minio/topology.png)`。
+5. **图片**：鉴权 URL **禁止**写进仓根 `wiki/` 正文。Agent 看 `archive/<pageId>/images/`；对理解有用的图拷到知识页旁（如 `wiki/操作手册/磁盘满处理.md` + `wiki/操作手册/磁盘满处理/topology.png`），正文用 `![](./磁盘满处理/topology.png)`。
 6. 按 [index-log.md](index-log.md) 更新分组 index 与 `wiki/log.md`（一篇一链）。
-7. 回写 catalog：`status: compiled`，`compiled_at: YYYY-MM-DD`，`title`，`wiki_pages: [相对仓根 wiki/ 的路径，如 操作手册/minio.md]`。一篇来源可对应多页。**不要**写 `id`。
+7. 回写 catalog：`status: compiled`，`compiled_at: YYYY-MM-DD`，`title`，`wiki_pages: [相对仓根 wiki/ 的路径，如 操作手册/磁盘满处理.md]`。一篇来源可对应多页。**不要**写 `id`。
 8. 编译失败：该条 `failed` + `note`，继续下一条。
 
 密钥、token、kubeconfig 不要抄进知识页。

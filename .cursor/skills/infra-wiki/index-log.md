@@ -23,13 +23,13 @@
 
 ## 分组名
 
-* [中文 title](./file.md) - 该页 description 的短摘要
+* [中文 title](./磁盘满处理.md) - 该页 description 的短摘要
 * [子目录](./subdir/) - 该子目录一句话
 ```
 
 - 标题用 `#`；内容分组用 `##`，不要再用 `#` 当第二节。
 - 条目格式：`* [标题](链接) - 短描述`（空格、连字符、空格）。描述取自目标页 `title` / `description`，不要另写一套。
-- 同目录概念：`./disk-full.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：bundle 绝对路径 `/系统与架构/minio.md`。
+- 同目录概念：`./磁盘满处理.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：bundle 绝对路径 `/系统与架构/minio.md`。
 - 有页必有一条；删页或改 `title`/`description` 时同步改条目。
 - 尚无概念页：只保留 `# 标题` 和一句话；**第一篇写入时**再加 `## 页面` 和条目。
 - 不要把 schema、domain 列表、Skill 说明写进 index（那是 README / Skill `types.md`）。

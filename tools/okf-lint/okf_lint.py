@@ -196,6 +196,11 @@ def main() -> int:
                 warnings.append(f"{rel}: frontmatter missing Chinese title")
             elif not CJK_RE.search(title):
                 warnings.append(f"{rel}: title must be Chinese, got {title!r}")
+            stem = path.stem
+            if stem not in RESERVED and not CJK_RE.search(stem):
+                warnings.append(
+                    f"{rel}: filename should be Chinese, got {path.name!r}"
+                )
             sm = STALE_RE.search(fm)
             if sm:
                 stale = dt.date.fromisoformat(sm.group(1))

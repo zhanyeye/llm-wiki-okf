@@ -4,21 +4,19 @@
 
 ## 命名与语言
 
-给人看的字必须中文；英文只用于文件名和专有名词。
-
 | 位置 | 语言 | 例 |
 |------|------|----|
-| 文件名 | 短 kebab **英文** | `disk-full.md` |
-| frontmatter `title` | **中文**（可夹 MinIO、Helm 等专名） | `文件服务器磁盘满处理` |
+| 文件名 | **中文**（可夹专名） | `磁盘满处理.md` |
+| frontmatter `title` | **中文**（可夹专名） | `文件服务器磁盘满处理` |
 | frontmatter `description` | **中文**一句话 | `磁盘使用率告警后的定位、清理与验证` |
-| 分组 index 链接文字 | 用该页中文 `title` | `* [文件服务器磁盘满处理](./disk-full.md) - …` |
+| 分组 index 链接文字 | 用该页中文 `title` | `* [文件服务器磁盘满处理](./磁盘满处理.md) - …` |
 | 正文章节 | 下表固定 **中文** 标题（`##`） | `## 触发条件` |
 
 禁止：
 
-- 把英文文件名、英文来源标题或英文概念名直接写成 `title`（错：`Disk Full Handling`；对：`磁盘满处理`）。
+- 把英文来源标题直接写成 `title`（错：`Disk Full Handling`；对：`磁盘满处理`）。
 - 在正文再写一层英文 `# Title`（不要套 Karpathy 的 `# {Title}` 头）。页面标题只在 `title`；如必须写 H1，必须与 `title` 相同且为中文。
-- 用中文当文件名。
+- 用纯英文当文件名（错：`disk-full.md`；对：`磁盘满处理.md`）。
 
 ## 目录与 type
 
@@ -55,7 +53,7 @@
 - OKF 知识图根是 `wiki/`。保留名只有 `wiki/index.md` 和 `wiki/log.md`，不加 `type`。`wiki/index.md` 可有 `okf_version: "0.2"`。仓根 `index.md` 是仓地图，不是知识 TOC。写法见 [index-log.md](index-log.md)。
 - 概念页必须放在上表对应 `wiki/` 分组，不要写在仓库根或 `wiki/` 根。
 - 每个概念 `.md` 必须有可解析的 YAML frontmatter，且含非空 `type`，与上表一致。
-- 链接：跨目录用相对 wiki 根的路径 `[MinIO](/系统与架构/minio.md)`（不要 `/wiki/...`）；同目录 index 条目用 `./file.md`。
+- 链接：跨目录用相对 wiki 根的路径 `[MinIO](/系统与架构/minio.md)`（不要 `/wiki/...`）；同目录 index 条目用 `./磁盘满处理.md`。
 - `sources`：公司 wiki 用原始 URL；工单/纪要等用仓内路径 `raw/...`。正文须自洽；查询不读 raw。
 - 断链允许暂时存在（尚未写的知识）；lint 会警告。
 
@@ -85,7 +83,7 @@ sources:
 - `sources`：只做溯源，不要写「去 raw 里看步骤」。
   - 公司 wiki：只写原始 wiki URL（可多条）。**禁止**写 `raw/wiki/archive/...`。
   - 工单 / 纪要等：仓内路径 `raw/tickets/...`。
-- **图片（wiki 导出）**：鉴权图链禁止写进正文。有用的图从 `raw/wiki/archive/<pageId>/images/` 拷到知识页旁目录，例如 `wiki/操作手册/minio.md` + `wiki/操作手册/minio/topology.png`，正文 `![](./minio/topology.png)`。知识页须离线可读。
+- **图片（wiki 导出）**：鉴权图链禁止写进正文。有用的图从 `raw/wiki/archive/<pageId>/images/` 拷到知识页旁目录，例如 `wiki/操作手册/磁盘满处理.md` + `wiki/操作手册/磁盘满处理/topology.png`，正文 `![](./磁盘满处理/topology.png)`。知识页须离线可读。
 - Actor：`human:<id>` / `<agent>/<model>` / `process:<name>`。人工确认必须用 `human:`。
 - 新页用 `status: draft`；过目后改 `stable`。缺省视为 `stable`。
 - `stale_after` 默认生成日后 180 天。
