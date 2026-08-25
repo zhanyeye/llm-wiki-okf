@@ -35,7 +35,7 @@ description: >-
 
 - `raw/` 只读，禁止修改。
 - 先读 `wiki/index.md` 和相关分组 `index.md`，再打开正文。不要一次加载整库。
-- 每个概念一篇 `.md`，YAML frontmatter 必有 `type`，且与 [types.md](types.md) 一致。知识页必须放在 `wiki/` 对应分组，不要写在仓库根。
+- 每个概念一篇 `.md`，YAML frontmatter 必有 `type`，且与 [types.md](types.md) 一致。知识页必须放在 `wiki/` 对应分组，不要写在仓库根。`title` / `description` 必须中文；文件名才用英文 kebab。
 - `wiki/index.md` / `wiki/log.md` 是保留名，不加 `type`。格式见 [index-log.md](index-log.md)。仅 `wiki/index.md` 可有 `okf_version: "0.2"`。
 - 链接：同目录 `./file.md`；跨目录 `[MinIO](/系统与架构/minio.md)`（相对 wiki 根，不要写成 `/wiki/...`）。
 - 写入后按 [index-log.md](index-log.md) 更新分组 `index.md` 与 `wiki/log.md`（新分组才改 wiki 根 index）。禁止跳过。

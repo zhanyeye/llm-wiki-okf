@@ -23,7 +23,7 @@
 
 ## 分组名
 
-* [概念 title](./file.md) - 该页 description 的短摘要
+* [中文 title](./file.md) - 该页 description 的短摘要
 * [子目录](./subdir/) - 该子目录一句话
 ```
 

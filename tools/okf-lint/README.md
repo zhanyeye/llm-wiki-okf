@@ -14,7 +14,7 @@
 python tools/okf-lint/okf_lint.py
 ```
 
-先修 error，再看 warning（断链、过期 `stale_after` 等）。
+先修 error，再看 warning（断链、过期 `stale_after`、`title` 不含中文等）。
 
 ## 扫什么
 

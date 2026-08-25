@@ -1,6 +1,24 @@
 # 选 type、目录与 frontmatter
 
-同一内容只放一个目录，其它地方用链接。文件名短 kebab 英文；中文只在 `title`。占位符用 `<cluster>`、`<namespace>`、`<path>`，不要编造内网主机名或密钥。
+同一内容只放一个目录，其它地方用链接。占位符用 `<cluster>`、`<namespace>`、`<path>`，不要编造内网主机名或密钥。
+
+## 命名与语言
+
+给人看的字必须中文；英文只用于文件名和专有名词。
+
+| 位置 | 语言 | 例 |
+|------|------|----|
+| 文件名 | 短 kebab **英文** | `disk-full.md` |
+| frontmatter `title` | **中文**（可夹 MinIO、Helm 等专名） | `文件服务器磁盘满处理` |
+| frontmatter `description` | **中文**一句话 | `磁盘使用率告警后的定位、清理与验证` |
+| 分组 index 链接文字 | 用该页中文 `title` | `* [文件服务器磁盘满处理](./disk-full.md) - …` |
+| 正文章节 | 下表固定 **中文** 标题（`##`） | `## 触发条件` |
+
+禁止：
+
+- 把英文文件名、英文来源标题或英文概念名直接写成 `title`（错：`Disk Full Handling`；对：`磁盘满处理`）。
+- 在正文再写一层英文 `# Title`（不要套 Karpathy 的 `# {Title}` 头）。页面标题只在 `title`；如必须写 H1，必须与 `title` 相同且为中文。
+- 用中文当文件名。
 
 ## 目录与 type
 
@@ -48,8 +66,8 @@
 ```yaml
 ---
 type: Runbook
-title: 人类可读标题
-description: 一句话摘要。
+title: 文件服务器磁盘满处理
+description: 磁盘使用率告警后的定位、清理与验证。
 domain: storage
 tags: [oncall, disk]
 status: draft

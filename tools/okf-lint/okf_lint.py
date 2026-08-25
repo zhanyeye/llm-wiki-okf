@@ -36,6 +36,8 @@ KNOWLEDGE_DIRS = frozenset(TYPE_DIR.values())
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 TYPE_RE = re.compile(r"^type:\s*[\"']?([A-Za-z][A-Za-z0-9]*)[\"']?\s*$", re.M)
+TITLE_RE = re.compile(r"^title:\s*(.*)$", re.M)
+CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 STALE_RE = re.compile(r"^stale_after:\s*[\"']?(\d{4}-\d{2}-\d{2})[\"']?\s*$", re.M)
 LOG_DATE_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$", re.M)
 LOG_ENTRY_RE = re.compile(
@@ -44,6 +46,16 @@ LOG_ENTRY_RE = re.compile(
 LOG_BAD_COLON_RE = re.compile(
     r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*："
 )
+
+
+def parse_title(fm: str) -> str | None:
+    m = TITLE_RE.search(fm)
+    if not m:
+        return None
+    raw = m.group(1).strip()
+    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in "\"'":
+        raw = raw[1:-1]
+    return raw.strip() or None
 
 
 def split_frontmatter(text: str) -> tuple[str | None, str]:
@@ -179,6 +191,11 @@ def main() -> int:
                     errors.append(
                         f"{rel}: type {typ} should live under wiki/{expected_dir}/"
                     )
+            title = parse_title(fm)
+            if title is None:
+                warnings.append(f"{rel}: frontmatter missing Chinese title")
+            elif not CJK_RE.search(title):
+                warnings.append(f"{rel}: title must be Chinese, got {title!r}")
             sm = STALE_RE.search(fm)
             if sm:
                 stale = dt.date.fromisoformat(sm.group(1))
