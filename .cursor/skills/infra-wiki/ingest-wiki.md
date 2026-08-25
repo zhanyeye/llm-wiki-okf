@@ -16,7 +16,7 @@ wiki-cli 负责下载；导出后若文件不是「`page.md` + `images/`」，�
 
 1. 读 wiki-cli Skill（常见路径：`~/.cursor/skills/wiki-cli/SKILL.md`、项目/用户 skills 下同名目录）。找不到就 `wiki --help` / `wiki-cli --help`。
 2. 用 Skill / help 里**真实存在**的「导出页面 + 下载鉴权图片」命令；**禁止虚构 flags**。
-3. 导出目标：`raw/wiki/archive/<pageId>/`（`pageId` 从该条 url 解析）。若 CLI 默认写到别处，导出后挪到该路径，或让 CLI 的 output 参数指向该路径。
+3. 导出目标：`raw/wiki/archive/<pageId>/`（`<pageId>` = url 里文档 id 的**完整字符串**，见 §3）。若 CLI 默认写到别处，导出后挪到该路径，或让 CLI 的 output 参数指向该路径。
 4. CLI / Skill 都找不到 → **停**，告诉用户先安装/配置 wiki-cli，本批标 `failed` 并写 `note`，不要空编存档。
 
 把本会话实际采用的命令记在回复里一行即可（便于下次对齐），**不要**把私有 CLI 文档抄进本仓。
@@ -42,8 +42,8 @@ wiki-cli 负责下载；导出后若文件不是「`page.md` + `images/`」，�
 
 对每条本批 URL：
 
-1. 从 url 解析 `pageId`（如 `pageId=12001` → `12001`）。解析不到 → 该条 `status: failed`，`note` 写「url 无 pageId，请换成带 pageId 的链接」，**继续下一条**。不要用标题造 slug，不要在 catalog 写 `id`。
-2. 目标目录：`raw/wiki/archive/<pageId>/`。刷新或重导：先**清空**该目录再写，避免旧图残留。
+1. 从 url 取出文档标识参数的**完整取值**（常见参数名 `pageId` / `docId` 等，以实际 URL 为准），用作 `archive/` 下目录名。**原样使用，不要改写**：不要剥前缀、不要只留数字、不要再映射成另一套 id。取不到 → 该条 `status: failed`，`note` 写「url 无文档 id，请换成带 pageId 的链接」，**继续下一条**。不要用标题造 slug，不要在 catalog 写 `id`。
+2. 目标目录：`raw/wiki/archive/<pageId>/`（`<pageId>` = 上一步取出的完整取值）。刷新或重导：先**清空**该目录再写，避免旧图残留。
 3. 按 §0 调用 wiki-cli 导出正文 + 图片到该目录（或导出到别处后挪入）。失败则该条 `status: failed`，`note` 写原因，**继续下一条**，不整批回滚。
 4. 导出后检查布局。目标：
 
@@ -97,7 +97,7 @@ raw/wiki/archive/<pageId>/
 | `wiki_pages` | 相对仓根 `wiki/` 的路径列表 |
 | `note` | 跳过/失败原因 |
 
-**不要**写 `id`。存档路径约定为 `raw/wiki/archive/<pageId>/`，从 url 解析，不必记在 catalog。
+**不要**写 `id`。存档路径为 `raw/wiki/archive/<pageId>/`，`<pageId>` = url 文档 id 参数的完整取值原样，不必记在 catalog。
 
 ## 硬规则摘要
 
