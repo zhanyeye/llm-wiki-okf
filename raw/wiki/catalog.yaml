@@ -1,0 +1,4 @@
+# Agent 账本：人不用改。由对话 / inbox 合并写入。
+version: 1
+source: wiki
+items: []

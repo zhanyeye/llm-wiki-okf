@@ -56,7 +56,7 @@
 - 概念页必须放在上表对应 `wiki/` 分组，不要写在仓库根或 `wiki/` 根。
 - 每个概念 `.md` 必须有可解析的 YAML frontmatter，且含非空 `type`，与上表一致。
 - 链接：跨目录用相对 wiki 根的路径 `[MinIO](/系统与架构/minio.md)`（不要 `/wiki/...`）；同目录 index 条目用 `./file.md`。
-- `sources` 用仓内路径，例如 `raw/tickets/foo.md`。正文须自洽；查询不读 raw。
+- `sources` 用仓内路径，例如 `raw/tickets/foo.md` 或 `raw/wiki/snapshots/<id>/page.md`。正文须自洽；查询不读 raw。
 - 断链允许暂时存在（尚未写的知识）；lint 会警告。
 
 `domain` 取值：`landscape` | `images` | `k8s` | `cicd` | `network` | `database` | `storage` | `middleware` | `troubleshooting`。
@@ -78,11 +78,15 @@ generated: { by: human:name-or-agent/model, at: 2026-08-21T00:00:00Z }
 verified: { by: human:name, at: 2026-08-21T00:00:00Z }
 stale_after: 2027-02-17
 sources:
-  - resource: raw/example.md
+  - resource: raw/wiki/snapshots/minio/page.md
+  - resource: https://wiki.example.com/pages/viewpage.action?pageId=12001
 ---
 ```
 
-- `sources`：仓内相对路径 `raw/...`；只做溯源，不要写「去 raw 里看步骤」。
+- `sources`：只做溯源，不要写「去 raw 里看步骤」。
+  - 仓内路径：`raw/...`（含 `raw/wiki/snapshots/<id>/page.md`）。
+  - 从公司 wiki 编译时：至少一条 snapshot 路径；可再加一条原始 wiki URL。
+- **图片（wiki 导出）**：鉴权图链禁止写进正文。有用的图从 snapshot 拷到知识页旁目录，例如 `wiki/操作手册/minio.md` + `wiki/操作手册/minio/topology.png`，正文 `![](./minio/topology.png)`。知识页须离线可读。
 - Actor：`human:<id>` / `<agent>/<model>` / `process:<name>`。人工确认必须用 `human:`。
 - 新页用 `status: draft`；过目后改 `stable`。缺省视为 `stable`。
 - `stale_after` 默认生成日后 180 天。

@@ -6,7 +6,8 @@ description: >-
   排查、入库、迁文档、复盘、playbook、runbook；以及 Rancher、MinIO、Helm、Harbor、
   NFS、px、yum、镜像、域名、DNS、证书、防火墙、openGauss、流水线、微服务重启、
   时延、磁盘满、绿区代理。Use when closing an incident, migrating an old doc
-  into wiki/, or linting wiki pages.
+  into wiki/, linting wiki pages, or incremental ingest from company wiki
+  links / raw/wiki/inbox.md via wiki-cli.
 ---
 
 # infra-wiki
@@ -23,6 +24,7 @@ description: >-
 |----------|-----|
 | 查、排障、东西在哪、怎么做 | [query.md](query.md) |
 | 工单/纪要/故障结论入库 | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
+| 公司 wiki 增量入库（对话贴链接 / inbox / 再来 5 个） | [ingest-wiki.md](ingest-wiki.md) + [types.md](types.md) + [index-log.md](index-log.md) |
 | 故障关闭、复盘、值班结束 | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
 | 把旧文档迁进 wiki | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
 | 从零写一页 | [author.md](author.md) + [types.md](types.md) + [index-log.md](index-log.md) |
@@ -33,7 +35,7 @@ description: >-
 
 ## 硬规则
 
-- `raw/` 只读，禁止修改。
+- `raw/` 默认只读，禁止修改。**例外**：`raw/wiki/` 通道仅允许写 `catalog.yaml`、`snapshots/`、清理 `inbox.md`（见 [ingest-wiki.md](ingest-wiki.md)）。
 - 先读 `wiki/index.md` 和相关分组 `index.md`，再打开正文。不要一次加载整库。
 - 每个概念一篇 `.md`，YAML frontmatter 必有 `type`，且与 [types.md](types.md) 一致。知识页必须放在 `wiki/` 对应分组，不要写在仓库根。`title` / `description` 必须中文；文件名才用英文 kebab。
 - `wiki/index.md` / `wiki/log.md` 是保留名，不加 `type`。格式见 [index-log.md](index-log.md)。仅 `wiki/index.md` 可有 `okf_version: "0.2"`。

@@ -2,7 +2,9 @@
 
 把 `raw/`、对话里的故障结论、或要迁入的旧文档写成 wiki 页。
 
-1. 有 raw 就读；**不要改 raw。** 密钥、token、kubeconfig 不要抄进 wiki。步骤、入口、命令写进知识页正文，使页可脱离 raw 阅读。
+**分流：** 对话贴了公司 wiki 链接要入库，或 `raw/wiki/inbox.md` 非空 / 用户说「把 inbox 入库」「再来 5 个」「重试 failed」→ **停读本文件**，改走 [ingest-wiki.md](ingest-wiki.md)。其它 raw（工单、纪要等）继续下面步骤。
+
+1. 有 raw 就读；**不要改 raw**（`raw/wiki/` 例外见 ingest-wiki）。密钥、token、kubeconfig 不要抄进 wiki。步骤、入口、命令写进知识页正文，使页可脱离 raw 阅读。
 2. 读 [types.md](types.md) 选 type/目录，按该 type 的固定**中文**标题写正文；frontmatter 字段与示例也在 types.md。`title` / `description` **必须中文**（可含 MinIO 等专名），禁止把英文文件名或来源英文标题当 `title`。不要套 Karpathy 英文 `# Title` 正文头。`sources` 用仓内路径，例如 `raw/tickets/disk-full.md`。
 3. **故障结论：** 必写 `Incident`。步骤以后还能用 → 再写或改 `Playbook` / `Runbook`。把 `wiki/故障排查/index.md` 里对应「待入库」改成链接。
 4. **迁旧文档：** 按标题选 type，补 frontmatter（`status: draft`），链到已有 Architecture / Registry，不要另建平行副本。

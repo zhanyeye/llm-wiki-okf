@@ -7,4 +7,5 @@ alwaysApply: true
 
 - **查 / 排障 / 东西在哪**：只跟 `query.md`。先读 `wiki/index.md`，再打开相关分组 index 与 2–5 篇正文。不要通读 `AGENTS.md` 全文，不要读 `raw/`，不要一次 Glob/打开整库。
 - **入库 / 迁文档 / 故障结案 / 从零写页**：读 `ingest.md` 或 `author.md`，并读 `types.md` + `index-log.md`。
+- **公司 wiki / 增量入库 / inbox / 再来 5 个**：读 `ingest-wiki.md` + `types.md` + `index-log.md`（对话贴链接或 `raw/wiki/inbox.md`）。
 - **体检**：读 `lint.md`。

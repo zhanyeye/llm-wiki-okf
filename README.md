@@ -42,7 +42,7 @@
 | 面 | 路径 | 谁维护 | 说明 |
 | --- | --- | --- | --- |
 | **知识面** | [`wiki/`](wiki/) | **Agent** | 编译后的知识。人读、提问、过目确认（`verified`）。 |
-| **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。Agent **只读、不改、不删**。 |
+| **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。一般 raw Agent **只读**；公司 wiki 见 [`raw/wiki/`](raw/wiki/)（inbox + Agent 账本）。 |
 | **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/自动化脚本/`（运维）或 `tools/*/README.md`（框架）。 |
 
 ## 在 Code Agent 中使用
@@ -62,7 +62,12 @@
 把 raw/ 里这份工单入库。
 这次故障结案，结论写进 wiki。
 补一页绿区转发代理操作说明。
+把这些 wiki 链接入库：
+https://wiki.example.com/pages/viewpage.action?pageId=12001
+把 inbox 入库。
 ```
+
+公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（一行一个 URL）。不要改 `catalog.yaml`。Agent 每次默认处理 5 条，导出快照后再编译进仓根 `wiki/`。
 
 ### Query（查询）
 
