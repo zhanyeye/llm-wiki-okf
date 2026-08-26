@@ -4,74 +4,54 @@
 
 ## 命名与语言
 
-| 位置 | 语言 | 例 |
-|------|------|----|
-| 文件名 | **中文**（可夹专名） | `磁盘满处理.md` |
-| frontmatter `title` | **中文**（可夹专名） | `文件服务器磁盘满处理` |
-| frontmatter `description` | **中文**一句话 | `磁盘使用率告警后的定位、清理与验证` |
-| 分组 index 链接文字 | 用该页中文 `title` | `* [文件服务器磁盘满处理](./磁盘满处理.md) - …` |
-| 正文章节 | 下表固定 **中文** 标题（`##`） | `## 触发条件` |
+| 位置 | 语言 |
+|------|------|
+| 文件名 | **中文**（可夹专名） |
+| frontmatter `title` / `description` | **中文** |
+| 分组 index 链接文字 | 该页中文 `title` |
+| 正文章节 | 下表固定 **中文** `##` 标题 |
 
-禁止：
+页面标题只在 `title`。正文从该 type 的固定 `##` 开始；不要再套一层英文 H1。不要把英文来源标题直接当文件名或 `title`。若必须写 H1，须与 `title` 相同且为中文。
 
-- 把英文来源标题直接写成 `title`（错：`Disk Full Handling`；对：`磁盘满处理`）。
-- 在正文再写一层英文 `# Title`（不要套 Karpathy 的 `# {Title}` 头）。页面标题只在 `title`；如必须写 H1，必须与 `title` 相同且为中文。
-- 用纯英文当文件名（错：`disk-full.md`；对：`磁盘满处理.md`）。
+## type / 目录 / 何时选 / 固定标题
 
-## 目录与 type
+| type | 目录 | 何时选 | 固定标题（按序，勿改名） |
+|------|------|--------|--------------------------|
+| `Registry` | `wiki/资源注册表/` | 入口、负责人、告警、东西在哪 | 资源；环境；入口；负责人；依赖；告警；凭证怎么申请 |
+| `Architecture` | `wiki/系统与架构/` | 系统职责、拓扑、数据流 | 职责与边界；拓扑 / 请求路径 / 数据流；依赖；相关文档 |
+| `Runbook` | `wiki/操作手册/` | 可重复变更/部署/扩缩容/回滚，或改配置 | 触发条件；何时用 / 何时不用；前置检查；步骤；验证；回滚；相关系统 |
+| `Playbook` | `wiki/故障排查/` | 按症状排查、止损、升级 | 症状；影响；排查 / 止损路径；常见根因；升级条件；相关文档 |
+| `Incident` | `wiki/案例与复盘/` | 就这一次故障/变更/演练 | 时间线；根因；修复；行动项 |
+| `Decision` | `wiki/架构决策记录/` | 选型、放弃项、长期前提 | 背景；决策与放弃项；影响与约束；落地手册 |
+| `FAQ` | `wiki/常见问题/` | 短问答、报错释义 | 问题；答案 |
+| `Policy` | `wiki/规范与约束/` | 必须/禁止、门禁 | 适用范围；必须 / 禁止；检查方式；例外 |
+| `Curriculum` | `wiki/技能地图/` | 能力项、学习路径 | 能力项 |
+| `Onboarding` | `wiki/新人上手/` | 接手清单、首周任务 | 权限申请；第 1 周清单；必读 |
+| `Automation` | `wiki/自动化脚本/` | 脚本参数、权限、风险（可执行文件在 `script/`） | 做什么；权限；参数；怎么跑；输入输出；风险 |
 
-| type | 目录 | 放什么 |
-|------|------|--------|
-| `Registry` | `wiki/资源注册表/` | 资源、入口、环境、负责人、依赖、告警。不存凭证，只写申请途径和找谁 |
-| `Architecture` | `wiki/系统与架构/` | 系统说明、拓扑、请求/数据链路、依赖关系 |
-| `Runbook` | `wiki/操作手册/` | 申请、部署、变更、扩缩容、回滚；网关、DNS、证书、防火墙等配置说明 |
-| `Playbook` | `wiki/故障排查/` | 按症状的排查、止损、升级路径 |
-| `Decision` | `wiki/架构决策记录/` | 选型背景、方案权衡、影响与约束 |
-| `FAQ` | `wiki/常见问题/` | 短问答、工具速查、报错释义 |
-| `Policy` | `wiki/规范与约束/` | 命名、权限、变更、安全、CI 适配规范 |
-| `Incident` | `wiki/案例与复盘/` | 故障、变更、演练的复盘与行动项 |
-| `Curriculum` | `wiki/技能地图/` | 能力范围、学习路径、技能矩阵 |
-| `Onboarding` | `wiki/新人上手/` | 接手清单、权限申请、首周任务 |
-| `Automation` | `wiki/自动化脚本/` | 脚本说明、参数、权限、风险；可执行文件在 `script/`，不要把 `.py` 塞进 wiki |
-
-按场景选 type：
-
-| 情况 | type | 目录 |
-|------|------|------|
-| 可重复的变更/部署/扩缩容/回滚，或改配置项、参数表、reload | `Runbook` | `wiki/操作手册/` |
-| 按症状排查、止损、升级 | `Playbook` | `wiki/故障排查/` |
-| 就这一次故障/变更/演练 | `Incident` | `wiki/案例与复盘/` |
-| 入口、负责人、告警、东西在哪 | `Registry` | `wiki/资源注册表/` |
-| 系统职责、拓扑、数据流 | `Architecture` | `wiki/系统与架构/` |
-| 选型、放弃项、以后不能轻易改的前提 | `Decision` | `wiki/架构决策记录/` |
-| 三五句问答、报错释义 | `FAQ` | `wiki/常见问题/` |
-| 必须/禁止、门禁规范 | `Policy` | `wiki/规范与约束/` |
-| 能力项、学习路径 | `Curriculum` | `wiki/技能地图/` |
-| 接手清单、首周任务 | `Onboarding` | `wiki/新人上手/` |
-| 脚本参数、权限、风险 | `Automation` | `wiki/自动化脚本/` |
-
-- OKF 知识图根是 `wiki/`。保留名只有 `wiki/index.md` 和 `wiki/log.md`，不加 `type`。`wiki/index.md` 可有 `okf_version: "0.2"`。仓根 `index.md` 是仓地图，不是知识 TOC。写法见 [index-log.md](index-log.md)。
-- 概念页必须放在上表对应 `wiki/` 分组，不要写在仓库根或 `wiki/` 根。
-- 每个概念 `.md` 必须有可解析的 YAML frontmatter，且含非空 `type`，与上表一致。
-- 链接：跨目录用相对 wiki 根的路径 `[MinIO](/系统与架构/minio.md)`（不要 `/wiki/...`）；同目录 index 条目用 `./磁盘满处理.md`。
+- 保留名：`wiki/index.md`、`wiki/log.md`（不加 `type`）。`wiki/index.md` 可有 `okf_version: "0.2"`。仓根 `index.md` 是仓地图，不是知识 TOC。写法见 [index-log.md](index-log.md)。
+- 概念页必须放在上表对应分组，不要写在仓库根或 `wiki/` 根。
+- 每个概念 `.md` 必须有可解析 YAML frontmatter，且含非空 `type`，与上表一致。
+- 链接：跨目录用相对 wiki 根的路径 `[标题](/分组/页.md)`（不要 `/wiki/...`）；同目录 index 条目用 `./页.md`。
 - `sources`：公司 wiki 用原始 URL；工单/纪要等用仓内路径 `raw/...`。正文须自洽；查询不读 raw。
 - 断链允许暂时存在（尚未写的知识）；lint 会警告。
+- `Registry` 不写密码、token、密钥；只写申请途径和找谁。`Automation` 不要把 `.py` 正文塞进 wiki。
 
-`domain` 取值：`landscape` | `images` | `k8s` | `cicd` | `network` | `database` | `storage` | `middleware` | `troubleshooting`。
+`domain`：`landscape` | `images` | `k8s` | `cicd` | `network` | `database` | `storage` | `middleware` | `troubleshooting`。
 
 ## Frontmatter
 
 ```yaml
 ---
 type: Runbook
-title: 文件服务器磁盘满处理
-description: 磁盘使用率告警后的定位、清理与验证。
+title: 示例操作手册
+description: 一句话说明适用场景与结果。
 domain: storage
-tags: [oncall, disk]
+tags: [oncall]
 status: draft
-owner: infra-storage
+owner: infra
 scope: [prod]
-services: [minio]
+services: []
 generated: { by: human:name-or-agent/model, at: 2026-08-21T00:00:00Z }
 verified: { by: human:name, at: 2026-08-21T00:00:00Z }
 stale_after: 2027-02-17
@@ -80,31 +60,16 @@ sources:
 ---
 ```
 
-- `sources`：只做溯源，不要写「去 raw 里看步骤」。
-  - 公司 wiki：只写原始 wiki URL（可多条）。**禁止**写 `raw/wiki/archive/...`。
+- `sources` 只做溯源，不要写「去 raw 里看步骤」。
+  - 公司 wiki：只写原始 wiki URL（可多条）。禁止写 `raw/wiki/archive/...`。
   - 工单 / 纪要等：仓内路径 `raw/tickets/...`。
-- **图片（wiki 导出）**：鉴权图链禁止写进正文。有用的图从 `raw/wiki/archive/<pageId>/images/` 拷到知识页旁目录，例如 `wiki/操作手册/磁盘满处理.md` + `wiki/操作手册/磁盘满处理/topology.png`，正文 `![](./磁盘满处理/topology.png)`。知识页须离线可读。
-- Actor：`human:<id>` / `<agent>/<model>` / `process:<name>`。人工确认必须用 `human:`。
+- **图片（wiki 导出）**：鉴权图链禁止写进正文。有用的图从 `raw/wiki/archive/<docKey>/images/` 拷到知识页旁目录，正文用相对路径引用（如 `![](./页名/图.png)`）。知识页须离线可读。
+- Actor：`human:<id>` / `agent/<model>` / `process:<name>`。人工确认必须用 `human:`。
 - 新页用 `status: draft`；过目后改 `stable`。缺省视为 `stable`。
 - `stale_after` 默认生成日后 180 天。
 - 无 `verified` ⇒ unverified。不要假装已人工确认。
-- `Registry` 页不写密码、token、密钥。
 - 允许额外 key；不要删除你不认识的字段。
 
-## 固定正文标题
+## 正文
 
-正文用该 type 的固定 `#` 标题（按序，勿改名）。命令放代码块。`Registry` 不写密码、token、密钥。
-
-| type | 标题 |
-|------|------|
-| `Runbook` | 触发条件；何时用 / 何时不用；前置检查；步骤；验证；回滚；相关系统 |
-| `Playbook` | 症状；影响；排查 / 止损路径；常见根因；升级条件；相关文档 |
-| `Incident` | 时间线；根因；修复；行动项 |
-| `Registry` | 资源；环境；入口；负责人；依赖；告警；凭证怎么申请 |
-| `Architecture` | 职责与边界；拓扑 / 请求路径 / 数据流；依赖；相关文档 |
-| `Decision` | 背景；决策与放弃项；影响与约束；落地手册 |
-| `FAQ` | 问题；答案 |
-| `Policy` | 适用范围；必须 / 禁止；检查方式；例外 |
-| `Curriculum` | 能力项 |
-| `Onboarding` | 权限申请；第 1 周清单；必读 |
-| `Automation` | 做什么；权限；参数；怎么跑；输入输出；风险 |
+命令放代码块。按上表该 type 的固定标题写（`##`，按序，勿改名）。
