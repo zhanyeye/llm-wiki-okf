@@ -2,6 +2,7 @@
 
 ## 2026-08-26
 
+* **Update**: 去掉 `raw/wiki/catalog.yaml`；`inbox.md` 改为增量只追加（对话可代写新 URL）；去重与 skipped/failed 走 `sources:` 与本 log；公司 wiki 编译强制 Triage + 蒸馏验收。
 * **Update**: ingest 约束：交叉引用按内容关联（同批确有关系可互链，禁止瞎链）；知识页图片统一 `attachments/`；编译可用可选 Obsidian CLI。
 * **Update**: 空分组不再强制保留 `index.md`；有概念页时再由 Agent 创建。仅 `故障排查/index.md` 因待入库清单保留。
 * **Update**: 8 个分组目录改回中文（与人读名称一致）；`type` 仍为英文。

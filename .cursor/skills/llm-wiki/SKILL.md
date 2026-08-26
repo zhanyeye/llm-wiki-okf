@@ -20,7 +20,7 @@ description: >-
 
 1. **安全**：不写密钥；不编造集群名、地址、步骤。
 2. **接地**：查询只根据已打开的 `wiki/` 页作答；缺页就说缺页。
-3. **分面**：知识只写 `wiki/`；`raw/` 默认只读（公司 wiki 通道例外见 [references/source-wiki-cli.md](references/source-wiki-cli.md)）；框架面（仓根 `index.md` / `README.md` / `AGENTS.md` / `script/` / `tools/`）不是知识正文。
+3. **分面**：知识只写 `wiki/`；`raw/` 默认只读（公司 wiki 通道例外：可追加 `inbox.md`、写 `archive/`，见 [references/source-wiki-cli.md](references/source-wiki-cli.md)）；框架面（仓根 `index.md` / `README.md` / `AGENTS.md` / `script/` / `tools/`）不是知识正文。
 4. **按意图只读对应文件**；写入再读 schema，并完成 index/log + lint。
 
 ## 路由
@@ -52,6 +52,6 @@ description: >-
 当前分组见 [`wiki/index.md`](../../../wiki/index.md)。未来增删分组时只改该文件与各分组 index，并同步更新 [references/okf.md](references/okf.md) 中的 type→目录映射表。
 
 ```
-raw/          ← 来源（默认只读；raw/wiki/ 例外）
+raw/          ← 来源（默认只读；raw/wiki/ 仅可追加 inbox、写 archive）
 wiki/         ← OKF 编译结果（index.md、log.md、各分组）
 ```

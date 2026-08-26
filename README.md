@@ -39,7 +39,7 @@
 | 面 | 路径 | 谁维护 | 说明 |
 | --- | --- | --- | --- |
 | **知识面** | [`wiki/`](wiki/) | **Agent** | 编译后的知识。人读、提问、过目确认（`verified`）。 |
-| **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。一般 raw Agent **只读**；公司 wiki 见 [`raw/wiki/`](raw/wiki/)（inbox + catalog + archive）。 |
+| **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。一般 raw Agent **只读**；公司 wiki 见 [`raw/wiki/`](raw/wiki/)（增量 `inbox.md` + `archive/`）。 |
 | **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/llm-wiki/`](.cursor/skills/llm-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/操作手册/`（运维）或 `tools/*/README.md`（框架）。 |
 
 ## 在 Code Agent 中使用
@@ -53,7 +53,7 @@
 
 ### Ingest（摄入）
 
-把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；Agent **不改** `raw/`。故障结论不要只留在聊天里。写入后会更新分组 `index.md`（若无则创建）和 [`wiki/log.md`](wiki/log.md)。空分组可以没有 `index.md`。
+把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；一般来源 Agent **不改** `raw/`（公司 wiki：可追加 `inbox.md`、写 `archive/`）。故障结论不要只留在聊天里。写入后会更新分组 `index.md`（若无则创建）和 [`wiki/log.md`](wiki/log.md)。空分组可以没有 `index.md`。
 
 ```text
 把 raw/ 里这份工单入库。
@@ -64,7 +64,7 @@ https://wiki.example.com/pages/viewpage.action?pageId=12001
 把 inbox 入库。
 ```
 
-公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（一行一个 URL）。不要改 `catalog.yaml`。Agent 每次默认处理 5 条，导出到 `raw/wiki/archive/<pageId>/`（`page.md` + `images/`）后再编译进仓根 `wiki/`；知识页 `sources` 只写原始 URL。
+公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（一行一个 URL，**只追加、入库不删行**）。对话入库时 Agent 可把新 URL 追加进 inbox。去重看知识页 `sources:` 与 [`wiki/log.md`](wiki/log.md)。Agent 每次默认处理 5 条，导出到 `raw/wiki/archive/<pageId>/`（`page.md` + `images/`）后再蒸馏编译进仓根 `wiki/`；知识页 `sources` 只写原始 URL。新页 `status: draft`，请人抽看后再标 `verified`。
 
 ### Query（查询）
 

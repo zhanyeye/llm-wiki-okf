@@ -73,9 +73,24 @@
 | 动词 | 何时 |
 |------|------|
 | `**Creation**` | 新建概念页 |
-| `**Update**` | 改已有页（含改 index 条目、把待入库换成链接） |
+| `**Update**` | 改已有页（含改 index 条目、把待入库换成链接、公司 wiki ingest 结果） |
 | `**Deprecation**` | 废弃一页 |
 | `**Initialization**` | 建目录结构（一般只出现一次） |
 
 - 链接用 bundle 绝对路径：`[标题](/操作手册/file.md)`。
 - 纯查询、只跑 lint 且未改页 → 不写 log。
+
+### 公司 wiki ingest 行（固定句式）
+
+便于下次按 URL 过滤已处理项；与 `inbox.md`（只追加）配合，**不用** catalog：
+
+```markdown
+* **Update**: ingest compiled https://wiki.example.com/pages/viewpage.action?pageId=12001 → [标题](/操作手册/页.md)。
+* **Update**: ingest skipped https://wiki.example.com/pages/viewpage.action?pageId=12002 — 非运维知识。
+* **Update**: ingest failed https://wiki.example.com/pages/viewpage.action?pageId=12003 — wiki-cli 失败：…。
+* **Update**: ingest no material: https://wiki.example.com/pages/viewpage.action?pageId=12004
+```
+
+- `ingest compiled`：URL 已编进知识页（也可用 `sources:` 判断已处理）。
+- `ingest skipped` / `ingest failed`：默认不再进本批，除非用户说重试或刷新。
+- 新建概念页仍可另写一条 `**Creation**`。
