@@ -6,7 +6,7 @@
 
 人只贴对话链接，或编辑 [`raw/wiki/inbox.md`](../../../raw/wiki/inbox.md)。人不要改 [`raw/wiki/catalog.yaml`](../../../raw/wiki/catalog.yaml)。
 
-编译仍遵守 [types.md](types.md) 与 [index-log.md](index-log.md)。查询路径永不读本文件。
+编译仍遵守 [references/types.md](references/types.md) 与 [references/index-log.md](references/index-log.md)。查询路径永不读本文件。
 
 ## 0. 绑定 wiki-cli（每会话首次导出前）
 
@@ -60,9 +60,9 @@ raw/wiki/archive/<docKey>/
 
 1. 只读本条 `archive/<docKey>/page.md` 与 `images/`。
 2. 非运维知识 → `status: skipped`，`note` 写原因，不写知识页。
-3. 否则按 [types.md](types.md) 选 type/目录；`status: draft`；`sources` **只写原始 wiki URL**（可多条）。禁止写 `raw/wiki/archive/...`。正文须自洽。
+3. 否则按 [references/types.md](references/types.md) 选 type/目录；`status: draft`；`sources` **只写原始 wiki URL**（可多条）。禁止写 `raw/wiki/archive/...`。正文须自洽。
 4. 图片：鉴权 URL 禁止写进 `wiki/`。有用的图拷到知识页旁目录，正文用仓内相对路径引用。
-5. 按 [index-log.md](index-log.md) 更新分组 index 与 `wiki/log.md`。
+5. 按 [references/index-log.md](references/index-log.md) 更新分组 index 与 `wiki/log.md`。
 6. 回写 catalog：`status: compiled`，`compiled_at: YYYY-MM-DD`，`title`，`wiki_pages: [相对仓根 wiki/ 的路径]`。一篇来源可对应多页。
 7. 编译失败：该条 `failed` + `note`，继续下一条。
 

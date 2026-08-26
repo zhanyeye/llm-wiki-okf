@@ -104,7 +104,7 @@ python tools/okf-lint/okf_lint.py
 | [`新人上手/`](wiki/新人上手/) | `Onboarding` | 接手清单、权限申请、首周任务 |
 | [`自动化脚本/`](wiki/自动化脚本/) | `Automation` | 脚本说明、参数、权限、风险（`.py` 在 `script/`） |
 
-业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。type / frontmatter 见 Skill [`types.md`](.cursor/skills/infra-wiki/types.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
+业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。type / frontmatter 见 Skill [`references/types.md`](.cursor/skills/infra-wiki/references/types.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
 
 ## 路线图
 

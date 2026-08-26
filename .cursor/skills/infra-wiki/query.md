@@ -1,6 +1,6 @@
 # query
 
-**只读本文件与 `wiki/`。** 不要通读 `AGENTS.md`；不要读 `raw/`；不要一次 Glob/Read 整库；不要读 `ingest.md` / `types.md` / `index-log.md` / `author.md`；不要把仓根 `index.md` / `README.md` / `script/` / `tools/` 当正文。
+**只读本文件与 `wiki/`。** 不要通读 `AGENTS.md`；不要读 `raw/`；不要一次 Glob/Read 整库；不要读 `ingest.md` / `references/`；不要把仓根 `index.md` / `README.md` / `script/` / `tools/` 当正文。
 
 ## 流程
 
@@ -18,4 +18,4 @@
 - 命令、主机名、集群名、地址**只来自已打开的页**；页内占位符保持原样，不要替换成臆造值。
 - 故障排查 index 中该项为「待入库」、或没有正文 → 回答「没有成文步骤」；可指出最接近的已有页，不要补全内网命令或主机名。
 - wiki 里没有的事实 → 说「wiki 里没有」，建议按 [ingest.md](ingest.md) 补；不要编。
-- 有价值的排查树 / 对比表：问是否回写成新页（[author.md](author.md)）。
+- 有价值的排查树 / 对比表：问是否回写成新页（[ingest.md](ingest.md)）。

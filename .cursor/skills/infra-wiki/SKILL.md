@@ -26,18 +26,17 @@ description: >-
 | 用户意图 | 读 |
 |----------|-----|
 | 查、排障、东西在哪、怎么做 | [query.md](query.md) |
-| type / 目录 / frontmatter / 固定标题 | [types.md](types.md) |
-| 工单、纪要、迁文档、故障关闭 | [ingest.md](ingest.md) + [types.md](types.md) + [index-log.md](index-log.md) |
-| 公司 wiki 链接 / inbox / 继续下一批 / 重试失败项 | [ingest-wiki.md](ingest-wiki.md) + [types.md](types.md) + [index-log.md](index-log.md) |
-| 从零写一页 | [author.md](author.md) + [types.md](types.md) + [index-log.md](index-log.md) |
-| 只改 index / log | [index-log.md](index-log.md) |
+| type / 目录 / frontmatter / 固定标题 | [references/types.md](references/types.md) |
+| 工单、纪要、迁文档、故障关闭、从零写一页 | [ingest.md](ingest.md) + [references/types.md](references/types.md) + [references/index-log.md](references/index-log.md) |
+| 公司 wiki 链接 / inbox / 继续下一批 / 重试失败项 | [ingest-wiki.md](ingest-wiki.md) + [references/types.md](references/types.md) + [references/index-log.md](references/index-log.md) |
+| 只改 index / log | [references/index-log.md](references/index-log.md) |
 | 体检、过期、断链 | [lint.md](lint.md) |
 
-默认走 query。查询**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库，不要读写入用文件。
+默认走 query。查询**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库，不要读写入用文件或 `references/`。
 
 ## 不变量
 
 - **分面**：概念页只在 `wiki/` 对应分组。`raw/` 默认只读；例外：公司 wiki 通道可写 `raw/wiki/catalog.yaml`、`raw/wiki/archive/`、清理 `raw/wiki/inbox.md`（见 [ingest-wiki.md](ingest-wiki.md)）。
 - **接地**：wiki 里没有的事实不要补；答案与命令只来自已读页面。
-- **一页一概念**：每篇概念 `.md` 有 YAML frontmatter 与非空 `type`（见 [types.md](types.md)）。
-- **写入闭环**：按 [types.md](types.md) 写页 → 正文自洽（查询不依赖打开 `raw/`）→ 按 [index-log.md](index-log.md) 更新 index/log → 跑 lint。
+- **一页一概念**：每篇概念 `.md` 有 YAML frontmatter 与非空 `type`（见 [references/types.md](references/types.md)）。
+- **写入闭环**：按 [references/types.md](references/types.md) 写页 → 正文自洽（查询不依赖打开 `raw/`）→ 按 [references/index-log.md](references/index-log.md) 更新 index/log → 跑 lint。

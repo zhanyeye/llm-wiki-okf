@@ -31,12 +31,11 @@
 
 | 意图 | 必读 |
 |------|------|
-| 入库 / 迁文档 / 故障结案 | [`ingest.md`](.cursor/skills/infra-wiki/ingest.md) + [`types.md`](.cursor/skills/infra-wiki/types.md) + [`index-log.md`](.cursor/skills/infra-wiki/index-log.md) |
-| 公司 wiki 增量入库（对话贴链接 / inbox） | [`ingest-wiki.md`](.cursor/skills/infra-wiki/ingest-wiki.md) + [`types.md`](.cursor/skills/infra-wiki/types.md) + [`index-log.md`](.cursor/skills/infra-wiki/index-log.md) |
-| 从零写一页 | [`author.md`](.cursor/skills/infra-wiki/author.md) + [`types.md`](.cursor/skills/infra-wiki/types.md) + [`index-log.md`](.cursor/skills/infra-wiki/index-log.md) |
+| 入库 / 迁文档 / 故障结案 / 从零写一页 | [`ingest.md`](.cursor/skills/infra-wiki/ingest.md) + [`references/types.md`](.cursor/skills/infra-wiki/references/types.md) + [`references/index-log.md`](.cursor/skills/infra-wiki/references/index-log.md) |
+| 公司 wiki 增量入库（对话贴链接 / inbox） | [`ingest-wiki.md`](.cursor/skills/infra-wiki/ingest-wiki.md) + [`references/types.md`](.cursor/skills/infra-wiki/references/types.md) + [`references/index-log.md`](.cursor/skills/infra-wiki/references/index-log.md) |
 | 体检、断链、过期 | [`lint.md`](.cursor/skills/infra-wiki/lint.md) |
 
-type、目录、frontmatter、固定正文标题：全部在 [`types.md`](.cursor/skills/infra-wiki/types.md)。
+type、目录、frontmatter、固定正文标题：全部在 [`references/types.md`](.cursor/skills/infra-wiki/references/types.md)。
 
 ## 值班
 
