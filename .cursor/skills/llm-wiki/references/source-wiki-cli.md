@@ -67,7 +67,7 @@ raw/wiki/archive/<docKey>/
 2. 非运维知识 → catalog `status: skipped`，`note` 写原因，不写知识页。
 3. 否则按 [okf.md](okf.md) 选 type/目录；`status: draft`；`sources` **只写原始 wiki URL**。正文须自洽。
 4. 图片：鉴权 URL 禁止写进 `wiki/`。有用的图拷到知识页旁目录，正文用仓内相对路径。
-5. 按 [index-log.md](index-log.md) 更新分组 index 与 `wiki/log.md`。
+5. 按 [index-log.md](index-log.md) 更新分组 index（无则创建）与 `wiki/log.md`。
 6. 回写 catalog：`status: compiled`，`compiled_at: YYYY-MM-DD`，`title`，`wiki_pages: [相对仓根 wiki/ 的路径]`。
 7. 编译失败：`failed` + `note`，继续下一条。
 

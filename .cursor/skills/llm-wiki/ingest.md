@@ -22,7 +22,7 @@
 4. **故障关闭**：事实写入 `Incident`；可复用步骤写入或更新 `Playbook` / `Runbook`；把 `wiki/故障排查/index.md` 里对应「待入库」改成链接。
 5. **迁旧文档**：按内容选 type，补 frontmatter，链到已有 Architecture / Registry，不要另建平行副本。
 6. 一篇来源可改多页；保持交叉引用一致。命令放可复制代码块；占位符用 `<cluster>`、`<namespace>`、`<path>`。
-7. 按 [references/index-log.md](references/index-log.md) 更新被改目录的 index、必要时 `wiki/index.md` 与 `故障排查/index.md`，并追加 `wiki/log.md`。
+7. 按 [references/index-log.md](references/index-log.md) 更新被改目录的 index（**若该分组尚无 `index.md`，写入第一篇时创建**）、必要时 `wiki/index.md` 与 `故障排查/index.md`，并追加 `wiki/log.md`。
 8. 跑 `python tools/okf-lint/okf_lint.py`，先修 error。
 
 ## 公司 wiki

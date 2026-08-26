@@ -106,7 +106,9 @@ def resolve_link(src: Path, href: str) -> Path | None:
         except ValueError:
             return target
     if target.is_dir():
-        return target / "index.md"
+        # Directory TOC link (./分组/): valid if the directory exists.
+        # Group index.md is optional until the first concept page is written.
+        return target
     return target
 
 

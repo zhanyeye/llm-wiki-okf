@@ -53,7 +53,7 @@
 
 ### Ingest（摄入）
 
-把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；Agent **不改** `raw/`。故障结论不要只留在聊天里。写入后会更新分组 `index.md` 和 [`wiki/log.md`](wiki/log.md)。
+把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；Agent **不改** `raw/`。故障结论不要只留在聊天里。写入后会更新分组 `index.md`（若无则创建）和 [`wiki/log.md`](wiki/log.md)。空分组可以没有 `index.md`。
 
 ```text
 把 raw/ 里这份工单入库。
@@ -68,7 +68,7 @@ https://wiki.example.com/pages/viewpage.action?pageId=12001
 
 ### Query（查询）
 
-问 `wiki/` 里已有的知识。Agent 先读 [`wiki/index.md`](wiki/index.md)，再打开分组 index，最后读 2–5 篇正文。只知道现象时走 [`wiki/故障排查/`](wiki/故障排查/)。
+问 `wiki/` 里已有的知识。Agent 先读 [`wiki/index.md`](wiki/index.md)，再打开对应分组（有 `index.md` 则先读它），最后读 2–5 篇正文。只知道现象时走 [`wiki/故障排查/`](wiki/故障排查/)。
 
 ```text
 磁盘满了怎么处理？

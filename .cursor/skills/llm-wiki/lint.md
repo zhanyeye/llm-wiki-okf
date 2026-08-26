@@ -14,8 +14,10 @@ python tools/okf-lint/okf_lint.py
 
 ## 2. Safe Fixes（可自动修）
 
-**Index 一致性** — 对照各分组 `index.md` 与实际 `.md` 文件：
+**Index 一致性** — 对照各分组 `index.md` 与实际概念 `.md` 文件：
 
+- 尚无概念页 → 允许没有 `index.md`（不要为消警告建空 index）
+- 有概念页但缺 `index.md` → **创建** index 并补条目
 - 有页无条目 → 补条目（description 取自 frontmatter）
 - 条目指向不存在文件 → 标 `[MISSING]`，不删条目
 - 删页或改 title/description → 同步改 index

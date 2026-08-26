@@ -5,12 +5,13 @@
 ## 流程
 
 1. 读 `wiki/index.md`（不是仓库根 `index.md`）。
-2. 按问题打开分组 index：
-   - **现象不明** → `wiki/故障排查/index.md`
+2. 按问题打开分组：
+   - **现象不明** → `wiki/故障排查/index.md`（若存在）
    - **已知系统** → 对应分组（如 `wiki/系统与架构/`）
    - **入口 / 负责人 / 日志路径** → `wiki/资源注册表/`
-3. 打开相关正文（通常 2–5 篇；没有相关页不要凑数）。看 frontmatter：已过 `stale_after`、或没有 `verified` → 回答里标明「可能过期 / 未经人工确认」。
-4. 仍不够：在 `wiki/` 下搜 `title` / `tags` / `services` / `domain`。
+3. 分组有 `index.md` → 读它再开正文；**没有** `index.md` → 该分组尚无概念页（或仅有 `.gitkeep`），不要假定有内容；可直接列目录下 `.md` 或搜 `wiki/`。
+4. 打开相关正文（通常 2–5 篇；没有相关页不要凑数）。看 frontmatter：已过 `stale_after`、或没有 `verified` → 回答里标明「可能过期 / 未经人工确认」。
+5. 仍不够：在 `wiki/` 下搜 `title` / `tags` / `services` / `domain`。
 
 ## 输出标准
 

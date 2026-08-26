@@ -2,6 +2,7 @@
 
 ## 2026-08-26
 
+* **Update**: 空分组不再强制保留 `index.md`；有概念页时再由 Agent 创建。仅 `故障排查/index.md` 因待入库清单保留。
 * **Update**: 8 个分组目录改回中文（与人读名称一致）；`type` 仍为英文。
 * **Update**: 分组改为 8 个英文目录（registry、architecture、runbooks、playbooks、adr、faq、incidents、onboarding）；去掉规范与约束、技能地图、自动化脚本顶栏。人读名称不变。
 

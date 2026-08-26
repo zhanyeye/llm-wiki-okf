@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # 基础设施知识库
 
-人和 Agent 读同一套 Markdown。先读本页看分组，再打开对应目录的 `index.md`，最后打开 2–5 篇正文。
+人和 Agent 读同一套 Markdown。先读本页看分组，再打开对应目录（有 `index.md` 则先读它），最后打开 2–5 篇正文。分组尚无概念页时可以没有 `index.md`；写入第一篇时由 Agent 创建。
 
 ## 分组
 
