@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lint the OKF knowledge surface under wiki/. Stdlib only. UTF-8 paths.
 
-Scans only wiki/index.md, wiki/log.md and the 11 type directories (allowlist).
+Scans only wiki/index.md, wiki/log.md and the 8 type directories (allowlist).
 Does not treat repo-root index.md, README.md, AGENTS.md, raw/, script/,
 tools/, etc. as concept pages.
 """
@@ -25,11 +25,8 @@ TYPE_DIR = {
     "Playbook": "故障排查",
     "Decision": "架构决策记录",
     "FAQ": "常见问题",
-    "Policy": "规范与约束",
     "Incident": "案例与复盘",
-    "Curriculum": "技能地图",
     "Onboarding": "新人上手",
-    "Automation": "自动化脚本",
 }
 
 KNOWLEDGE_DIRS = frozenset(TYPE_DIR.values())
@@ -75,7 +72,7 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
 
 
 def iter_md(bundle: Path) -> list[Path]:
-    """Only wiki index/log and files under the 11 knowledge directories."""
+    """Only wiki index/log and files under the 8 knowledge directories."""
     out: list[Path] = []
     for name in RESERVED:
         p = bundle / name

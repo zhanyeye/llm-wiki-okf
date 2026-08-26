@@ -8,9 +8,9 @@
 
 | 位置 | frontmatter | 列什么 |
 |------|-------------|--------|
-| `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 11 个分组目录 |
+| `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 8 个分组目录 |
 | `wiki/<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
-| 仓根 `index.md` | **禁止** frontmatter；**禁止**列 11 分组 | 只链 `wiki/` / `raw/` / `script/` / `tools/`（仓地图，lint 不扫） |
+| 仓根 `index.md` | **禁止** frontmatter；**禁止**列 8 分组 | 只链 `wiki/` / `raw/` / `script/` / `tools/`（仓地图，lint 不扫） |
 
 `wiki/index.md` **只在增删/改名分组时**改。日常入库只改被写入的那个分组 `index.md`；故障相关再看 `wiki/故障排查/index.md`。
 
@@ -29,7 +29,7 @@
 
 - 标题用 `#`；内容分组用 `##`。
 - 条目格式：`* [标题](链接) - 短描述`（空格、连字符、空格）。描述取自目标页 `title` / `description`。
-- 同目录概念：`./页名.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：bundle 绝对路径 `/分组/页.md`。
+- 同目录概念：`./页名.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：bundle 绝对路径 `/资源注册表/页.md`。
 - 有页必有一条；删页或改 `title`/`description` 时同步改条目。
 - 尚无概念页：只保留 `# 标题` 和一句话；**第一篇写入时**再加 `##` 与条目。
 - 不要把 schema、domain 列表、Skill 说明写进 index。
@@ -47,8 +47,8 @@
 
 ## 2026-08-21
 
-* **Update**: 说明，并链到 [标题](/分组/file.md)。
-* **Creation**: 写入 [标题](/分组/file.md)。
+* **Update**: 说明，并链到 [标题](/操作手册/file.md)。
+* **Creation**: 写入 [标题](/操作手册/file.md)。
 
 ## 2026-08-20
 
@@ -67,5 +67,5 @@
   | `**Deprecation**` | 废弃一页 |
   | `**Initialization**` | 建目录结构（一般只出现一次） |
 
-- 链接用 bundle 绝对路径：`[标题](/分组/file.md)`。
+- 链接用 bundle 绝对路径：`[标题](/操作手册/file.md)`。
 - 纯查询、只跑 lint 且未改页 → 不写 log。

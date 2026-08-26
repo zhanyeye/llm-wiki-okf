@@ -4,5 +4,5 @@
 
 * [wiki/](./wiki/) - 编译后的知识；查询从 wiki/index.md 开始
 * [raw/](./raw/) - 只读来源；经 sources 溯源
-* [script/](./script/) - 运维可执行脚本；用法见 wiki/自动化脚本/
+* [script/](./script/) - 运维可执行脚本；用法见 wiki/操作手册/
 * [tools/](./tools/) - 维护本仓的工具；总览见 tools/index.md

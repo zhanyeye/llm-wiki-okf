@@ -1,5 +1,10 @@
 # 更新日志
 
+## 2026-08-26
+
+* **Update**: 8 个分组目录改回中文（与人读名称一致）；`type` 仍为英文。
+* **Update**: 分组改为 8 个英文目录（registry、architecture、runbooks、playbooks、adr、faq、incidents、onboarding）；去掉规范与约束、技能地图、自动化脚本顶栏。人读名称不变。
+
 ## 2026-08-24
 
 * **Update**: `okf_lint.py` 迁至 `tools/okf-lint/`；`tools/index.md` 作工具总览；`script/` 专放运维脚本。

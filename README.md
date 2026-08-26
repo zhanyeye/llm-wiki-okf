@@ -19,15 +19,12 @@
 │   ├── log.md                    # 追加式变更日志
 │   ├── 资源注册表/
 │   ├── 系统与架构/
-│   ├── 操作手册/
-│   ├── 故障排查/
+│   ├── 操作手册/                 # 含脚本用法
+│   ├── 故障排查/                 # 场景预案；值班入口
 │   ├── 架构决策记录/
 │   ├── 常见问题/
-│   ├── 规范与约束/
 │   ├── 案例与复盘/
-│   ├── 技能地图/
-│   ├── 新人上手/
-│   └── 自动化脚本/               # 说明文档；.py 在 script/
+│   └── 新人上手/                 # 含学习路径
 ├── raw/                          # 人维护：只读来源
 ├── script/                       # 运维可执行脚本
 ├── tools/                        # 维护本仓的框架工具
@@ -43,7 +40,7 @@
 | --- | --- | --- | --- |
 | **知识面** | [`wiki/`](wiki/) | **Agent** | 编译后的知识。人读、提问、过目确认（`verified`）。 |
 | **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。一般 raw Agent **只读**；公司 wiki 见 [`raw/wiki/`](raw/wiki/)（inbox + catalog + archive）。 |
-| **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/自动化脚本/`（运维）或 `tools/*/README.md`（框架）。 |
+| **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/操作手册/`（运维）或 `tools/*/README.md`（框架）。 |
 
 ## 在 Code Agent 中使用
 
@@ -94,17 +91,14 @@ python tools/okf-lint/okf_lint.py
 | --- | --- | --- |
 | [`资源注册表/`](wiki/资源注册表/) | `Registry` | 资源、入口、环境、负责人、依赖、告警。不存凭证 |
 | [`系统与架构/`](wiki/系统与架构/) | `Architecture` | 系统说明、拓扑、请求/数据链路 |
-| [`操作手册/`](wiki/操作手册/) | `Runbook` | 标准操作或配置说明 |
-| [`故障排查/`](wiki/故障排查/) | `Playbook` | 按症状排查、止损、升级 |
+| [`操作手册/`](wiki/操作手册/) | `Runbook` | 标准操作、配置说明与脚本用法（`.py` 在 `script/`） |
+| [`故障排查/`](wiki/故障排查/) | `Playbook` | 按症状排查、止损、升级（场景预案） |
 | [`架构决策记录/`](wiki/架构决策记录/) | `Decision` | 选型、权衡、约束 |
 | [`常见问题/`](wiki/常见问题/) | `FAQ` | 短问答、工具速查、报错释义 |
-| [`规范与约束/`](wiki/规范与约束/) | `Policy` | 命名、权限、变更、安全、CI 规范 |
 | [`案例与复盘/`](wiki/案例与复盘/) | `Incident` | 故障/变更/演练复盘 |
-| [`技能地图/`](wiki/技能地图/) | `Curriculum` | 能力范围、学习路径 |
-| [`新人上手/`](wiki/新人上手/) | `Onboarding` | 接手清单、权限申请、首周任务 |
-| [`自动化脚本/`](wiki/自动化脚本/) | `Automation` | 脚本说明、参数、权限、风险（`.py` 在 `script/`） |
+| [`新人上手/`](wiki/新人上手/) | `Onboarding` | 接手清单、权限申请、首周任务、学习路径 |
 
-业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。type / frontmatter 见 Skill [`references/types.md`](.cursor/skills/infra-wiki/references/types.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
+业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。规范、技能地图、脚本说明不再单开目录：必须/禁止写入相关架构或手册页；学习路径写入新人上手；脚本用法写入操作手册（`.py` 仍在 `script/`）。type / frontmatter 见 Skill [`references/types.md`](.cursor/skills/infra-wiki/references/types.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
 
 ## 路线图
 
@@ -113,6 +107,6 @@ python tools/okf-lint/okf_lint.py
 | --------------- | ----------------------------- |
 | **Phase 0（当前）** | 框架、schema、Skill、校验脚本 |
 | **Phase 1**     | 按痛点补操作手册、故障排查、资源注册表           |
-| **Phase 2**     | 存量文档落入 11 个目录、打 domain、互相链接   |
-| **Phase 3**     | 补齐系统与架构、技能地图、新人上手、自动化脚本       |
+| **Phase 2**     | 存量文档落入 8 个目录、打 domain、互相链接   |
+| **Phase 3**     | 补齐系统与架构、新人上手；脚本用法写入操作手册       |
 | **Phase 4（可选）** | Obsidian / MkDocs；再加本地搜索      |

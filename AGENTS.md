@@ -6,11 +6,11 @@
 
 | 面 | 路径 | Agent 行为 |
 |----|------|------------|
-| **知识面（OKF）** | [`wiki/`](wiki/)（`index.md`、`log.md`、11 个分组） | 查询入口；写入只发生在这里。正文须自洽，不依赖打开 `raw/` |
+| **知识面（OKF）** | [`wiki/`](wiki/)（`index.md`、`log.md`、8 个分组） | 查询入口；写入只发生在这里。正文须自洽，不依赖打开 `raw/` |
 | **来源面** | [`raw/`](raw/) | 默认**只读**。公司 wiki 的 `sources` 写原始 URL；其它来源经 `sources` 写 `raw/...`。**例外**：公司 wiki 通道 [`raw/wiki/`](raw/wiki/) 允许 Agent 写 `catalog.yaml`、`archive/`、清理 `inbox.md`（见 Skill `ingest-wiki.md`） |
 | **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
 
-仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/自动化脚本/`。
+仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/操作手册/`。
 
 分享请 **clone 整仓**，不要只拷 `wiki/`。
 
@@ -45,4 +45,4 @@ type、目录、frontmatter、固定正文标题：全部在 [`references/types.
 
 ## 路线图
 
-Phase 0 当前（框架）。Phase 1 按痛点补手册/排查/注册表。Phase 2 迁约 80 篇。Phase 3 补架构、技能地图、新人上手、脚本。Phase 4 可选浏览与搜索。
+Phase 0 当前（框架）。Phase 1 按痛点补手册/排查/注册表。Phase 2 迁约 80 篇。Phase 3 补架构、新人上手；脚本用法写入操作手册。Phase 4 可选浏览与搜索。
