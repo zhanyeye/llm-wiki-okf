@@ -27,4 +27,4 @@ raw/wiki/
 - 知识页 `sources` **只写原始 wiki URL**，不写 `archive/` 路径。
 - 存档目录名 = URL 里文档 id 参数的**完整取值原样**（不要剥前缀、不要只留数字）；图必须在 `images/`，不得与 `page.md` 同级。
 
-细则见 Skill [`.cursor/skills/infra-wiki/ingest-wiki.md`](../.cursor/skills/infra-wiki/ingest-wiki.md)。
+细则见 Skill [`.cursor/skills/llm-wiki/references/source-wiki-cli.md`](../.cursor/skills/llm-wiki/references/source-wiki-cli.md)。

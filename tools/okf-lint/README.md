@@ -18,4 +18,4 @@ python tools/okf-lint/okf_lint.py
 
 ## 扫什么
 
-只扫 `wiki/index.md`、`wiki/log.md` 与 8 个分组目录。不扫仓根 `index.md`、`README.md`、`raw/`、`script/`、`tools/`。
+只扫 `wiki/index.md`、`wiki/log.md` 与各分组目录（以 `wiki/index.md` 为准）。不扫仓根 `index.md`、`README.md`、`raw/`、`script/`、`tools/`。

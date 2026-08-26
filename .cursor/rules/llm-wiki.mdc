@@ -1,0 +1,6 @@
+---
+description: 按意图使用 llm-wiki Skill；查询走 query，写入走 ingest/okf。
+alwaysApply: true
+---
+
+处理本仓库的运维知识、值班排查、文档入库或知识库体检时，使用项目 Skill `llm-wiki`：按意图只读对应 Skill 文件（默认 `query.md`）。写入 / 迁文档 / 从零写页 / 公司 wiki 入库时再读 `references/okf.md` 与 `references/index-log.md`；公司 wiki 链接另读 `references/source-wiki-cli.md`。

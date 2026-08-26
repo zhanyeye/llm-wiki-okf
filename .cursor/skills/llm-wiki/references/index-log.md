@@ -2,15 +2,17 @@
 
 查询不改这两类文件；**新建或改概念页之后必须更新**。
 
+分组列表以 [`wiki/index.md`](../../../../wiki/index.md) 为权威来源；本文件只规定格式，不硬编码分组名。
+
 ## index.md（渐进式索引）
 
 `index.md` 是目录 TOC，不是概念页。
 
 | 位置 | frontmatter | 列什么 |
 |------|-------------|--------|
-| `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 8 个分组目录 |
+| `wiki/index.md` | 仅允许 `okf_version: "0.2"` | 各分组目录（读该文件，不假设固定数量） |
 | `wiki/<分组>/index.md` | **禁止** frontmatter | 本目录概念页 |
-| 仓根 `index.md` | **禁止** frontmatter；**禁止**列 8 分组 | 只链 `wiki/` / `raw/` / `script/` / `tools/`（仓地图，lint 不扫） |
+| 仓根 `index.md` | **禁止** frontmatter | 只链 `wiki/` / `raw/` / `script/` / `tools/`（仓地图，lint 不扫） |
 
 `wiki/index.md` **只在增删/改名分组时**改。日常入库只改被写入的那个分组 `index.md`；故障相关再看 `wiki/故障排查/index.md`。
 
@@ -40,17 +42,17 @@
 
 ## log.md（变更日志）
 
-仅 `wiki/log.md`。无 frontmatter。追加式，**不要改写或删除**旧条目。仓库根不放 `log.md`。
+仅 `wiki/log.md`。无 frontmatter。追加式，**不要改写或删除**旧条目。
 
 ```markdown
 # 更新日志
 
-## 2026-08-21
+## 2026-08-26
 
 * **Update**: 说明，并链到 [标题](/操作手册/file.md)。
 * **Creation**: 写入 [标题](/操作手册/file.md)。
 
-## 2026-08-20
+## 2026-08-25
 
 * **Initialization**: 建立分组结构。
 ```
@@ -60,12 +62,12 @@
 - 一条一事、一篇一链。
 - 动词（英文，加粗）后接 **ASCII 冒号 `:`**（不要用 `：`）：
 
-  | 动词 | 何时 |
-  |------|------|
-  | `**Creation**` | 新建概念页 |
-  | `**Update**` | 改已有页（含改 index 条目、把待入库换成链接） |
-  | `**Deprecation**` | 废弃一页 |
-  | `**Initialization**` | 建目录结构（一般只出现一次） |
+| 动词 | 何时 |
+|------|------|
+| `**Creation**` | 新建概念页 |
+| `**Update**` | 改已有页（含改 index 条目、把待入库换成链接） |
+| `**Deprecation**` | 废弃一页 |
+| `**Initialization**` | 建目录结构（一般只出现一次） |
 
 - 链接用 bundle 绝对路径：`[标题](/操作手册/file.md)`。
 - 纯查询、只跑 lint 且未改页 → 不写 log。

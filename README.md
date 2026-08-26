@@ -4,7 +4,7 @@
 
 组织方式来自两处：
 
-- [Karpathy / llm-wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)：`raw/` 与 `wiki/` 分离。人投放来源、提问；Agent 把知识编译进 wiki 并持续维护。wiki 是可复利的产物，对话不是。
+- [Karpathy LLM Wiki](https://github.com/Astro-Han/karpathy-llm-wiki) / [Karpathy gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)：`raw/` 与 `wiki/` 分离。人投放来源、提问；Agent 把知识编译进 wiki 并持续维护。wiki 是可复利的产物，对话不是。
 - [Google Cloud Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)：用各层 `index.md` 做**渐进式索引**（progressive disclosure）。先读 `wiki/index.md` 看有哪些分组，再读分组 index，最后打开 2–5 篇正文。每页 YAML frontmatter（`type` 等）和 `tools/okf-lint/okf_lint.py` 是配套约定。[OKF — The Markdown Spec for Humans and AI Agents](https://okf.md/)
 
 **分享请 clone 整仓**（含 `wiki/` 与 `raw/`），不要只拷 `wiki/`。知识页须自洽；`sources` 只做溯源。
@@ -33,14 +33,14 @@
 │       ├── README.md
 │       └── okf_lint.py
 ├── AGENTS.md                     # 能力索引；细则在 Skill
-└── .cursor/skills/infra-wiki/    # Ingest / Query / Lint
+└── .cursor/skills/llm-wiki/      # Ingest / Query / Lint
 ```
 
 | 面 | 路径 | 谁维护 | 说明 |
 | --- | --- | --- | --- |
 | **知识面** | [`wiki/`](wiki/) | **Agent** | 编译后的知识。人读、提问、过目确认（`verified`）。 |
 | **来源面** | [`raw/`](raw/) | **人** | 投放来源后告诉 Agent 入库。一般 raw Agent **只读**；公司 wiki 见 [`raw/wiki/`](raw/wiki/)（inbox + catalog + archive）。 |
-| **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/infra-wiki/`](.cursor/skills/infra-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/操作手册/`（运维）或 `tools/*/README.md`（框架）。 |
+| **框架面** | 仓根 [`index.md`](index.md)、[`AGENTS.md`](AGENTS.md)、[`README.md`](README.md)、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/skills/llm-wiki/`](.cursor/skills/llm-wiki/) | 人（改前先确认） | 约定与工具；**不是**运维知识页。运维脚本在 `script/`，框架工具在 `tools/`，用法写在 `wiki/操作手册/`（运维）或 `tools/*/README.md`（框架）。 |
 
 ## 在 Code Agent 中使用
 
@@ -48,8 +48,8 @@
 
 | 产品 | 会读什么 | 你怎么做 |
 |------|----------|----------|
-| [Cursor](https://cursor.com) | [`AGENTS.md`](AGENTS.md)、Rule [`.cursor/rules/infra-wiki.mdc`](.cursor/rules/infra-wiki.mdc)、Skill [`infra-wiki`](.cursor/skills/infra-wiki/) | 打开仓库 → Agent 聊天，直接问 |
-| [Claude Code](https://code.claude.com/docs) | 根目录 [`AGENTS.md`](AGENTS.md) | 在仓库根运行 `claude`；需要更细路由时 `@.cursor/skills/infra-wiki/SKILL.md`，或把该目录拷到 `.claude/skills/infra-wiki/` |
+| [Cursor](https://cursor.com) | [`AGENTS.md`](AGENTS.md)、Rule [`.cursor/rules/llm-wiki.mdc`](.cursor/rules/llm-wiki.mdc)、Skill [`llm-wiki`](.cursor/skills/llm-wiki/) | 打开仓库 → Agent 聊天，直接问 |
+| [Claude Code](https://code.claude.com/docs) | 根目录 [`AGENTS.md`](AGENTS.md) | 在仓库根运行 `claude`；需要更细路由时 `@.cursor/skills/llm-wiki/SKILL.md`，或把该目录拷到 `.claude/skills/llm-wiki/` |
 
 ### Ingest（摄入）
 
@@ -98,7 +98,7 @@ python tools/okf-lint/okf_lint.py
 | [`案例与复盘/`](wiki/案例与复盘/) | `Incident` | 故障/变更/演练复盘 |
 | [`新人上手/`](wiki/新人上手/) | `Onboarding` | 接手清单、权限申请、首周任务、学习路径 |
 
-业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。规范、技能地图、脚本说明不再单开目录：必须/禁止写入相关架构或手册页；学习路径写入新人上手；脚本用法写入操作手册（`.py` 仍在 `script/`）。type / frontmatter 见 Skill [`references/types.md`](.cursor/skills/infra-wiki/references/types.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
+业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。规范、技能地图、脚本说明不再单开目录：必须/禁止写入相关架构或手册页；学习路径写入新人上手；脚本用法写入操作手册（`.py` 仍在 `script/`）。type / frontmatter 见 Skill [`references/okf.md`](.cursor/skills/llm-wiki/references/okf.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
 
 ## 路线图
 
