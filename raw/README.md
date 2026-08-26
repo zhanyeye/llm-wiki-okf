@@ -26,5 +26,6 @@ raw/wiki/
 - **Agent 允许写**：`catalog.yaml`、`archive/`、清理 `inbox.md` 里已入队的行。其它 raw 仍只读。
 - 知识页 `sources` **只写原始 wiki URL**，不写 `archive/` 路径。
 - 存档目录名 = URL 里文档 id 参数的**完整取值原样**（不要剥前缀、不要只留数字）；图必须在 `images/`，不得与 `page.md` 同级。
+- 编译进 `wiki/` 后：有用图片拷到知识页同目录 `attachments/`（不是 `images/`）。
 
 细则见 Skill [`.cursor/skills/llm-wiki/references/source-wiki-cli.md`](../.cursor/skills/llm-wiki/references/source-wiki-cli.md)。

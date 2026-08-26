@@ -1,27 +1,41 @@
-# Obsidian 适配层（可选 / 未来）
+# Obsidian 适配层
 
-Obsidian 不是当前 ingest/query/lint 的必需依赖。仅在用户明确要求或 Phase 4 浏览场景时使用。
+Obsidian **不是**必需依赖。本机未开 Obsidian / 无 `obsidian` CLI 时，ingest 用普通 Read/Write 即可。
+
+当用户把本仓当 vault，且 Obsidian 正在运行时，Code Agent **可以**在编译 wiki 时使用相关 skill 辅助。
 
 ## 何时用哪个 Skill
 
 | 场景 | Skill | 说明 |
 |------|-------|------|
-| 把本仓作为 Obsidian vault 浏览/编辑 | `obsidian-cli` | 读/写/搜索笔记；开发插件时用 reload/screenshot |
-| 编辑 wiki 页 wikilinks、callouts、embeds | `obsidian-markdown` | 与 OKF 正文兼容；frontmatter 仍按 [okf.md](okf.md) |
-| 可视化知识图、排查树 | `json-canvas` | 可选 `.canvas` 文件，不替代 OKF 概念页 |
-| 表格视图、过滤、公式 | `obsidian-bases` | 可选 `.base` 文件，从 frontmatter 聚合 |
-| 抓取**公网**文档进 raw | `defuddle` | **不用于**公司内网 wiki（内网 wiki 走 [source-wiki-cli.md](source-wiki-cli.md)） |
+| 创建/更新/搜索 vault 内笔记、设 property | `obsidian-cli` | 需 Obsidian 已打开；`path=` 用相对 vault 根路径（如 `wiki/操作手册/页.md`） |
+| 编辑 wikilinks、callouts、embeds | `obsidian-markdown` | frontmatter 仍按 [okf.md](okf.md)；跨目录链接优先 OKF `/分组/页.md` |
+| 系统拓扑 / 排查树可视化 | `json-canvas` | 可选 `.canvas`，不替代 OKF 概念页、不承载可操作步骤 |
+| 按 type/domain/tags 做值班视图 | `obsidian-bases` | 可选 `.base`，从 frontmatter 聚合 |
+| 抓取**公网**文档进 raw | `defuddle` | **禁止**用于公司内网 wiki（走 [source-wiki-cli.md](source-wiki-cli.md)） |
+
+## 编译 wiki 时如何用（可选）
+
+在 [ingest.md](../ingest.md) / 公司 wiki 编译阶段，若 Obsidian 可用：
+
+1. **先读**项目或全局 `obsidian-cli` Skill，再跑 `obsidian help`（不要臆造子命令）。
+2. **查重**：`obsidian search` 找是否已有同名/同主题页，避免平行副本。
+3. **写页**：可用 `obsidian create` / `append` / `property:set` 写入 `wiki/...`；内容仍须符合 [okf.md](okf.md)（`type`、固定标题、`sources`、`attachments/`）。
+4. **附件**：图片仍落在知识页同目录 `attachments/`；CLI 不能替代拷贝二进制时，用 Shell/文件系统拷贝后再改 markdown 图链。
+5. **失败回退**：CLI 报错、vault 未打开、路径不对 → 立即改用普通 Write/StrReplace，不要卡住整批 ingest。
+
+权威顺序：**OKF 规则 > llm-wiki ingest 流程 > Obsidian 便利性**。
 
 ## 边界
 
-- **Query / Lint 默认路径不变**：仍从 `wiki/index.md` 渐进式读 Markdown；Obsidian CLI 是可选加速，不是替代。
-- **写入仍走 llm-wiki ingest**：Obsidian 里手改的页若需正式入库，仍应满足 OKF frontmatter 并跑 lint。
-- **vault 根目录**：若整仓作 vault，`wiki/` 是 OKF bundle；`raw/` 可设为排除或只读文件夹（Obsidian 侧配置，不在 skill 中强制）。
-- **链接**：OKF bundle 内跨目录链接用 `/分组/页.md`；Obsidian wikilinks `[[页]]` 仅在用户明确要求 Obsidian 风格时采用，且 lint 前须与 okf.md 链接规则一致。
+- Query / Lint 默认仍读 Markdown 文件；Obsidian 是加速，不是查询唯一入口。
+- 禁止为了用 Obsidian 而改写链接风格（不要默认改成 `[[wikilink]]`，除非用户明确要求且 lint 仍可通过）。
+- `raw/` 默认不要当可编辑笔记区；公司 wiki 存档只经 source-wiki-cli 通道写入。
+- Canvas / Bases 产出不是知识正文；值班结论仍须写回 OKF 概念页。
 
-## 推荐 Phase 4 工作流
+## 推荐工作流
 
-1. Clone 整仓 → Obsidian 打开为 vault。
-2. 日常仍用 Agent + llm-wiki skill 做 ingest/query/lint。
-3. 人用 Obsidian 阅读、加注释；确认过的页更新 frontmatter `verified`。
-4. 可选：用 Bases 做按 `type` / `domain` / `tags` 的值班视图；用 Canvas 画系统拓扑（引用 wiki 页，不重复写事实）。
+1. Clone 整仓 → Obsidian 打开为 vault（vault 根 = 仓根）。
+2. Agent 用 llm-wiki 做 ingest/query/lint；有 CLI 时按上表辅助写页。
+3. 人用 Obsidian 阅读、批注；确认后更新 `verified`。
+4. 可选 Bases / Canvas 做视图，不重复写事实。

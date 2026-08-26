@@ -2,6 +2,7 @@
 
 ## 2026-08-26
 
+* **Update**: ingest 约束：交叉引用按内容关联（同批确有关系可互链，禁止瞎链）；知识页图片统一 `attachments/`；编译可用可选 Obsidian CLI。
 * **Update**: 空分组不再强制保留 `index.md`；有概念页时再由 Agent 创建。仅 `故障排查/index.md` 因待入库清单保留。
 * **Update**: 8 个分组目录改回中文（与人读名称一致）；`type` 仍为英文。
 * **Update**: 分组改为 8 个英文目录（registry、architecture、runbooks、playbooks、adr、faq、incidents、onboarding）；去掉规范与约束、技能地图、自动化脚本顶栏。人读名称不变。

@@ -43,7 +43,9 @@ description: >-
 - **一页一概念**：每篇概念 `.md` 有 YAML frontmatter 与非空 `type`（见 [references/okf.md](references/okf.md)）。
 - **写入闭环**：按 okf.md 写页 → 正文自洽（查询不依赖打开 `raw/`）→ 按 index-log.md 更新 index/log → 跑 lint。
 - **公司 wiki**：不得 WebFetch 内网 wiki；必须走 `wiki-cli` skill 与 `wiki` CLI（见 source-wiki-cli.md）。
-- **链接**：wiki 文件内用相对路径；对话输出引用用仓根相对路径（如 `wiki/操作手册/页.md`）。
+- **链接**：wiki 文件内用相对路径；对话输出引用用仓根相对路径（如 `wiki/操作手册/页.md`）。交叉引用按**内容是否确有关联**（含同批）；禁止仅因同批而互链（见 okf.md）。
+- **附件**：知识页图片统一 `./attachments/`（md 同目录）；raw 存档仍用 `images/`。
+- **Obsidian**：可选；编译时可用 `obsidian-cli` 等（见 [references/obsidian.md](references/obsidian.md)），失败回退 Write。
 
 ## 目录结构（可演进）
 

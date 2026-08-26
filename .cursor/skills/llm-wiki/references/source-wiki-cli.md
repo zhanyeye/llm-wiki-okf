@@ -61,15 +61,17 @@ raw/wiki/archive/<docKey>/
 
 ## 4. 编译（必须串行）
 
-对每条导出并验收成功的条目，**一条一条**编译（index/log 是共享状态）：
+对每条导出并验收成功的条目，**一条一条**编译（index/log 是共享状态）。「同批」本身不是关联依据；**内容确有关联时可以互链**。
 
-1. 只读本条 `archive/<docKey>/page.md` 与 `images/`。
+1. 以本条 `archive/<docKey>/page.md` 与 `images/` 为主；需要判断与本批其它条是否相关时，可对照其标题/摘要，不要为凑链通读全文硬凑。
 2. 非运维知识 → catalog `status: skipped`，`note` 写原因，不写知识页。
-3. 否则按 [okf.md](okf.md) 选 type/目录；`status: draft`；`sources` **只写原始 wiki URL**。正文须自洽。
-4. 图片：鉴权 URL 禁止写进 `wiki/`。有用的图拷到知识页旁目录，正文用仓内相对路径。
-5. 按 [index-log.md](index-log.md) 更新分组 index（无则创建）与 `wiki/log.md`。
-6. 回写 catalog：`status: compiled`，`compiled_at: YYYY-MM-DD`，`title`，`wiki_pages: [相对仓根 wiki/ 的路径]`。
-7. 编译失败：`failed` + `note`，继续下一条。
+3. 否则按 [okf.md](okf.md) 选 type/目录；`status: draft`；`sources` **只写本条原始 wiki URL**。正文须自洽。
+4. **交叉引用**：按 [okf.md](okf.md)「按内容关联」——确有依赖/互补/上下游 → 可链已有页，也可链本批其它确相关页；仅因同批 → 不链。
+5. **图片**：鉴权 URL 禁止写进 `wiki/`。有用的图从 `images/` 拷到知识页同目录 `attachments/`，正文用 `![](./attachments/<文件名>)`（见 okf.md）。raw 侧仍保持 `images/`。
+6. 可选：按 [obsidian.md](obsidian.md) 用 `obsidian-cli` 创建/更新笔记；失败则回退普通 Write。
+7. 按 [index-log.md](index-log.md) 更新分组 index（无则创建）与 `wiki/log.md`。
+8. 回写 catalog：`status: compiled`，`compiled_at: YYYY-MM-DD`，`title`，`wiki_pages: [相对仓根 wiki/ 的路径]`。
+9. 编译失败：`failed` + `note`，继续下一条。
 
 ## 5. 本批结束
 

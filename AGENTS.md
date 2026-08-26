@@ -10,7 +10,7 @@
 | **来源面** | [`raw/`](raw/) | 默认**只读**。公司 wiki 的 `sources` 写原始 URL；其它来源经 `sources` 写 `raw/...`。**例外**：公司 wiki 通道 [`raw/wiki/`](raw/wiki/) 允许 Agent 写 `catalog.yaml`、`archive/`、清理 `inbox.md`（见 Skill `references/source-wiki-cli.md`） |
 | **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
 
-仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/操作手册/`。
+仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/操作手册/`。知识页图片统一放在该页同目录 `attachments/`。交叉引用按内容是否确有关联（同批亦可）；禁止仅因同批而互链。
 
 分享请 **clone 整仓**，不要只拷 `wiki/`。
 
