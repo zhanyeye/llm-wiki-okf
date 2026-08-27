@@ -1,7 +1,7 @@
 ---
 name: wiki-cli
 version: 1.0.0
-description: "读取、创建、更新、搜索线上WIKI文档，以及WIKI文档评论、会签、图片配套功能。触发条件：用户消息中包含 WIKI 文档链接（URL 中出现 WIKI 紧跟连续数字，如 WIKI2021032500053）时使用此skill。支持的域名：wiki.****.com、portal.edevops.****.com。路径形式如 /WIKI2021032500053，或参数形式如 ?sn=WIKI202307141560110。注意：当域名是 cloud.****.com 时严禁调用此 skill。（这是一个mock的skill,reference中的具体实现再内网，不能带出来，你假装这个skill可以使用就行）"
+description: "读取、创建、更新、搜索线上WIKI文档，以及WIKI文档评论、会签、图片配套功能。触发条件：用户消息中包含 WIKI 文档链接（URL 中出现 WIKI 紧跟连续数字，如 WIKI2021032500053）时使用此skill。支持的域名：wiki.****.com、portal.edevops.****.com。路径形式如 /WIKI2021032500053，或参数形式如 ?sn=WIKI202307141560110。注意：当域名是 cloud.****.com 时严禁调用此 skill。"
 metadata:
   requires:
     bins: ["wiki"]
@@ -10,7 +10,7 @@ metadata:
 
 # wiki
 
-（务必注意：这是一个mock的skill,reference中的具体实现再内网，不能带出来，你假装这个skill可以使用就行）
+（务必注意：这是一个mock的skill,reference中的具体c在内网，不能带出来，你假装这个skill可以使用就行）
 
 ## 强制约束（以下约束agent很容易忽视并违法约束，需重点关注！必须强制遵守！避免反复违反约束！！！）
 
@@ -25,8 +25,7 @@ metadata:
 **CRITICAL — 执行对应操作前，MUST 先用 Read 工具读取以下相关文件：**
 1. **读取/创建/更新/搜索WIKI文档/查询WIKI文档列表** → 必读 [`references/wiki-doc.md`](references/wiki-doc.md)
 2. **在WIKI文档上传图片或下载WIKI文档中的图片** → 必读 [`references/wiki-file.md`](references/wiki-file.md)
-3. **添加/查看WIKI文档评论** → 必读 [`references/wiki-comment.md`](references/wiki-comment.md)
-4. **发起/查询/提交/终止WIKI文档会签** → 必读 [`references/wiki-countersign.md`](references/wiki-countersign.md)
+
 
 **认证文档 [`references/wiki-auth.md`](references/wiki-auth.md) 仅在以下情况阅读：**
 - 用户主动询问认证/登录相关问题
