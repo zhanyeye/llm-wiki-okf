@@ -41,7 +41,7 @@
 
 - 标题用 `#`；内容分组用 `##`。
 - 条目格式：`* [标题](链接) - 短描述`（空格、连字符、空格）。描述取自目标页 `title` / `description`。
-- 同目录概念：`./页名.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：bundle 绝对路径 `/资源注册表/页.md`。
+- 同目录概念：`./页名.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：仓根绝对路径 `/wiki/资源注册表/页.md`。
 - 不要把 schema、domain 列表、Skill 说明写进 index。
 
 ### 故障排查/index.md
@@ -57,8 +57,8 @@
 
 ## 2026-08-26
 
-* **Update**: 说明，并链到 [标题](/操作手册/file.md)。
-* **Creation**: 写入 [标题](/操作手册/file.md)。
+* **Update**: 说明，并链到 [标题](/wiki/操作手册/file.md)。
+* **Creation**: 写入 [标题](/wiki/操作手册/file.md)。
 
 ## 2026-08-25
 
@@ -77,7 +77,7 @@
 | `**Deprecation**` | 废弃一页 |
 | `**Initialization**` | 建目录结构（一般只出现一次） |
 
-- 链接用 bundle 绝对路径：`[标题](/操作手册/file.md)`。
+- 链接用仓根绝对路径：`[标题](/wiki/操作手册/file.md)`。
 - 纯查询、只跑 lint 且未改页 → 不写 log。
 
 ### 公司 wiki ingest 行（固定句式）
@@ -85,7 +85,7 @@
 便于下次按 URL 过滤已处理项；与 `inbox.md`（只追加）配合，**不用** catalog：
 
 ```markdown
-* **Update**: ingest compiled https://wiki.example.com/pages/viewpage.action?pageId=12001 → [标题](/操作手册/页.md)。
+* **Update**: ingest compiled https://wiki.example.com/pages/viewpage.action?pageId=12001 → [标题](/wiki/操作手册/页.md)。
 * **Update**: ingest skipped https://wiki.example.com/pages/viewpage.action?pageId=12002 — 非运维知识。
 * **Update**: ingest failed https://wiki.example.com/pages/viewpage.action?pageId=12003 — wiki-cli 失败：…。
 * **Update**: ingest no material: https://wiki.example.com/pages/viewpage.action?pageId=12004

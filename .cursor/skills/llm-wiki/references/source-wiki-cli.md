@@ -1,8 +1,8 @@
-# 公司 Wiki 来源（wiki-cli）
+# 公司 Wiki 来源（wiki_export.py + wiki-cli）
 
 `raw/wiki/` 是来源通道，与仓根 `wiki/`（知识面）不是同一目录。
 
-**禁止**用 WebFetch / Defuddle 抓内网 wiki。必须用 **wiki-cli** skill 与本机 **`wiki` CLI**。
+**禁止**用 WebFetch / Defuddle 抓内网 wiki。必须用 **wiki_export.py** 脚本（内部调用 wiki CLI）。
 
 ## 触发
 
@@ -15,28 +15,28 @@
 Agent 对 `raw/` **只允许**：
 
 1. 把本对话里尚未出现在 inbox 的 URL **追加**到 `inbox.md` 末尾（精确匹配去重）；不删行、不改已有行。
-2. 写 `raw/wiki/archive/<docKey>/`（导出落盘）。
+2. 通过 `wiki_export.py` 写 `raw/wiki/archive/<docKey>/`（导出落盘）。
 
 禁止写 `catalog.yaml`（已废除）、禁止清理 inbox。
 
-## 0. 绑定 wiki-cli（每会话首次导出前）
+## 0. 前置检查（每会话首次入库前）
 
-1. **读取 wiki-cli Skill**：
-   - 项目内：[`.cursor/skills/wiki-cli/SKILL.md`](../../../wiki-cli/SKILL.md)
-   - 或用户全局：`~/.cursor/skills/wiki-cli/SKILL.md` 等
-2. 按 wiki-cli Skill 要求，**先读对应 references**（如 `wiki-doc.md`、`wiki-file.md`）再执行命令。
-3. **串行执行**：全部 wiki 命令必须等待上一条返回后再发下一条；禁止并行。
-4. 只用 Skill / `wiki --help` 里**真实存在**的导出与图片下载命令；不要虚构 flags。
-5. CLI / Skill 都找不到 → 停；告诉用户先安装配置；本批标 `failed` 并写 `wiki/log.md`，不要空编存档。
+1. 检查脚本与 wiki CLI：
 
-会话实际采用的命令记在回复里一行即可。
+```bash
+python tools/wiki-export/wiki_export.py check
+```
+
+   如果 check 不通过 → 停；告诉用户先安装配置；本批标 `failed` 并写 `wiki/log.md`，不要空编存档。
+
+2. 全部 wiki CLI 交互**串行**执行；`wiki_export.py` 已内部串行调用 wiki CLI，Agent 无需再逐条手动调用。
 
 ## 1. 收集与追加 inbox
 
 1. 收集 URL：当前对话链接 + `inbox.md` 非注释行（`#` 开头整行忽略；空行忽略）。有效行 = 去掉首尾空白后整行就是 URL；**一行一个**，原样保留。
 2. 对话里有、且 inbox 中尚未出现的 URL（**url 精确匹配**）→ **追加到 `inbox.md` 末尾**。不要删行、不要改已有行、不要写成 `[标题](url)`、不要加状态列。
 3. 「重试失败项」：从 `wiki/log.md` 读标记为 `ingest failed` 的 URL，纳入待处理（不依赖 catalog）。
-4. 「刷新某 url」：该 URL 无视已有 `sources:`，清空并重导对应 `archive/` 后再编译。
+4. 「刷新某 url」：该 URL 无视已有 `sources:`，用 `re-export` 模式重导后再编译。
 
 不要 Glob 整个 `raw/` 或整库 `wiki/`。
 
@@ -47,26 +47,42 @@ Agent 对 `raw/` **只允许**：
 - 已在某知识页 frontmatter `sources[].resource` 中出现过的 URL（精确匹配），除非用户点名「刷新该 url」
 - `wiki/log.md` 里已记为 `ingest skipped` / `ingest failed` 的 URL，除非用户说重试或刷新
 
-默认取最多 **5** 条；用户指定本批条数则按指定；未指定不要一轮抽干全部未处理项。
+默认取最多 **15** 条；用户指定本批条数则按指定。批处理导出无 token 瓶颈，但编译（triage → 蒸馏 → 写页）每条约需 1 轮对话，过大批次易超上下文，建议 10–20 条。
 
-## 3. 导出与整理
+## 3. 批量导出（用 wiki_export.py）
 
-对每条本批 URL：
+将本批 URL 交给脚本一次性导出，**不要逐条手动调用 wiki CLI**：
 
-1. 从 url 取出文档标识参数的**完整取值**（常见 `pageId` / `docId` / `sn=WIKI...`），记为 `<docKey>`。**原样使用**，不要改写。取不到 → `failed`，写 log。
-2. 目标：`raw/wiki/archive/<docKey>/`。刷新：先清空该目录再写。
-3. 按 §0 用 wiki-cli 导出正文 + 图片。失败 → `failed`，写 log，继续下一条。
-4. 本仓布局合同：
+```bash
+python tools/wiki-export/wiki_export.py export <url1> <url2> ...
+```
+
+脚本会自动：
+- 从 URL 提取 docKey
+- 调用 `wiki doc get` 获取正文
+- 解析所有图片 URL 并下载到 `images/`（用 hash 命名，避免 `image.png` 覆盖）
+- 改写 `{标题}.md` 中的图片链接为本地路径
+- 串行调用 wiki CLI（无需 Agent 逐条等待）
+
+### 刷新模式
+
+需要重导某个已归档的 docKey：
+
+```bash
+python tools/wiki-export/wiki_export.py re-export <docKey>
+```
+
+### 导出结果验收
+
+脚本输出每个文档的状态。对成功的条目，验收目录结构：
 
 ```
 raw/wiki/archive/<docKey>/
-  page.md
+  {标题}.md
   images/
 ```
 
-   整理：主 markdown → `page.md`；图片 → `images/`；改写 `page.md` 本地图链为 `./images/<文件名>`；禁止鉴权 URL 留在 `page.md`。
-5. **验收**：根下只有 `page.md` 与 `images/`。不满足 → `failed`，不编译。
-6. `page.md` 不润色；进知识页前剥离密钥。
+不满足 → `failed`，不编译。
 
 ## 4. 编译（必须串行；质量门）
 
@@ -78,7 +94,7 @@ raw/wiki/archive/<docKey>/
 
 ### 4.2 Triage（与一般摄入相同）
 
-以本条 `archive/<docKey>/page.md` 为主；在 `wiki/` 按标题/实体/同义词搜已有页，判定：
+以本条 `archive/<docKey>/{标题}.md` 为主；在 `wiki/` 按标题/实体/同义词搜已有页，判定：
 
 - **Update** — 合并进已有页（补 `sources` 写本条原始 wiki URL）
 - **New** — 才新建；一篇来源可拆成多种 type（例如手册 + 注册表）
@@ -93,7 +109,7 @@ raw/wiki/archive/<docKey>/
 - 按 type 固定 `##` 写满；来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令
 - 正文自洽，值班打开这一页就能做；不要「详见 raw/archive」
 - 命令进代码块；密钥/token 剥离；占位符用 `<cluster>`、`<namespace>`、`<path>`
-- 只拷对操作有用的图到知识页同目录 `attachments/`，正文 `![](./attachments/<文件名>)`（见 okf.md）；raw 侧仍保持 `images/`
+- 只拷对操作有用的图到知识页同目录 `attachments/`，正文 `![](./attachments/<文件名>)`（见 okf.md）；raw 侧仍用 `images/`
 - **交叉引用**：按 [okf.md](okf.md)「按内容关联」——确有依赖/互补/上下游 → 可链；仅因同批 → 不链
 - `status: draft`；**不替人写** `verified`
 - `sources` **只写本条原始 wiki URL**；禁止写 `raw/wiki/archive/...`
@@ -104,7 +120,7 @@ raw/wiki/archive/<docKey>/
 
 按 [index-log.md](index-log.md) 更新分组 index（无则创建）与 `wiki/log.md`。公司 wiki 结果用固定句式（便于下次过滤）：
 
-- `* **Update**: ingest compiled https://... → [标题](/操作手册/页.md)。`
+- `* **Update**: ingest compiled https://... → [标题](/wiki/操作手册/页.md)。`
 - `* **Update**: ingest skipped https://... — 非运维知识。`
 - `* **Update**: ingest failed https://... — wiki-cli 失败：…`
 - `* **Update**: ingest no material: https://...`
