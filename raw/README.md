@@ -23,7 +23,7 @@ raw/wiki/
 
 - **人**：对话贴链接，或编辑 [`raw/wiki/inbox.md`](wiki/inbox.md)（一行一个 URL，只追加）。`#` 开头整行是注释。
 - **Agent 允许写**：把对话里尚未出现的 URL **追加**到 `inbox.md` 末尾；写 `archive/`。禁止删改 inbox 已有行。其它 raw 仍只读。
-- 已编译与否看知识页 `sources:`；skipped/failed 记在 `wiki/log.md`（无 catalog）。
+- 已编译与否看知识页 `sources:`；skipped/failed 记在 `wiki/log.md`。
 - 知识页 `sources` **只写原始 wiki URL**，不写 `archive/` 路径。
 - 存档目录名 = URL 里文档 id 参数的**完整取值原样**（不要剥前缀、不要只留数字）；图必须在 `images/`，不得与 `page.md` 同级。
 - 编译进 `wiki/` 后：有用图片拷到知识页同目录 `attachments/`（不是 `images/`）。

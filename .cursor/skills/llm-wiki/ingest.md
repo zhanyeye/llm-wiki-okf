@@ -34,7 +34,7 @@
 1. 收集对话链接 + `inbox.md`；把对话里尚未出现的 URL **追加**到 inbox 末尾（不删行）。
 2. 按 `sources:` 与 `wiki/log.md` 里 ingest skipped/failed 过滤；每批默认最多 15 条未处理项（批处理导出无瓶颈，编译每条约 1 轮对话，10–20 条为宜）。
 3. 用 **`python tools/wiki-export/wiki_export.py export`** 批量导出到 `raw/wiki/archive/<docKey>/`（`{标题}.md` + `images/`）。脚本内部串行调用 wiki CLI，Agent 无需逐条手动调用。
-4. **串行编译**（与一般摄入共用 Triage）：过滤非运维 → Triage（Update / New / No material）→ 蒸馏验收 → 写 OKF 页 → 更新 index/log（不用 catalog）。
+4. **串行编译**（与一般摄入共用 Triage）：过滤非运维 → Triage（Update / New / No material）→ 蒸馏验收 → 写 OKF 页 → 更新 index/log。
 5. 交叉引用按**内容是否确有关联**决定；同批不是关联依据，但同批页之间若确有依赖/互补 → **可以**互链。
 6. 知识页 `sources` **只写原始 wiki URL**；禁止写 `raw/wiki/archive/...`。有用图片拷到知识页同目录 `attachments/`，正文 `![](./attachments/...)`。
 7. 本批结束汇报 compiled/skipped/failed/no material；列出路径并请人抽看 draft；问是否继续；再跑 lint。

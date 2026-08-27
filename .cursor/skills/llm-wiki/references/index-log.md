@@ -82,7 +82,7 @@
 
 ### 公司 wiki ingest 行（固定句式）
 
-便于下次按 URL 过滤已处理项；与 `inbox.md`（只追加）配合，**不用** catalog：
+便于下次按 URL 过滤已处理项；与 `inbox.md`（只追加）配合：
 
 ```markdown
 * **Update**: ingest compiled https://wiki.example.com/pages/viewpage.action?pageId=12001 → [标题](/wiki/操作手册/页.md)。

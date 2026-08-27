@@ -1,5 +1,9 @@
 # 更新日志
 
+## 2026-08-27
+
+* **Update**: frontmatter 检索用 `domain` + `tags`；去掉 `scope`；`owner` 可选表示本页维护人。
+
 ## 2026-08-26
 
 * **Update**: 去掉 `raw/wiki/catalog.yaml`；`inbox.md` 改为增量只追加（对话可代写新 URL）；去重与 skipped/failed 走 `sources:` 与本 log；公司 wiki 编译强制 Triage + 蒸馏验收。

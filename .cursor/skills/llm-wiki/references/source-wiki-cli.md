@@ -17,8 +17,6 @@ Agent 对 `raw/` **只允许**：
 1. 把本对话里尚未出现在 inbox 的 URL **追加**到 `inbox.md` 末尾（精确匹配去重）；不删行、不改已有行。
 2. 通过 `wiki_export.py` 写 `raw/wiki/archive/<docKey>/`（导出落盘）。
 
-禁止写 `catalog.yaml`（已废除）、禁止清理 inbox。
-
 ## 0. 前置检查（每会话首次入库前）
 
 1. 检查脚本与 wiki CLI：
@@ -35,7 +33,7 @@ python tools/wiki-export/wiki_export.py check
 
 1. 收集 URL：当前对话链接 + `inbox.md` 非注释行（`#` 开头整行忽略；空行忽略）。有效行 = 去掉首尾空白后整行就是 URL；**一行一个**，原样保留。
 2. 对话里有、且 inbox 中尚未出现的 URL（**url 精确匹配**）→ **追加到 `inbox.md` 末尾**。不要删行、不要改已有行、不要写成 `[标题](url)`、不要加状态列。
-3. 「重试失败项」：从 `wiki/log.md` 读标记为 `ingest failed` 的 URL，纳入待处理（不依赖 catalog）。
+3. 「重试失败项」：从 `wiki/log.md` 读标记为 `ingest failed` 的 URL，纳入待处理。
 4. 「刷新某 url」：该 URL 无视已有 `sources:`，用 `re-export` 模式重导后再编译。
 
 不要 Glob 整个 `raw/` 或整库 `wiki/`。

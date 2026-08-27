@@ -35,7 +35,14 @@
 - `Registry` 不写密码、token、密钥；只写申请途径和找谁。
 - 不要把 `.py` 正文塞进 wiki；脚本用法写 `Runbook`，可执行文件在 `script/`。
 
-`domain`（可选）：`landscape` | `images` | `k8s` | `cicd` | `network` | `database` | `storage` | `middleware` | `troubleshooting`。
+### 检索标签：`domain` + `tags`
+
+| 字段 | 用途 | 写法 |
+|------|------|------|
+| `domain` | 固定业务/技术大类 | 只从枚举选：`landscape` \| `images` \| `k8s` \| `cicd` \| `network` \| `database` \| `storage` \| `middleware` \| `troubleshooting` |
+| `tags` | 其余可搜标签 | 自由列表：场景、专名、服务/系统名（如 `oncall`、`NFS-prod`、`支付网关`） |
+
+查询不够时搜 `title` / `tags` / `domain`（见 [query.md](../query.md)）。
 
 ## Frontmatter
 
@@ -45,11 +52,8 @@ type: Runbook
 title: 示例操作手册
 description: 一句话说明适用场景与结果。
 domain: storage
-tags: [oncall]
+tags: [oncall, NFS-prod]
 status: draft
-owner: infra
-scope: [prod]
-services: []
 generated:
   by: agent/cursor
   at: 2026-08-26T04:00:00Z
@@ -74,10 +78,12 @@ sources:
 | `type` | **必填**（OKF 唯一 always-required） |
 | `title` | 推荐；中文 |
 | `description` | 推荐；用于 index 摘要 |
-| `tags` | 可选 |
+| `domain` | 推荐；固定枚举大类（见上） |
+| `tags` | 推荐；场景、专名、服务/系统名（见上） |
 | `status` | `draft` \| `stable` \| `deprecated`；新页用 `draft` |
+| `owner` | 可选；本页文档维护人。系统/资源负责人写在 `Registry` 正文「负责人」 |
 | `generated` | `{ by, at }`；`by` 用 `human:<id>` / `agent/<model>` / `process:<name>` |
-| `verified` | 可选；人工确认须 `human:` |
+| `verified` | 可选；人工确认须 `human:`；Agent 不替人写 |
 | `stale_after` | ISO 8601；默认生成日后 180 天 |
 | `sources` | 溯源；见下 |
 

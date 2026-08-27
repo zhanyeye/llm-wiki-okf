@@ -7,7 +7,7 @@
 | 面 | 路径 | Agent 行为 |
 |----|------|------------|
 | **知识面（OKF）** | [`wiki/`](wiki/)（`index.md`、`log.md`、各分组） | 查询入口；写入只发生在这里。正文须自洽，不依赖打开 `raw/` |
-| **来源面** | [`raw/`](raw/) | 默认**只读**。公司 wiki 的 `sources` 写原始 URL；其它来源经 `sources` 写 `raw/...`。**例外**：公司 wiki 通道 [`raw/wiki/`](raw/wiki/) 允许 Agent **追加** `inbox.md` 新 URL、写 `archive/`（见 Skill `references/source-wiki-cli.md`）；禁止删改 inbox 已有行、禁止写 catalog |
+| **来源面** | [`raw/`](raw/) | 默认**只读**。公司 wiki 的 `sources` 写原始 URL；其它来源经 `sources` 写 `raw/...`。**例外**：公司 wiki 通道 [`raw/wiki/`](raw/wiki/) 允许 Agent **追加** `inbox.md` 新 URL、写 `archive/`（见 Skill `references/source-wiki-cli.md`）；禁止删改 inbox 已有行 |
 | **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
 
 仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/操作手册/`。知识页图片统一放在该页同目录 `attachments/`。交叉引用按内容是否确有关联（同批亦可）；禁止仅因同批而互链。
@@ -20,7 +20,7 @@
 2. 现象不明时读 [`wiki/故障排查/index.md`](wiki/故障排查/index.md)（若存在）。
 3. 已知系统读对应分组；找入口/负责人读 `wiki/资源注册表/`。分组尚无概念页时可以没有 `index.md`。
 4. 打开 2–5 篇作答，引用路径。
-5. 仍不够再搜索 `tags` / `domain` / `services` / `title`。
+5. 仍不够再搜索 `tags` / `domain` / `title`。
 6. **禁止**用训练数据填补未写入知识库的集群名、地址、凭证、步骤。缺失就说缺失，并建议入库。不要读 `raw/` 当答案。
 
 有价值的综合结论应回写成新页。细则见 Skill [`query.md`](.cursor/skills/llm-wiki/query.md)。
