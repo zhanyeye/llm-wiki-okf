@@ -114,6 +114,10 @@ raw/wiki/archive/<docKey>/
 
 可选：按 [obsidian.md](obsidian.md) 用 `obsidian-cli` 创建/更新笔记；失败则回退普通 Write。
 
+### 4.3.1 实体注册（资源注册表同步）
+
+按 [ingest.md](../ingest.md) 一般摄入第 4 步执行。**写完概念页后立即做，不要等用户提醒。** 本通道 `sources` **只写本条原始 wiki URL**，禁止 `raw/wiki/archive/...`。没有可注册实体、或本条是 skipped / failed / no material → 跳过，不强行建页。交叉引用仍按 [okf.md](okf.md)「按内容关联」，链到 Registry 时放在该 type 的固定相关章节。
+
 ### 4.4 index / log
 
 按 [index-log.md](index-log.md) 更新分组 index（无则创建）与 `wiki/log.md`。公司 wiki 结果用固定句式（便于下次过滤）：

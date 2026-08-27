@@ -22,13 +22,21 @@
    - **Update** — 合并进已有页
    - **No material** — 无新增知识；只记 log，不强行写页
 3. **Compile**：按 [references/okf.md](references/okf.md) 选 type/目录与固定标题；填 frontmatter（`status: draft`）；`sources` 写仓内路径（如 `raw/tickets/...`）或原始 URL。图片进同目录 `attachments/`（见 okf.md）。来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令。不替人写 `verified`。可用 `obsidian-cli` 写页；需要 callout/embed 时读 `obsidian-markdown`（链接风格仍按 okf.md）。
-4. **交叉引用**：按内容关联决定是否互链（见 okf.md）。同批多来源不因「同批」自动互链；**确有依赖/互补时可以互链**。
-5. **故障关闭**：事实写入 `Incident`；可复用步骤写入或更新 `Playbook` / `Runbook`；把 `wiki/故障排查/index.md` 里对应「待入库」改成链接。
-6. **迁旧文档**：按内容选 type，补 frontmatter，链到已有 Architecture / Registry，不要另建平行副本。
-7. 一篇来源可改多页；**仅当该来源触及的概念确需交叉引用时**保持链接一致。命令放可复制代码块；占位符用 `<cluster>`、`<namespace>`、`<path>`。
-8. **可选可视化**：Architecture / 复杂排查树且用户需要或内容确需示意 → `json-canvas`；用户要按 type/domain/status 浏览 → `obsidian-bases`。不要每篇默认建 canvas/base。
-9. 按 [references/index-log.md](references/index-log.md) 更新被改目录的 index（**若该分组尚无 `index.md`，写入第一篇时创建**）、必要时 `wiki/index.md` 与 `故障排查/index.md`，并追加 `wiki/log.md`。
-10. 跑 `python tools/okf-lint/okf_lint.py`，先修 error。汇报新页/改页路径，请人抽看 draft；要标 `verified` 需人确认。
+4. **实体注册（资源注册表同步）**：写完概念页后**立即做**，不要等用户提醒。从来源提取值班会反复用到的入口（平台控制台、集群 dashboard/API、镜像仓、DNS/代理、制品库等）。本条是 No material / skipped / failed 则跳过。
+   - **不要登记**：一次性排查 IP、临时跳板、个人机器、正文里未当作入口的外链。密钥/token/kubeconfig 仍禁止写入（见 okf.md）。
+   - **没有可注册实体**：跳过，不强行建 Registry 页。
+   - 在 `wiki/资源注册表/` 按实体名与同义词查找，按序处理：
+     1. **已有该实体** → 补缺失入口/地址，追 `sources`，不要重复建页。
+     2. **没有该实体，但已有合适领域页**（如「CI-CD平台与制品仓」「基础设施平台入口」）→ 归入该页。
+     3. **没有合适领域页** → 才新建 Registry 页。按领域/职能成页（一页是一类入口的目录），**不要一 URL 一页**，也不要建成超大杂页。
+   - `sources`：公司 wiki 写原始 URL；本地 raw / 工单写仓内路径（见 okf.md）。一个平台入口只注册一次；多篇来源可充实同一 Registry 页。
+5. **交叉引用**：按内容关联决定是否互链（见 okf.md）。同批多来源不因「同批」自动互链；**确有依赖/互补时可以互链**。概念页提到已注册的平台/资源且内容确有依赖时，在该 type 的固定相关章节链到对应 Registry 页（Runbook「相关系统」；Playbook / Architecture「相关文档」；Registry「依赖」）。
+6. **故障关闭**：事实写入 `Incident`；可复用步骤写入或更新 `Playbook` / `Runbook`；把 `wiki/故障排查/index.md` 里对应「待入库」改成链接。
+7. **迁旧文档**：按内容选 type，补 frontmatter，链到已有 Architecture / Registry，不要另建平行副本。
+8. 一篇来源可改多页；**仅当该来源触及的概念确需交叉引用时**保持链接一致。命令放可复制代码块；占位符用 `<cluster>`、`<namespace>`、`<path>`。
+9. **可选可视化**：Architecture / 复杂排查树且用户需要或内容确需示意 → `json-canvas`；用户要按 type/domain/status 浏览 → `obsidian-bases`。不要每篇默认建 canvas/base。
+10. 按 [references/index-log.md](references/index-log.md) 更新被改目录的 index（**若该分组尚无 `index.md`，写入第一篇时创建**）、必要时 `wiki/index.md` 与 `故障排查/index.md`，并追加 `wiki/log.md`。
+11. 跑 `python tools/okf-lint/okf_lint.py`，先修 error。汇报新页/改页路径，请人抽看 draft；要标 `verified` 需人确认。
 
 ## 公司 wiki
 
@@ -37,7 +45,7 @@
 1. 收集对话链接 + `inbox.md`；把对话里尚未出现的 URL **追加**到 inbox 末尾（不删行）。
 2. 按 `sources:` 与 `wiki/log.md` 里 ingest skipped/failed 过滤；每批默认最多 15 条未处理项（批处理导出无瓶颈，编译每条约 1 轮对话，10–20 条为宜）。
 3. 用 **`python tools/wiki-export/wiki_export.py export`** 批量导出到 `raw/wiki/archive/<docKey>/`（`{标题}.md` + `images/`）。脚本内部串行调用 wiki CLI，Agent 无需逐条手动调用。
-4. **串行编译**（与一般摄入共用 Triage）：过滤非运维 → Triage（可用时 `obsidian search`）→ 蒸馏验收 → 写 OKF 页（可用 `obsidian-cli`）→ 更新 index/log。内网导出**不要**用 Defuddle。
+4. **串行编译**（与一般摄入共用 Triage）：过滤非运维 → Triage（可用时 `obsidian search`）→ 蒸馏验收 → 写 OKF 页（可用 `obsidian-cli`）→ **实体注册**（上节第 4 步）→ 更新 index/log。内网导出**不要**用 Defuddle。
 5. 交叉引用按**内容是否确有关联**决定；同批不是关联依据，但同批页之间若确有依赖/互补 → **可以**互链。
 6. 知识页 `sources` **只写原始 wiki URL**；禁止写 `raw/wiki/archive/...`。有用图片拷到知识页同目录 `attachments/`，正文 `![](./attachments/...)`。
 7. 本批结束汇报 compiled/skipped/failed/no material；列出路径并请人抽看 draft；问是否继续；再跑 lint。

@@ -41,7 +41,7 @@ description: >-
 - **分面**：概念页只在 `wiki/` 对应分组（分组以 [`wiki/index.md`](../../../wiki/index.md) 为准，不在 skill 中硬编码）。
 - **接地**：wiki 里没有的事实不要补；答案与命令只来自已读页面。
 - **一页一概念**：每篇概念 `.md` 有 YAML frontmatter 与非空 `type`（见 [references/okf.md](references/okf.md)）。
-- **写入闭环**：按 okf.md 写页 → 正文自洽（查询不依赖打开 `raw/`）→ 按 index-log.md 更新 index/log → 跑 lint。
+- **写入闭环**：按 okf.md 写页 → 可复用入口同步进资源注册表（见 ingest.md 实体注册）→ 正文自洽（查询不依赖打开 `raw/`）→ 按 index-log.md 更新 index/log → 跑 lint。
 - **公司 wiki**：禁止 WebFetch 内网 wiki；批量导出用 `tools/wiki-export/wiki_export.py`（内部串行调用 wiki CLI），编译仍由 Agent 做 Triage + 蒸馏。
 - **链接**：wiki 文件内同目录用 `./页名.md`，跨目录用仓根绝对路径 `/wiki/操作手册/页.md`；对话输出引用用仓根相对路径 `wiki/操作手册/页.md`。交叉引用按**内容是否确有关联**（含同批）；禁止仅因同批而互链（见 okf.md）。
 - **附件**：知识页图片统一 `./attachments/`（md 同目录）；raw 存档仍用 `images/`。
