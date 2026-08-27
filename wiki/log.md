@@ -2,6 +2,7 @@
 
 ## 2026-08-27
 
+* **Update**: 编译 wiki 时按场景主动用 `obsidian-cli` / `obsidian-markdown` / `obsidian-bases` / `json-canvas` / `defuddle`（见 Skill `references/obsidian.md`）；内网 wiki 仍禁 Defuddle。
 * **Update**: frontmatter 检索用 `domain` + `tags`；去掉 `scope`；`owner` 可选表示本页维护人。
 
 ## 2026-08-26
