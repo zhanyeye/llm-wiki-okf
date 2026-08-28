@@ -36,7 +36,7 @@ description: >-
 | 体检、过期、断链 | [lint.md](lint.md) |
 | Obsidian 浏览 / Bases / Canvas / 公网 Defuddle | [references/obsidian.md](references/obsidian.md) |
 
-默认走 query。查询**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库，不要读写入用 references。
+默认走 query。查询**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库，不要加载写入用的 `references/`（query 内 Archive 存档除外）。
 
 ## 不变量
 

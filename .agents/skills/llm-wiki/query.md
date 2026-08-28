@@ -1,6 +1,6 @@
 # query
 
-**以 `wiki/` 为主，raw/ 为回退补充。** 不要通读 `AGENTS.md`；不要一次 Glob/Read 整库；不要读 `ingest.md` / `references/`；不要把仓根 `index.md` / `README.md` / `script/` / `tools/` 当正文。
+**以 `wiki/` 为主，raw/ 为回退补充。** 不要通读 `AGENTS.md`；不要一次 Glob/Read 整库；不要读 `ingest.md` / `references/`（唯一例外：§Archive 存档时按需读 [references/okf.md](references/okf.md)）；不要把仓根 `index.md` / `README.md` / `script/` / `tools/` 当正文。
 
 ## 搜索范围策略
 
