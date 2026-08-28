@@ -91,6 +91,6 @@
 * **Update**: ingest no material: https://wiki.example.com/pages/viewpage.action?pageId=12004
 ```
 
-- `ingest compiled`：URL 已编进知识页（也可用 `sources:` 判断已处理）。
+- `ingest compiled`：URL 已编进知识页（也可用 `sources` 数组判断已处理）。
 - `ingest skipped` / `ingest failed`：默认不再进本批，除非用户说重试或刷新。
 - 新建概念页仍可另写一条 `**Creation**`。

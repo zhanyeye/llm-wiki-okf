@@ -9,6 +9,7 @@
 | 触发 | 走 |
 |------|-----|
 | 对话贴了公司 wiki 链接要入库；或 `raw/wiki/inbox.md` 非空；或「继续下一批 / 重试失败项 / 刷新某 url」 | §公司 wiki → [references/source-wiki-cli.md](references/source-wiki-cli.md) |
+| 「增量刷新 / 刷新 wiki / 检查更新」 | §公司 wiki → [references/source-wiki-cli.md](references/source-wiki-cli.md) **§增量刷新** |
 | 公网文档 URL（非公司 wiki）要入库 | §一般摄入：先用 `defuddle` 落 raw，再 Compile（见 [references/obsidian.md](references/obsidian.md)） |
 | 本地 raw Markdown、工单、纪要、故障结案、迁文档、从零写页 | §一般摄入 |
 
@@ -21,7 +22,16 @@
    - **New** — 新建一页或多页
    - **Update** — 合并进已有页
    - **No material** — 无新增知识；只记 log，不强行写页
-3. **Compile**：按 [references/okf.md](references/okf.md) 选 type/目录与固定标题；填 frontmatter（`status: draft`）；`sources` 写仓内路径（如 `raw/tickets/...`）或原始 URL。图片进同目录 `attachments/`（见 okf.md）。来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令。不替人写 `verified`。可用 `obsidian-cli` 写页；需要 callout/embed 时读 `obsidian-markdown`（链接风格仍按 okf.md）。
+3. **Compile**：按 [references/okf.md](references/okf.md) 选 type/目录与固定标题；填 frontmatter（`status: draft`）；`sources` 写字符串数组（原始 URL 或仓内相对路径）。图片进同目录 `attachments/`（见 okf.md）。来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令。不替人写 `verified`。可用 `obsidian-cli` 写页；需要 callout/embed 时读 `obsidian-markdown`（链接风格仍按 okf.md）。
+4. **脚本提取**（Compile 后、实体注册前）：若正文含**独立可运行脚本**（≥5 行 bash/python，含 shebang 或可保存为文件直接执行），按以下流程提取：
+   - 在 `script/<功能名>/` 下创建脚本文件（去掉 markdown 代码围栏，补 shebang 和 `set -euo pipefail` 如缺失）
+   - 同目录创建 `README.md`（含：用途、参数说明、用法、退出码、相关 wiki 页链接）
+   - wiki 正文**完整保留**脚本（离线可用），在脚本代码块上方加一行 `> 可执行版本：[script/<功能名>/<文件>](/script/<功能名>/<文件>)`
+   - wiki 页 frontmatter 加 `automation:` 块（`ready: true`、`script_ref`、`params`、`exit_codes`），见 okf.md
+   - 正文中自动化段落用 `<!-- okf:auto:script -->` / `<!-- okf:auto:verify -->` / `<!-- okf:auto:rollback -->` 标记
+   - **不提取**：单条命令（`df -h`、`kubectl get pods`）、验证/排查片段、需要人工交互的命令序列——这些仅加 `automation.ready: partial` + `params`
+   - **script/ 命名**：按功能名（如 `disk-manager`、`bisheng-install`），不用 wiki 分组名
+   - 更新 `script/README.md` 索引
 4. **实体注册（资源注册表同步）**：写完概念页后**立即做**，不要等用户提醒。从来源提取值班会反复用到的入口（平台控制台、集群 dashboard/API、镜像仓、DNS/代理、制品库等）。本条是 No material / skipped / failed 则跳过。
    - **不要登记**：一次性排查 IP、临时跳板、个人机器、正文里未当作入口的外链。密钥/token/kubeconfig 仍禁止写入（见 okf.md）。
    - **没有可注册实体**：跳过，不强行建 Registry 页。

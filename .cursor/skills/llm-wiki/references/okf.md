@@ -62,12 +62,24 @@ verified:
   at: 2026-08-26T06:00:00Z
 stale_after: 2027-02-22T00:00:00Z
 sources:
-  - id: wiki-disk-full
-    resource: https://wiki.example.com/pages/viewpage.action?pageId=12001
-    title: 磁盘满处理
-  - id: raw-ticket
-    resource: raw/tickets/disk-full.md
-    title: 工单摘录
+  - https://wiki.example.com/pages/viewpage.action?pageId=12001
+  - raw/tickets/disk-full.md
+automation:
+  ready: true
+  script_ref: script/disk-manager/disk-manager.sh
+  params:
+    - name: TARGET_DIRS
+      type: string
+      default: "/data"
+      required: true
+      description: 目标目录列表，冒号分隔
+    - name: FILE_SIZE
+      type: string
+      default: "1G"
+      required: false
+  exit_codes:
+    0: 成功
+    1: 参数错误
 ---
 ```
 
@@ -86,12 +98,40 @@ sources:
 | `verified` | 可选；人工确认须 `human:`；Agent 不替人写 |
 | `stale_after` | ISO 8601；默认生成日后 180 天 |
 | `sources` | 溯源；见下 |
+| `automation` | 可选；自动化元数据（见下） |
+
+### automation 块
+
+标记本页是否可由 Agent 自动执行，以及脚本参数与退出码。
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `ready` | `true` \| `partial` \| `false` | `true`=有独立可运行脚本；`partial`=有结构化命令但无独立脚本；`false`（默认）=纯文档 |
+| `script_ref` | 仓内路径 | 指向 `script/<name>/<file>`；`ready: true` 时必填 |
+| `params` | 列表 | 脚本/命令参数：`{ name, type, default, required, description }` |
+| `exit_codes` | 映射 | 退出码含义：`{ 0: "成功", 1: "参数错误" }` |
+
+**判定 ready 级别**：
+
+| 级别 | 条件 | 示例 |
+|------|------|------|
+| `true` | 正文含独立可运行的完整脚本（≥5 行、可保存为 .sh/.py 直接执行）→ 已提取到 `script/` | disk-manager.sh、bisheng-install |
+| `partial` | 有多步骤命令序列但不适合提取为独立脚本（需人工判断/交互） | Etcd 手动恢复、harbor GC 流程 |
+| `false` | 仅单条验证命令、纯概念文档 | 架构页、Registry 页 |
+
+**正文与脚本的关系**：
+
+- 正文**完整保留**脚本内容（离线可用）
+- `script_ref` 提供可直接执行的脚本路径（自动化入口）
+- 两者内容相同，`script_ref` 是正文中脚本的提取版本（含 param 替换、exit 处理等增强）
+- Agent 优先用 `script_ref` 执行；人读正文
 
 ### sources
 
-- 公司 wiki：**只写原始 wiki URL**（`resource` 字段）。禁止写 `raw/wiki/archive/...`。
-- 本地 raw：`resource: raw/tickets/...`（仓内相对路径）。
-- 需要 per-claim 归因时，正文用脚注 `[^source-id]`，label 对应 `sources[].id`。
+- 字符串数组；每个元素是一个 URL 或仓内相对路径
+- 公司 wiki：**只写原始 wiki URL**。禁止写 `raw/wiki/archive/...`。
+- 本地 raw：写仓内相对路径（如 `raw/tickets/disk-full.md`）。
+- Obsidian 会自动将 HTTP 链接渲染为可点击链接，方便追溯。
 - `sources` 只做溯源；正文须自洽，查询不读 raw。
 
 ### 图片（统一 attachments/）
@@ -143,3 +183,25 @@ wiki/操作手册/attachments/磁盘满-dashboard.png
 ## 正文
 
 命令放代码块。按 type 固定 `##` 标题写（见上表）。
+
+### Agent 可解析标记
+
+正文中的自动化相关段落可用 HTML 注释标记，供 Agent 快速定位：
+
+```markdown
+<!-- okf:auto:script -->
+脚本的完整内容（与 script_ref 指向的文件一致）
+<!-- /okf:auto:script -->
+
+<!-- okf:auto:verify -->
+验证步骤的命令
+<!-- /okf:auto:verify -->
+
+<!-- okf:auto:rollback -->
+回滚步骤的命令
+<!-- /okf:auto:rollback -->
+```
+
+- 不是必须有标记；没有标记时 Agent 按固定标题（步骤/验证/回滚）定位。
+- 有标记时 Agent 优先用标记区间提取内容。
+- 标记内不放 `script_ref`；`script_ref` 只在 frontmatter。
