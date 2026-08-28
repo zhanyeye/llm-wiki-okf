@@ -40,9 +40,14 @@
 | 字段 | 用途 | 写法 |
 |------|------|------|
 | `domain` | 固定业务/技术大类 | 只从枚举选：`landscape` \| `images` \| `k8s` \| `cicd` \| `network` \| `database` \| `storage` \| `middleware` \| `troubleshooting` |
-| `tags` | 其余可搜标签 | 自由列表：场景、专名、服务/系统名（如 `oncall`、`NFS-prod`、`支付网关`） |
+| `tags` | 其余可搜标签 | 自由列表：场景、专名、服务/系统名、别名、报错码、症状词（如 `oncall`、`NFS-prod`、`支付网关`、`503`、`上传失败`） |
 
-查询不够时搜 `title` / `tags` / `domain`（见 [query.md](../query.md)）。
+面向查询编写：
+
+- `title` 写人会查找的主题；`description` 同时说明适用场景/症状与页面能解决什么。
+- `tags` 补正文主题的中文/英文名、产品别名或缩写、稳定的错误码/报错短语、常见症状与操作动词。
+- 只写来源支持且对召回有区分度的词；不要罗列整句问法、通用虚词、未在来源中确认的内网别名，也不要重复 `domain`。
+- 标签不能替代正文。查询会同时搜 frontmatter 与正文全文（见 [query.md](../query.md)）。
 
 ## Frontmatter
 
@@ -89,9 +94,9 @@ automation:
 |------|------|
 | `type` | **必填**（OKF 唯一 always-required） |
 | `title` | 推荐；中文 |
-| `description` | 推荐；用于 index 摘要 |
+| `description` | 推荐；用于 index 摘要，并说明适用场景/症状与页面能解决什么 |
 | `domain` | 推荐；固定枚举大类（见上） |
-| `tags` | 推荐；场景、专名、服务/系统名（见上） |
+| `tags` | 推荐；场景、专名、服务/系统名、别名、报错码、症状词（见上） |
 | `status` | `draft` \| `stable` \| `deprecated`；新页用 `draft` |
 | `owner` | 可选；本页文档维护人。系统/资源负责人写在 `Registry` 正文「负责人」 |
 | `generated` | `{ by, at }`；`by` 用 `human:<id>` / `agent/<model>` / `process:<name>` |

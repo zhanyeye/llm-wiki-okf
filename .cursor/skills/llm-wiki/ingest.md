@@ -18,11 +18,11 @@
 ## 一般摄入
 
 1. **Fetch**：有 raw 就读对应文件；**不要改 raw**（`raw/wiki/` 例外见 source-wiki-cli：可追加 inbox、写 archive）。公网 URL 用 `defuddle parse <url> --md` 写入 `raw/` 再读。无来源时按对话/已知事实写。密钥、token、kubeconfig 不要抄进 wiki。
-2. **Triage**：在 `wiki/` 搜来源关键实体与同义词（Obsidian 可用时优先 `obsidian search`），判定：
+2. **Triage**：先从来源提取关键实体、中文/英文名、明显别名、报错码/报错短语、症状词和操作动词；用这些词在 `wiki/` 的 frontmatter 与正文中搜索（Obsidian 可用时优先 `obsidian search`），判定：
    - **New** — 新建一页或多页
    - **Update** — 合并进已有页
    - **No material** — 无新增知识；只记 log，不强行写页
-3. **Compile**：按 [references/okf.md](references/okf.md) 选 type/目录与固定标题；填 frontmatter（`status: draft`）；`sources` 写字符串数组（原始 URL 或仓内相对路径）。图片进同目录 `attachments/`（见 okf.md）。来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令。不替人写 `verified`。可用 `obsidian-cli` 写页；需要 callout/embed 时读 `obsidian-markdown`（链接风格仍按 okf.md）。
+3. **Compile**：按 [references/okf.md](references/okf.md) 选 type/目录与固定标题；填 frontmatter（`status: draft`）；`sources` 写字符串数组（原始 URL 或仓内相对路径）。`title` 用人会查找的主题，`description` 说明适用场景/症状与结果，`tags` 收录有区分度的别名、报错码和症状词；只写来源支持的词，不堆整句问法或臆造内网别名。图片进同目录 `attachments/`（见 okf.md）。来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令。不替人写 `verified`。可用 `obsidian-cli` 写页；需要 callout/embed 时读 `obsidian-markdown`（链接风格仍按 okf.md）。
 4. **脚本提取**（Compile 后、实体注册前）：若正文含**独立可运行脚本**（≥5 行 bash/python，含 shebang 或可保存为文件直接执行），按以下流程提取：
    - 在 `script/<功能名>/` 下创建脚本文件（去掉 markdown 代码围栏，补 shebang 和 `set -euo pipefail` 如缺失）
    - 同目录创建 `README.md`（含：用途、参数说明、用法、退出码、相关 wiki 页链接）
