@@ -30,6 +30,8 @@ description: >-
 | 查、排障、东西在哪、怎么做 | [query.md](query.md) |
 | 入库、迁文档、故障关闭、从零写一页、粘贴内容 | [ingest.md](ingest.md) + [references/okf.md](references/okf.md) + [references/index-log.md](references/index-log.md)；合适时再读 [references/obsidian.md](references/obsidian.md) |
 | 公司 wiki 链接 / inbox / 继续下一批 / 重试失败项 | [ingest.md](ingest.md) §公司 wiki + [references/source-wiki-cli.md](references/source-wiki-cli.md) + [references/okf.md](references/okf.md) + [references/index-log.md](references/index-log.md) + `tools/wiki-export/wiki_export.py`；合适时再读 [references/obsidian.md](references/obsidian.md) |
+| 增量刷新 / 刷新 wiki / 检查更新 | [ingest.md](ingest.md) §公司 wiki + [references/source-wiki-cli.md](references/source-wiki-cli.md) §增量刷新 |
+| 执行操作 / 跑脚本 / 自动化执行 | [query.md](query.md) §自动化执行 |
 | 只改 index / log | [references/index-log.md](references/index-log.md) |
 | 体检、过期、断链 | [lint.md](lint.md) |
 | Obsidian 浏览 / Bases / Canvas / 公网 Defuddle | [references/obsidian.md](references/obsidian.md) |
@@ -42,9 +44,10 @@ description: >-
 - **接地**：wiki 里没有的事实不要补；答案与命令只来自已读页面。
 - **一页一概念**：每篇概念 `.md` 有 YAML frontmatter 与非空 `type`（见 [references/okf.md](references/okf.md)）。
 - **写入闭环**：按 okf.md 写页 → 可复用入口同步进资源注册表（见 ingest.md 实体注册）→ 正文自洽（查询不依赖打开 `raw/`）→ 按 index-log.md 更新 index/log → 跑 lint。
-- **公司 wiki**：禁止 WebFetch 内网 wiki；批量导出用 `tools/wiki-export/wiki_export.py`（内部串行调用 wiki CLI），编译仍由 Agent 做 Triage + 蒸馏。
+- **公司 wiki**：禁止 WebFetch 内网 wiki；批量导出用 `tools/wiki-export/wiki_export.py`（内部串行调用 wiki CLI），编译仍由 Agent 做 Triage + 蒸馏。**增量刷新为默认模式**：只编译 wiki 有更新的条目；全量刷新需用户明确要求。
 - **链接**：wiki 文件内同目录用 `./页名.md`，跨目录用仓根绝对路径 `/wiki/操作手册/页.md`；对话输出引用用仓根相对路径 `wiki/操作手册/页.md`。交叉引用按**内容是否确有关联**（含同批）；禁止仅因同批而互链（见 okf.md）。
 - **附件**：知识页图片统一 `./attachments/`（md 同目录）；raw 存档仍用 `images/`。
+- **自动化**：正文含独立可运行脚本（≥5 行）时，提取到 `script/<功能名>/`（含脚本文件 + `README.md`），wiki 正文完整保留 + frontmatter 加 `automation` 块。Agent 执行操作时优先用 `script_ref`。详见 okf.md 和 ingest.md。
 - **Obsidian 增强**：本仓常作 vault。编译/整理 wiki 时，在合适场景**主动**用项目内 Skill：`obsidian-cli`、`obsidian-markdown`、`obsidian-bases`、`json-canvas`、`defuddle`（细则 [references/obsidian.md](references/obsidian.md)）。权威顺序：**OKF > ingest 流程 > Obsidian 便利**；CLI/工具失败则回退普通 Read/Write，勿阻塞整批。
 
 ## 目录结构（可演进）

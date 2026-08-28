@@ -13,6 +13,25 @@
 4. 打开相关正文（通常 2–5 篇；没有相关页不要凑数）。看 frontmatter：已过 `stale_after`、或没有 `verified` → 回答里标明「可能过期 / 未经人工确认」。
 5. 仍不够：在 `wiki/` 下搜 `title` / `tags` / `domain`。
 
+## 自动化执行
+
+用户要求执行操作时（「帮我跑磁盘水位脚本」「安装毕昇编译器」等），按以下流程：
+
+1. 在 `wiki/` 找到对应 Runbook / Playbook 页面（走上面查询流程）。
+2. 检查 frontmatter `automation.ready`：
+   - **`true`** → 读 `automation.script_ref`，用 Bash 执行 `script/<name>/<file>`，传参来自 `automation.params`
+   - **`partial`** → 按正文步骤手动执行（命令逐条给用户确认或由 Agent 按参数组装命令）
+   - **无 automation 块 / `false`** → 按正文步骤指导用户操作
+3. 执行前确认前置条件（Runbook「前置检查」小节）。
+4. 执行后运行验证步骤（Runbook「验证」/ Playbook 对应确认步骤）。
+5. 结果写入 `wiki/log.md`。
+
+**安全边界**：Agent 不自动执行涉及以下内容的脚本，需人工确认：
+- 删除数据（`rm -rf`、`TRUNCATE`）
+- 修改认证/密钥配置
+- 生产环境变更
+- 没有回滚步骤的操作
+
 ## 输出标准
 
 - 引用所用页面路径（对话中用仓根相对路径，如 `wiki/操作手册/页.md`）。
