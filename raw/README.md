@@ -28,4 +28,4 @@ raw/wiki/
 - 存档目录名 = URL 里文档 id 参数的**完整取值原样**（不要剥前缀、不要只留数字）；图必须在 `images/`，不得与 `page.md` 同级。
 - 编译进 `wiki/` 后：有用图片拷到知识页同目录 `attachments/`（不是 `images/`）。
 
-细则见 Skill [`.cursor/skills/llm-wiki/references/source-wiki-cli.md`](../.cursor/skills/llm-wiki/references/source-wiki-cli.md)。
+细则见 Skill [`.agents/skills/llm-wiki/references/source-wiki-cli.md`](../.agents/skills/llm-wiki/references/source-wiki-cli.md)。

@@ -1,8 +1,8 @@
 ---
 name: wiki-cli
-version: 1.0.0
 description: "读取、创建、更新、搜索线上WIKI文档，以及WIKI文档评论、会签、图片配套功能。触发条件：用户消息中包含 WIKI 文档链接（URL 中出现 WIKI 紧跟连续数字，如 WIKI2021032500053）时使用此skill。支持的域名：wiki.****.com、portal.edevops.****.com。路径形式如 /WIKI2021032500053，或参数形式如 ?sn=WIKI202307141560110。注意：当域名是 cloud.****.com 时严禁调用此 skill。"
 metadata:
+  version: "1.0.0"
   requires:
     bins: ["wiki"]
   cliHelp: "wiki --help;wiki doc --help;wiki comment --help;wiki countersign --help;wiki file --help;wiki auth --help;wiki uninstall --help"

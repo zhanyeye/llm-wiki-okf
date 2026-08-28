@@ -1,6 +1,6 @@
 # 基础设施知识库 Schema
 
-本文件是能力索引。人读总览见 [`README.md`](README.md)。执行细节按意图读 [`.cursor/skills/llm-wiki/`](.cursor/skills/llm-wiki/)，**不要**在纯查询时通读本文件长文或整份 Skill 目录。
+本文件是能力索引。人读总览见 [`README.md`](README.md)。执行细节按意图读 [`.agents/skills/llm-wiki/`](.agents/skills/llm-wiki/)，**不要**在纯查询时通读本文件长文或整份 Skill 目录。
 
 ## 权限（三面）
 
@@ -8,7 +8,7 @@
 |----|------|------------|
 | **知识面（OKF）** | [`wiki/`](wiki/)（`index.md`、`log.md`、各分组） | 查询入口；写入只发生在这里。正文须自洽，不依赖打开 `raw/` |
 | **来源面** | [`raw/`](raw/) | 默认**只读**。公司 wiki 的 `sources` 写原始 URL；其它来源经 `sources` 写 `raw/...`。**例外**：公司 wiki 通道 [`raw/wiki/`](raw/wiki/) 允许 Agent **追加** `inbox.md` 新 URL、写 `archive/`（见 Skill `references/source-wiki-cli.md`）；禁止删改 inbox 已有行 |
-| **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`tools/`](tools/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
+| **框架面** | 仓根 [`index.md`](index.md)、[`README.md`](README.md)、本文件、`requirement.md`、`docs/`、[`script/`](script/)、[`tools/`](tools/)、[`.agents/skills/`](.agents/skills/)、[`.claude/`](.claude/)、[`.cursor/`](.cursor/) | 改前先和用户确认；**不是**运维知识页；查询时不要当正文打开 |
 
 仓根 [`index.md`](index.md) 只是仓地图（链 `wiki/` / `raw/` / `script/` / `tools/`），不是知识 TOC。禁止在仓库根或 `wiki/` 根随意新建知识 `.md`（必须进对应分组）。运维脚本放 [`script/`](script/)；框架工具放 [`tools/`](tools/)（一个工具一个子目录）；运维用法说明放 `wiki/操作手册/`。知识页图片统一放在该页同目录 `attachments/`。交叉引用按内容是否确有关联（同批亦可）；禁止仅因同批而互链。
 
@@ -23,19 +23,19 @@
 5. 仍不够再搜索 `tags` / `domain` / `title`。
 6. **禁止**用训练数据填补未写入知识库的集群名、地址、凭证、步骤。缺失就说缺失，并建议入库。不要读 `raw/` 当答案。
 
-有价值的综合结论应回写成新页。细则见 Skill [`query.md`](.cursor/skills/llm-wiki/query.md)。
+有价值的综合结论应回写成新页。细则见 Skill [`query.md`](.agents/skills/llm-wiki/query.md)。
 
 ## 写入前必须读
 
-入库、迁文档、复盘、从零写页、改 index/log、体检时，**先读** Skill [`SKILL.md`](.cursor/skills/llm-wiki/SKILL.md) 按意图路由，再读对应文件（勿跳过）：
+入库、迁文档、复盘、从零写页、改 index/log、体检时，**先读** Skill [`SKILL.md`](.agents/skills/llm-wiki/SKILL.md) 按意图路由，再读对应文件（勿跳过）：
 
 | 意图 | 必读 |
 |------|------|
-| 入库 / 迁文档 / 故障结案 / 从零写一页 | [`ingest.md`](.cursor/skills/llm-wiki/ingest.md) + [`references/okf.md`](.cursor/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.cursor/skills/llm-wiki/references/index-log.md) |
-| 公司 wiki 增量入库（对话贴链接 / inbox） | [`ingest.md`](.cursor/skills/llm-wiki/ingest.md) + [`references/source-wiki-cli.md`](.cursor/skills/llm-wiki/references/source-wiki-cli.md) + [`references/okf.md`](.cursor/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.cursor/skills/llm-wiki/references/index-log.md) |
-| 体检、断链、过期 | [`lint.md`](.cursor/skills/llm-wiki/lint.md) |
+| 入库 / 迁文档 / 故障结案 / 从零写一页 | [`ingest.md`](.agents/skills/llm-wiki/ingest.md) + [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
+| 公司 wiki 增量入库（对话贴链接 / inbox） | [`ingest.md`](.agents/skills/llm-wiki/ingest.md) + [`references/source-wiki-cli.md`](.agents/skills/llm-wiki/references/source-wiki-cli.md) + [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
+| 体检、断链、过期 | [`lint.md`](.agents/skills/llm-wiki/lint.md) |
 
-type、目录、frontmatter、固定正文标题：全部在 [`references/okf.md`](.cursor/skills/llm-wiki/references/okf.md)。
+type、目录、frontmatter、固定正文标题：全部在 [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。
 
 ## 值班
 
