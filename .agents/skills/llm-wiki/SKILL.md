@@ -1,27 +1,28 @@
 ---
 name: llm-wiki
 description: >-
-  Build and maintain an OKF knowledge base under wiki/ using Karpathy-style
-  ingest / query / lint. Sources are raw Markdown and company wiki URLs
-  (via wiki-cli). Use for 基础设施、知识库、值班、排查、入库、迁文档、复盘、
-  playbook、runbook；以及 Rancher、MinIO、Helm、Harbor、NFS、px、yum、镜像、
-  域名、DNS、证书、防火墙、openGauss、流水线、微服务重启、时延、磁盘满、
-  绿区代理。Triggers: ingest, query, lint, add to wiki, company wiki links,
-  raw/wiki/inbox.md.
+  Build and maintain an OKF knowledge base under wiki/ using ingest / query /
+  lint. Sources are raw Markdown and company wiki URLs (via wiki-cli). Use for
+  基础设施、知识库、值班、排查、入库、迁文档、复盘、playbook、runbook；以及
+  Rancher、MinIO、Helm、Harbor、NFS、px、yum、镜像、域名、DNS、证书、防火墙、
+  openGauss、流水线、微服务重启、时延、磁盘满、绿区代理。Triggers: ingest,
+  query, lint, add to wiki, company wiki links, raw/wiki/inbox.md.
 ---
 
 # llm-wiki
 
 维护 `wiki/` 知识库。对话不是知识库；有价值的值班结论与综合要写回页面。
 
-基于 [Karpathy LLM Wiki](https://github.com/Astro-Han/karpathy-llm-wiki) 三操作：**Ingest**、**Query**、**Lint**。编译结果用 [OKF v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) 格式。
+三种操作：**Query** 查、**Ingest** 入库、**Lint** 体检，按意图走下面的路由。
 
-## 优先级
+## 原则
 
-1. **安全**：不写密钥；不编造集群名、地址、步骤。
-2. **接地**：查询只根据已打开的 `wiki/` 页作答；缺页就说缺页。
-3. **分面**：知识只写 `wiki/`；`raw/` 默认只读（公司 wiki 通道例外：可追加 `inbox.md`、写 `archive/`，见 [references/source-wiki-cli.md](references/source-wiki-cli.md)）；框架面（仓根 `index.md` / `README.md` / `AGENTS.md` / `script/` / `tools/`）不是知识正文。
-4. **按意图只读对应文件**；写入再读 schema，并完成 index/log + lint。
+任何操作都适用，按序优先：
+
+1. **安全**：机密凭证不进知识库（如密码、密钥、token、kubeconfig）；需要引用时写占位符或申请途径。
+2. **不编造**：答案与命令必须有页面依据——优先 `wiki/`，不够再搜 `raw/`；两边都没有才明说没有、建议入库，不要凭记忆或训练数据填空。
+3. **知识只进 `wiki/`**：`raw/` 是来源存档，默认只读（公司 wiki 通道例外：可追加 `inbox.md`、写 `archive/`，见 [references/source-wiki-cli.md](references/source-wiki-cli.md)）；仓根 `index.md` / `README.md` / `AGENTS.md` / `script/` / `tools/` 是框架文件，不是知识页。
+4. **按意图只读对应文件**（路由见下表）；写入时才读 schema 与流程文件。
 
 ## 路由
 
@@ -36,25 +37,16 @@ description: >-
 | 体检、过期、断链 | [lint.md](lint.md) |
 | Obsidian 浏览 / Bases / Canvas / 公网 Defuddle | [references/obsidian.md](references/obsidian.md) |
 
-默认走 query。查询**不要**先通读 `AGENTS.md`，不要读 `raw/`，不要一次加载整库，不要加载写入用的 `references/`（query 内 Archive 存档除外）。
+默认走 query。查询细节以 [query.md](query.md) 为准（`AGENTS.md` 查询节只是摘要），不要一次加载整库，不要加载写入用的 `references/`（query 内 Archive 存档除外）。
 
-## 不变量
+## 写入要求
 
-- **分面**：概念页只在 `wiki/` 对应分组（分组以 [`wiki/index.md`](../../../wiki/index.md) 为准，不在 skill 中硬编码）。
-- **接地**：wiki 里没有的事实不要补；答案与命令只来自已读页面。
+每次写入或修改 `wiki/` 后必须成立（lint 按此体检）：
+
 - **一页一概念**：每篇概念 `.md` 有 YAML frontmatter 与非空 `type`（见 [references/okf.md](references/okf.md)）。
 - **写入闭环**：按 okf.md 写页 → 可复用入口同步进资源注册表（见 ingest.md 实体注册）→ 正文自洽（查询不依赖打开 `raw/`）→ 按 index-log.md 更新 index/log → 跑 lint。
-- **公司 wiki**：禁止 WebFetch 内网 wiki；批量导出用 `tools/wiki-export/wiki_export.py`（内部串行调用 wiki CLI），编译仍由 Agent 做 Triage + 蒸馏。**增量刷新为默认模式**：只编译 wiki 有更新的条目；全量刷新需用户明确要求。
+- **公司 wiki**：禁止 WebFetch 内网 wiki；批量导出用 `tools/wiki-export/wiki_export.py`（内部串行调用 wiki CLI），编译仍由 Agent 做 Triage + 蒸馏。**增量刷新为默认**：只编译有更新/未处理的条目；全量刷新需用户明确要求。
 - **链接**：wiki 文件内同目录用 `./页名.md`，跨目录用仓根绝对路径 `/wiki/操作手册/页.md`；对话输出引用用仓根相对路径 `wiki/操作手册/页.md`。交叉引用按**内容是否确有关联**（含同批）；禁止仅因同批而互链（见 okf.md）。
-- **附件**：知识页图片统一 `./attachments/`（md 同目录）；raw 存档仍用 `images/`。
+- **附件**：知识页图片统一放该页同目录 `./attachments/`；raw 存档仍用 `images/`（细则见 okf.md）。
 - **自动化**：正文含独立可运行脚本（≥5 行）时，提取到 `script/<功能名>/`（含脚本文件 + `README.md`），wiki 正文完整保留 + frontmatter 加 `automation` 块。Agent 执行操作时优先用 `script_ref`。详见 okf.md 和 ingest.md。
-- **Obsidian 增强**：本仓常作 vault。编译/整理 wiki 时，在合适场景**主动**用项目内 Skill：`obsidian-cli`、`obsidian-markdown`、`obsidian-bases`、`json-canvas`、`defuddle`（细则 [references/obsidian.md](references/obsidian.md)）。权威顺序：**OKF > ingest 流程 > Obsidian 便利**；CLI/工具失败则回退普通 Read/Write，勿阻塞整批。
-
-## 目录结构（可演进）
-
-当前分组见 [`wiki/index.md`](../../../wiki/index.md)。未来增删分组时只改该文件与各分组 index，并同步更新 [references/okf.md](references/okf.md) 中的 type→目录映射表。
-
-```
-raw/          ← 来源（默认只读；raw/wiki/ 仅可追加 inbox、写 archive）
-wiki/         ← OKF 编译结果（index.md、log.md、各分组）
-```
+- **Obsidian 增强**：编译/整理时可在合适场景用项目内 Obsidian Skill 加速；细则与失败回退见 [references/obsidian.md](references/obsidian.md)。
