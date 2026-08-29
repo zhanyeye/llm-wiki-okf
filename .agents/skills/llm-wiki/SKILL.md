@@ -1,17 +1,19 @@
 ---
 name: llm-wiki
 description: >-
-  Build and maintain an OKF knowledge base under wiki/ using ingest / query /
-  lint. Sources are raw Markdown and company wiki URLs (via wiki-cli). Use for
-  基础设施、知识库、值班、排查、入库、迁文档、复盘、playbook、runbook；以及
-  Rancher、MinIO、Helm、Harbor、NFS、px、yum、镜像、域名、DNS、证书、防火墙、
-  openGauss、流水线、微服务重启、时延、磁盘满、绿区代理。Triggers: ingest,
-  query, lint, add to wiki, company wiki links, raw/wiki/inbox.md.
+  基础设施知识库（OKF）的查询与维护入口，知识存于 wiki/，三种操作：查（query）、
+  入库/迁文档/写页（ingest）、体检/断链/过期（lint）。
+  适用场景：基础设施问答、故障排查、故障复盘、操作手册、runbook / playbook、
+  迁文档、新人上手、找系统入口或负责人。
+  适用领域：Rancher、MinIO、Helm、Harbor、NFS、px、yum、镜像、域名、DNS、证书、
+  防火墙、openGauss、流水线；常见症状：微服务重启、时延高、磁盘满、绿区代理。
+  Triggers: 查、怎么配、在哪、入库、迁文档、复盘、体检、add to wiki、
+  贴公司 wiki 链接（WIKI+数字）、raw/wiki/inbox.md。
 ---
 
 # llm-wiki
 
-维护 `wiki/` 知识库。对话不是知识库；有价值的值班结论与综合要写回页面。
+维护 `wiki/` 知识库。聊天记录随会话结束即失效，只留在对话里的结论等于没入库。凡对话中产生可复用的知识——排查结论、故障复盘、跨多篇综合出的结论、验证有效的命令——都要写成新页或更新既有页（流程见 [ingest.md](ingest.md)）。
 
 三种操作：**Query** 查、**Ingest** 入库、**Lint** 体检，按意图走下面的路由。
 
