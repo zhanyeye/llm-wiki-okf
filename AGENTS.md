@@ -19,11 +19,11 @@
 1. 读 [`wiki/index.md`](wiki/index.md)（不要把仓根 index 当知识入口）。
 2. 现象不明时读 [`wiki/故障排查/index.md`](wiki/故障排查/index.md)（若存在）。
 3. 已知系统读对应分组；找入口/负责人读 `wiki/资源注册表/`。分组尚无概念页时可以没有 `index.md`。
-4. 打开 2–5 篇作答，引用路径。
+4. 按命中打开相关页作答，引用路径。
 5. 仍不够再搜索 `tags` / `domain` / `title`。
-6. **禁止**用训练数据填补未写入知识库的集群名、地址、凭证、步骤。缺失就说缺失，并建议入库。不要读 `raw/` 当答案。
+6. **禁止**用训练数据填补未写入知识库的集群名、地址、凭证、步骤。缺失就说缺失，并建议入库。`wiki/` 不足时按 query.md 回退搜 `raw/` 并标注「⚠️ 未编译」；不要默认把 `raw/` 当答案，raw 命中后建议入库。
 
-有价值的综合结论应回写成新页。细则见 Skill [`query.md`](.agents/skills/llm-wiki/query.md)。
+有价值的综合结论应回写成新页。细则见 Skill [`ingest.md`](.agents/skills/llm-wiki/ingest.md) §对话存档。
 
 ## 写入前必须读
 

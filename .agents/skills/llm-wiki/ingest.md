@@ -12,6 +12,8 @@
 | 「增量刷新 / 刷新 wiki / 检查更新」 | §公司 wiki → [references/source-wiki-cli.md](references/source-wiki-cli.md) **§增量刷新** |
 | 公网文档 URL（非公司 wiki）要入库 | §一般摄入：先用 `defuddle` 落 raw，再 Compile（见 [references/obsidian.md](references/obsidian.md)） |
 | 本地 raw Markdown、工单、纪要、故障结案、迁文档、从零写页 | §一般摄入 |
+| 用户指出已有页内容错误 / 过期 / 与环境不符 | §用户更正 |
+| 「把这个答案存进 wiki」/ 查询后同意回写成新页 | §对话存档 |
 
 编译时可按 [references/obsidian.md](references/obsidian.md) 使用 `obsidian-cli` / `obsidian-markdown` / `obsidian-bases` / `json-canvas` / `defuddle`；工具不可用则普通读写。
 
@@ -47,6 +49,18 @@
 10. **可选可视化**：Architecture / 复杂排查树且用户需要或内容确需示意 → `json-canvas`；用户要按 type/domain/status 浏览 → `obsidian-bases`。不要每篇默认建 canvas/base。
 11. 按 [references/index-log.md](references/index-log.md) 更新被改目录的 index（**若该分组尚无 `index.md`，写入第一篇时创建**）、必要时 `wiki/index.md` 与 `故障排查/index.md`，并追加 `wiki/log.md`。
 12. 跑 `python tools/okf-lint/okf_lint.py`，先修 error。汇报新页/改页路径，请人抽看 draft；要标 `verified` 需人确认。
+
+## 用户更正
+
+用户指出已有页内容错误、过期或与本环境不符时，按 Update 流程修改该页：用户更正写进 `sources` 或正文；页面改回 `status: draft` 并清除 `verified`；描述受影响时同步分组 index，并追加 `wiki/log.md`，跑 lint。
+
+## 对话存档
+
+查询对话中产生值得沉淀的答案（用户明确要求存档，或同意把排查树、跨页对比、raw/ 综合结论回写）时：
+
+1. **Triage 照常**：已有页明显同主题且用户同意合并 → 走 Update；否则默认新建页（存档是综合答案，不是来源材料）。
+2. 按 [references/okf.md](references/okf.md) 选 type/目录写页；`sources` 链到被引用的 wiki 页（仓内相对路径，如 `wiki/操作手册/页.md`），不写 raw；对话中的引用路径按 okf.md 链接规则改写为页内风格。
+3. 更新分组 index 与 `wiki/log.md`（见 [references/index-log.md](references/index-log.md)）。
 
 ## 公司 wiki
 

@@ -1,8 +1,8 @@
 ---
 name: llm-wiki
 description: >-
-  基础设施知识库（OKF）的查询与维护入口，知识存于 wiki/，三种操作：查（query）、
-  入库/迁文档/写页（ingest）、体检/断链/过期（lint）。
+  基础设施知识库（OKF）的查询与维护入口，知识存于 wiki/，四种操作：查（query）、
+  入库/迁文档/写页/存档/更正（ingest）、体检/断链/过期（lint）、执行 Runbook（execute）。
   适用场景：基础设施问答、故障排查、故障复盘、操作手册、runbook / playbook、
   迁文档、新人上手、找系统入口或负责人。
   适用领域：Rancher、MinIO、Helm、Harbor、NFS、px、yum、镜像、域名、DNS、证书、
@@ -15,7 +15,7 @@ description: >-
 
 维护 `wiki/` 知识库。聊天记录随会话结束即失效，只留在对话里的结论等于没入库。凡对话中产生可复用的知识——排查结论、故障复盘、跨多篇综合出的结论、验证有效的命令——都要写成新页或更新既有页（流程见 [ingest.md](ingest.md)）。
 
-三种操作：**Query** 查、**Ingest** 入库、**Lint** 体检，按意图走下面的路由。
+四种操作：**Query** 查、**Ingest** 入库、**Execute** 执行、**Lint** 体检，按意图走下面的路由。
 
 ## 原则
 
@@ -31,15 +31,15 @@ description: >-
 | 用户意图 | 读 |
 |----------|-----|
 | 查、排障、东西在哪、怎么做 | [query.md](query.md) |
-| 入库、迁文档、故障关闭、从零写一页、粘贴内容 | [ingest.md](ingest.md) + [references/okf.md](references/okf.md) + [references/index-log.md](references/index-log.md)；合适时再读 [references/obsidian.md](references/obsidian.md) |
+| 入库、迁文档、故障关闭、从零写一页、粘贴内容、存档查询答案 / 回写 | [ingest.md](ingest.md) + [references/okf.md](references/okf.md) + [references/index-log.md](references/index-log.md)；合适时再读 [references/obsidian.md](references/obsidian.md) |
 | 公司 wiki 链接 / inbox / 继续下一批 / 重试失败项 | [ingest.md](ingest.md) §公司 wiki + [references/source-wiki-cli.md](references/source-wiki-cli.md) + [references/okf.md](references/okf.md) + [references/index-log.md](references/index-log.md) + `tools/wiki-export/wiki_export.py`；合适时再读 [references/obsidian.md](references/obsidian.md) |
 | 增量刷新 / 刷新 wiki / 检查更新 | [ingest.md](ingest.md) §公司 wiki + [references/source-wiki-cli.md](references/source-wiki-cli.md) §增量刷新 |
-| 执行操作 / 跑脚本 / 自动化执行 | [query.md](query.md) §自动化执行 |
+| 执行操作 / 跑脚本 / 自动化执行 | [execute.md](execute.md) |
 | 只改 index / log | [references/index-log.md](references/index-log.md) |
 | 体检、过期、断链 | [lint.md](lint.md) |
 | Obsidian 浏览 / Bases / Canvas / 公网 Defuddle | [references/obsidian.md](references/obsidian.md) |
 
-默认走 query。查询细节以 [query.md](query.md) 为准（`AGENTS.md` 查询节只是摘要），不要一次加载整库，不要加载写入用的 `references/`（query 内 Archive 存档除外）。
+默认走 query。查询细节以 [query.md](query.md) 为准（`AGENTS.md` 查询节只是摘要），不要一次加载整库，不要加载写入用的 `references/`（写入与执行场景按路由表加载）。
 
 ## 写入要求
 

@@ -137,7 +137,7 @@ automation:
 - 公司 wiki：**只写原始 wiki URL**。禁止写 `raw/wiki/archive/...`。
 - 本地 raw：写仓内相对路径（如 `raw/tickets/disk-full.md`）。
 - Obsidian 会自动将 HTTP 链接渲染为可点击链接，方便追溯。
-- `sources` 只做溯源；正文须自洽，查询不读 raw。
+- `sources` 只做溯源；正文须自洽，查询默认无需读 raw（`wiki/` 不足时按 query.md 回退搜 raw 并标注「⚠️ 未编译」）。
 
 ### 图片（统一 attachments/）
 

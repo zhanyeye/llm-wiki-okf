@@ -38,10 +38,10 @@ CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 STALE_RE = re.compile(r"^stale_after:\s*[\"']?(\d{4}-\d{2}-\d{2})[\"']?\s*$", re.M)
 LOG_DATE_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$", re.M)
 LOG_ENTRY_RE = re.compile(
-    r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*: "
+    r"^\* \*\*(Creation|Update|Deprecation|Initialization|Execution)\*\*: "
 )
 LOG_BAD_COLON_RE = re.compile(
-    r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*："
+    r"^\* \*\*(Creation|Update|Deprecation|Initialization|Execution)\*\*："
 )
 
 

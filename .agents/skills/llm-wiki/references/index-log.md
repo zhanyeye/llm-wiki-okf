@@ -1,6 +1,6 @@
 # index.md 与 log.md
 
-查询不改这两类文件；**新建或改概念页之后必须更新**。
+常规查询不改这两类文件；**新建或改概念页之后必须更新**。唯一例外：execute.md 的执行记录（见下）。
 
 分组列表以 [`wiki/index.md`](../../../../wiki/index.md) 为权威来源；本文件只规定格式，不硬编码分组名。
 
@@ -76,9 +76,11 @@
 | `**Update**` | 改已有页（含改 index 条目、把待入库换成链接、公司 wiki ingest 结果） |
 | `**Deprecation**` | 废弃一页 |
 | `**Initialization**` | 建目录结构（一般只出现一次） |
+| `**Execution**` | Agent 按 execute.md 跑脚本后记录结果（不改知识页） |
 
 - 链接用仓根绝对路径：`[标题](/wiki/操作手册/file.md)`。
-- 纯查询、只跑 lint 且未改页 → 不写 log。
+- 纯查询、只跑 lint 且未改页 → 不写 log（执行记录见 `**Execution**`，如：
+  `* **Execution**: ran [磁盘满处理](/wiki/操作手册/磁盘满处理.md) — exit 0，水位恢复正常。`
 
 ### 公司 wiki ingest 行（固定句式）
 
