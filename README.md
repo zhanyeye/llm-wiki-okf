@@ -46,12 +46,17 @@
 
 ## 在 Code Agent 中使用
 
-用 **Cursor** 或 **Claude Code** 打开本仓库，在 Agent 对话里用自然语言说话。人投放来源、提问、过目确认；Agent 按 Karpathy 的三条操作维护 `wiki/`。禁止脱离 wiki 臆造未写入的细节。
+使用 **CodeAgent** 打开本仓库，在对话里提问或下命令即可。人投放来源、提问、过目确认；Agent 会读 [`AGENTS.md`](AGENTS.md) 和 Skill [`llm-wiki`](.agents/skills/llm-wiki/)，按查 / 入库 / 体检维护 `wiki/`。禁止脱离 wiki 臆造未写入的细节。
 
-| 产品 | 会读什么 | 你怎么做 |
-|------|----------|----------|
-| [Cursor](https://cursor.com) | [`AGENTS.md`](AGENTS.md)、Rule [`.cursor/rules/llm-wiki.mdc`](.cursor/rules/llm-wiki.mdc)、Skill [`llm-wiki`](.agents/skills/llm-wiki/) | 打开仓库 → Agent 聊天，直接问 |
-| [Claude Code](https://code.claude.com/docs) | [`AGENTS.md`](AGENTS.md)、[`CLAUDE.md`](CLAUDE.md)、[`.claude/skills/`](.claude/skills/)（软链接到 `.agents/skills/`） | 在仓库根运行 `claude`；可直接 `/llm-wiki`。Windows 需开发人员模式以检出真软链接，否则 clone 后执行 `mklink /J .claude\skills .agents\skills` |
+两种用法可以混：直接用自然语言，或打斜杠命令（定义在 [`.agents/commands/`](.agents/commands/)）。命令会把意图钉死，少绕路。
+
+| 命令 | 做什么 | 示例 |
+|------|--------|------|
+| [`/query`](.agents/commands/query.md) | 查 wiki、排障 | `/query 磁盘满了怎么处理` |
+| [`/ingest`](.agents/commands/ingest.md) | 入库、迁文档、结案写页 | `/ingest 把 raw/ 里这份工单入库` |
+| [`/lint`](.agents/commands/lint.md) | 体检、断链、过期 | `/lint` |
+
+贴公司 wiki 链接时用 `/ingest`（也可以把 URL 直接丢进对话）。不记得命令就原话说，例如「把 inbox 入库」「体检一下 wiki」。下文三条操作各有一组可复制的说法。
 
 ### Ingest（摄入）
 
