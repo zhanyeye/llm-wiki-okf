@@ -12,4 +12,4 @@
 - 体检：`lint.md`
 - 审核：`review.md` + `references/compile.md`
 
-知识按 L0 Atomic → L1 Registry → L2 Operational 编译；不要把来源缩写后机械换目录，也不要用训练数据填补 wiki 里没有的集群名、地址、凭证、步骤。
+知识按 L0 基础知识 → L1 Registry → Runbook/FAQ/ADR 编译；禁止把来源缩写后平铺成一页，也不要用训练数据填补 wiki 里没有的集群名、地址、凭证、步骤。L0 目录是 `wiki/基础知识/`。

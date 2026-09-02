@@ -18,11 +18,11 @@
 
 1. **取源**：公网 URL → `defuddle`；公司 wiki → `wiki_export.py`；已有 raw → 只读。
 2. **Resolve**：优先 `obsidian search` 查名称/别名，用 `backlinks` 查反向关系；否则用全文搜索。不得只按文件名判断同一实体。
-3. **Compose**：按 L0 → L1 → L2 写页。可用 `obsidian-cli` 写入；图片仍 `./attachments/`。
+3. **Compose**：按 L0 基础知识 → L1 Registry → Runbook/FAQ/ADR 写页。可用 `obsidian-cli` 写入；图片仍 `./attachments/`。语义关系必须用双链。
 4. **Link**：首次链接优先标题级；只有事实稳定且会被多处复用才添加块 ID。用 backlinks 检查上层影响面，反向关系不重复手写。
 5. **Validate**：确认每个 wikilink 的页、标题或块存在；Obsidian 不可用时由 okf-lint 完成同类机械检查。
 6. **可选可视化 / 视图**：Architecture 确需示意 → `json-canvas`；Registry/type/domain/status 聚合 → `obsidian-bases`。Base 不是第二份资产数据。
-7. **失败回退**：CLI 报错、vault 未开 → 使用普通文件工具继续完整六阶段，不降低质量门。
+7. **失败回退**：CLI 报错、vault 未开 → 使用普通文件工具继续分层写入，不降低质量门。
 
 ## 边界
 

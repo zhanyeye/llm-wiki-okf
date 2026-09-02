@@ -34,7 +34,7 @@ class LayeredLintTests(unittest.TestCase):
     def add_valid_graph(self, root: Path) -> None:
         wiki = root / "wiki"
         source = "https://wiki.example.invalid/WIKI-DEMO"
-        (wiki / "原子知识" / "网络规则.md").write_text(
+        (wiki / "基础知识" / "网络规则.md").write_text(
             f"""---
 type: Atomic
 id: atomic:network:zone-rule
@@ -168,8 +168,8 @@ validated_at: 2026-09-02T09:00:00Z
     def test_duplicate_stable_id_is_error(self) -> None:
         root = self.make_repo()
         self.add_valid_graph(root)
-        atomic = root / "wiki" / "原子知识" / "网络规则.md"
-        duplicate = root / "wiki" / "原子知识" / "重复规则.md"
+        atomic = root / "wiki" / "基础知识" / "网络规则.md"
+        duplicate = root / "wiki" / "基础知识" / "重复规则.md"
         duplicate.write_text(atomic.read_text(encoding="utf-8"), encoding="utf-8")
         errors, _warnings = OKF_LINT.run(root)
         self.assertTrue(any("duplicate id" in error for error in errors))

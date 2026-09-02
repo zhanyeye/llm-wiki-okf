@@ -6,7 +6,7 @@
 
 1. 搜索 `wiki/` 中 `status: draft`、无 `verified`、`stale_after` 已过或来源刷新后被改回 draft 的页面。
 2. 按关联的 `wiki/_meta/ingest/*.yaml` 聚合同一来源的产出，避免只看其中一页。
-3. 每批默认最多 5 组来源；列出 Atomic、Registry、L2 输出、coverage gap 和原始来源。
+3. 每批默认最多 5 组来源；列出基础知识（Atomic）、Registry、Runbook/FAQ/ADR 产出、coverage gap 和原始来源。
 4. 不读取无关页面；只沿 manifest、语义关系和 backlinks 打开审核所需内容。
 
 ## 审核清单
@@ -21,7 +21,7 @@
 
 ### 原子边界
 
-- Atomic 一页是一个稳定实体/概念，不混入多个可独立更新的系统。
+- Atomic（`wiki/基础知识/`）一页是一个内部概念或平台，不混入多个可独立更新的系统，也不写某套生产实例入口。
 - 不把每句话拆成文件；页内标题/块是可复用、稳定的知识单元。
 - 同一实体没有因不同来源生成平行副本；别名与同名异物已正确消歧。
 

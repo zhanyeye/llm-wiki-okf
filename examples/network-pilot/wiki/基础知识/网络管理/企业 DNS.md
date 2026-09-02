@@ -38,4 +38,4 @@ DemoDNS 是完全虚构的 `demo` 内部名称解析平台。
 
 ## 关系
 
-[[虚构域名 api.green.demo.example.invalid#依赖]] 是该能力的虚构 Registry 示例；HTTPS 还需 [[内部证书#定义]]。
+HTTPS 还需 [[内部证书#定义]]。具体哪条域名记录见资源注册表，本页不登记实例入口。

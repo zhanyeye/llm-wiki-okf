@@ -57,7 +57,7 @@ python tools/wiki-export/wiki_export.py check
 - 已在某知识页 frontmatter `sources` 字符串数组中出现过的 URL（精确匹配），除非用户点名「刷新该 url」
 - `wiki/log.md` 里已记为 `ingest skipped` / `ingest failed` 的 URL，除非用户说重试或刷新
 
-默认取最多 **15** 条；用户指定本批条数则按指定。批处理导出无 token 瓶颈，但六阶段语义编译需要逐条核对，过大批次易超上下文，建议 10–20 条。
+默认取最多 **15** 条；用户指定本批条数则按指定。批处理导出无 token 瓶颈，但分层语义编译需要逐条核对，过大批次易超上下文，建议 10–20 条。
 
 ## 3. 批量导出（用 wiki_export.py）
 
@@ -96,7 +96,7 @@ raw/wiki/archive/<docKey>/
 
 ## 4. 分层编译（必须串行；质量门）
 
-对每条导出并验收成功的条目，按 [compile.md](compile.md) **一条一条**执行 Extract → Resolve → Plan → Compose → Link → Validate（index/log 是共享状态）。「同批」本身不是关联依据。禁止默认「1 URL = 1 新页」。
+对每条导出并验收成功的条目，按 [compile.md](compile.md) **一条一条**先拆基础知识再长 Registry/Runbook/FAQ/ADR（index/log 是共享状态）。「同批」本身不是关联依据。禁止默认「1 URL = 1 新页」。
 
 ### 4.1 过滤
 
@@ -111,7 +111,7 @@ raw/wiki/archive/<docKey>/
 按稳定 ID、名称、别名、职责和环境搜索现有 Atomic/Registry：
 
 - 同一实体 → Update；补本条原始 URL 到 `sources`。
-- 新的稳定实体 → New；先 Atomic、再 Registry。
+- 新的稳定实体 → New；先基础知识（Atomic，按能力域），再 Registry。
 - 无新增知识 → No material；仍更新对应编译清单状态。
 - 无法确认 → gap；说明缺什么，不用模型常识填补。
 
@@ -121,7 +121,7 @@ raw/wiki/archive/<docKey>/
 
 ### 4.5 Compose
 
-按 L0 Atomic → L1 Registry → L2 Operational 写页；格式见 [okf.md](okf.md)。Registry 使用结构化 frontmatter，`technology` 必须链接 Atomic。上层页引用下层定义和约束，不复制近似版本。
+按 L0 基础知识 → L1 Registry → Runbook/FAQ/ADR 写页；格式见 [okf.md](okf.md)。Registry 使用结构化 frontmatter，`technology` 必须双链 Atomic。上层页引用下层定义和约束，不复制近似版本。L0 不反向依赖 Runbook。
 
 - 正文自洽；来源没有的小节写「来源未写」或「不适用」。
 - 命令进代码块；密钥/token 剥离；占位符用 `<cluster>`、`<namespace>`、`<path>`。
@@ -135,7 +135,7 @@ raw/wiki/archive/<docKey>/
 
 ### 4.7 Coverage manifest
 
-写 `wiki/_meta/ingest/<docKey>.yaml`，记录每个提取项的处置、目标和 gap 原因。该清单不进知识导航，不包含凭证。
+写 `wiki/_meta/ingest/<docKey>.yaml`（建议，供刷新用），记录每个提取项的处置、目标和 gap 原因。该清单不进知识导航，不包含凭证。一般 raw 入库不强制。
 
 ### 4.8 Validate
 
@@ -182,7 +182,7 @@ raw/wiki/archive/<docKey>/
 Step 1: 刷新元数据    wiki_inbox_meta.py fetch + generate
 Step 2: Diff          wiki_refresh.py diff
 Step 3: Re-export     wiki_export.py re-export <受影响 docKey...>
-Step 4: 编译          同 §4（Extract → Resolve → Plan → Compose → Link → Validate）
+Step 4: 编译          同 §4（先拆基础知识，再长 Registry/Runbook/FAQ/ADR）
 Step 5: 收尾          同 §5
 ```
 
@@ -236,7 +236,7 @@ python tools/wiki-export/wiki_refresh.py re-export-changed
 | | 首次入库 | 增量刷新 |
 |---|---------|---------|
 | 实体解析 | New / Update | 读取旧 manifest 后重新 Resolve，可能新增 Atomic/Registry |
-| 编译动作 | 写新页或合并进已有页 | **重跑六阶段并更新原有输出与关系** |
+| 编译动作 | 写新页或合并进已有页 | **按分层重跑并更新原有输出与关系** |
 | 不变处理 | N/A | wiki 源无新增知识 → `no material`，不强行改页 |
 
 增量刷新编译时：
