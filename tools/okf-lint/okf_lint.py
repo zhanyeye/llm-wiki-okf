@@ -13,7 +13,7 @@ from pathlib import Path
 
 RESERVED = {"index.md", "log.md"}
 TYPE_DIR = {
-    "Atomic": "原子知识",
+    "Atomic": "基础知识",
     "Registry": "资源注册表",
     "Architecture": "系统与架构",
     "Runbook": "操作手册",
@@ -47,7 +47,7 @@ ASSET_KINDS = {
     "dashboard",
     "alert",
     "network",
-    "storage",
+    "observability",
 }
 RELATION_FIELDS = {
     "technology",
@@ -324,7 +324,7 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             ids[doc.doc_id] = doc
         expected_layer = TYPE_LAYER.get(doc.typ)
         layer = scalar(doc.fm, "layer")
-        if expected_layer and layer != expected_layer:
+        if layer and expected_layer and layer != expected_layer:
             errors.append(f"{doc.rel}: layer must be {expected_layer!r} for {doc.typ}")
         if not doc.title:
             warnings.append(f"{doc.rel}: frontmatter missing title")

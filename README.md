@@ -1,6 +1,6 @@
 # 基础设施知识库
 
-团队基础设施知识库。人和 Agent 读同一套 Markdown。知识按 **L0 原子知识 → L1 资源注册表 → L2 运行知识** 生长，而不是把来源文档缩写后换目录。
+团队基础设施知识库。人和 Agent 读同一套 Markdown。知识按 **L0 基础知识 → L1 资源注册表 → 运维与设计（Runbook / FAQ / ADR）** 生长：先沉淀内网特有概念，再登记部署实例，手册与问答用双链引用下层。禁止把来源文档平铺成一页。
 
 组织方式来自两处：
 
@@ -15,13 +15,13 @@
 .
 ├── index.md                      # 仓地图：wiki / raw / script / tools
 ├── wiki/                         # OKF 知识图：Agent 维护
-│   ├── index.md                  # 知识入口：只列分组（可有 okf_version）
+│   ├── index.md                  # 知识入口：按层和能力域
 │   ├── log.md                    # 追加式变更日志
-│   ├── _meta/ingest/             # 每个来源的提取与覆盖清单
-│   ├── 原子知识/                   # L0：概念、组件、平台、规则、能力
-│   ├── 资源注册表/                 # L1：稳定资产与部署实例
+│   ├── _meta/ingest/             # 公司 wiki 批量可选的覆盖清单
+│   ├── 基础知识/                   # L0：内网特有概念/平台（按能力域）
+│   ├── 资源注册表/                 # L1：部署实例（集群/数据库/存储/中间件/可观测）
 │   ├── 系统与架构/
-│   ├── 操作手册/                   # L2：含脚本用法
+│   ├── 操作手册/                   # Runbook：引用 L0/L1
 │   ├── 故障排查/                 # 场景预案；值班入口
 │   ├── 架构决策记录/
 │   ├── 常见问题/
@@ -64,7 +64,7 @@
 
 ### Ingest（摄入）
 
-把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；一般来源 Agent **不改** `raw/`（公司 wiki：可追加 `inbox.md`、写 `archive/`）。Agent 必须先抽取知识清单、消歧实体和制定分层产出计划，再写 Atomic、Registry 与上层页面；每条有效知识都要有去向，不能无记录缩减。写入后会更新分组 `index.md` 和 [`wiki/log.md`](wiki/log.md)。
+把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；一般来源 Agent **不改** `raw/`（公司 wiki：可追加 `inbox.md`、写 `archive/`）。**禁止一来源一页**：内部概念进 L0 基础知识（按能力域），部署实例进 Registry 并双链 L0，步骤/问答/决策再写 Runbook/FAQ/ADR。写入后会更新分组 `index.md` 和 [`wiki/log.md`](wiki/log.md)。
 
 ```text
 把 raw/ 里这份工单入库。
@@ -75,11 +75,11 @@ https://wiki.example.com/pages/viewpage.action?pageId=12001
 把 inbox 入库。
 ```
 
-公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（只追加、入库不删行）。导出到 `raw/wiki/archive/<pageId>/` 后，按 **Extract → Resolve → Plan → Compose → Link → Validate** 编译；导出工具只保存来源，不负责知识生成。知识页 `sources` 只写原始 URL。新页 `status: draft`，通过语义审核后再标 `verified`。
+公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（只追加、入库不删行）。导出到 `raw/wiki/archive/<pageId>/` 后，先拆基础知识再长 Registry/Runbook/FAQ/ADR；导出工具只保存来源，不负责知识生成。知识页 `sources` 只写原始 URL。新页 `status: draft`，通过语义审核后再标 `verified`。公司 wiki 批量可写 `wiki/_meta/ingest/<docKey>.yaml`，该清单不进知识导航。
 
 ### Query（查询）
 
-问 `wiki/` 里已有的知识。Agent 先读 [`wiki/index.md`](wiki/index.md)，再打开对应分组（有 `index.md` 则先读它），最后读 2–5 篇正文。只知道现象时走 [`wiki/故障排查/`](wiki/故障排查/)。
+问 `wiki/` 里已有的知识。Agent 先读 [`wiki/index.md`](wiki/index.md)，按层选起点：是什么/内部概念走 [`基础知识`](wiki/基础知识/)；哪一套走 [`资源注册表`](wiki/资源注册表/)；怎么做走操作手册；为什么走 ADR；只知道现象时走 [`wiki/故障排查/`](wiki/故障排查/)。
 
 ```text
 磁盘满了怎么处理？
@@ -110,8 +110,8 @@ python tools/okf-lint/okf_lint.py
 
 | 目录 | `type` | 放什么 |
 | --- | --- | --- |
-| [`原子知识/`](wiki/原子知识/) | `Atomic` | 内部概念、组件、平台、规则、能力；具体标题/块可被上层引用 |
-| [`资源注册表/`](wiki/资源注册表/) | `Registry` | 资源、入口、环境、负责人、依赖、告警。不存凭证 |
+| [`基础知识/`](wiki/基础知识/) | `Atomic` | 内网特有概念、平台、规则（按能力域分子目录）；上层用双链引用 |
+| [`资源注册表/`](wiki/资源注册表/) | `Registry` | 部署实例：哪一套、入口、环境、负责人、依赖、告警。不存凭证 |
 | [`系统与架构/`](wiki/系统与架构/) | `Architecture` | 系统说明、拓扑、请求/数据链路 |
 | [`操作手册/`](wiki/操作手册/) | `Runbook` | 标准操作、配置说明与脚本用法（`.py` 在 `script/`） |
 | [`故障排查/`](wiki/故障排查/) | `Playbook` | 按症状排查、止损、升级（场景预案） |
@@ -120,15 +120,15 @@ python tools/okf-lint/okf_lint.py
 | [`案例与复盘/`](wiki/案例与复盘/) | `Incident` | 故障/变更/演练复盘 |
 | [`新人上手/`](wiki/新人上手/) | `Onboarding` | 接手清单、权限申请、首周任务、学习路径 |
 
-业务域写在 frontmatter 的 `domain`。Registry 可按资产种类建子目录；其它层不因来源文档目录机械复制。语义关系使用 `[[页#标题]]`，关键稳定事实使用 `[[页#^block-id]]`。type / frontmatter / Registry 画像见 Skill [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。
+业务域写在 frontmatter 的 `domain`。基础知识按能力域分子目录；Registry 按资产种类分子目录。语义关系必须使用 Obsidian `[[页]]` / `[[页#标题]]`，关键稳定事实可用 `[[页#^block-id]]`。type / frontmatter / Registry 画像见 Skill [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。
 
 ## 路线图
 
 
 | 阶段              | 做什么                           |
 | --------------- | ----------------------------- |
-| **Phase 0（当前）** | 分层 schema、编译 Skill、关系与质量门 |
-| **Phase 1**     | 建核心 Atomic/Registry，补高频 Runbook/Playbook |
-| **Phase 2**     | 按六段流水线重编译存量来源并建立内容级关系 |
+| **Phase 0（当前）** | L0 基础知识能力域 + L1 资产类骨架、双链约定 |
+| **Phase 1**     | 按痛点补 L0 概念页与 Registry 实例，再补高频 Runbook/FAQ/ADR |
+| **Phase 2**     | 存量来源按「先拆基础知识再长上层」重编译，禁止平铺 |
 | **Phase 3**     | 补齐架构、新人上手、自动化与演练 |
 | **Phase 4** | Obsidian/MkDocs 视图与持续质量治理 |

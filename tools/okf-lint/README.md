@@ -24,4 +24,4 @@ python tools/okf-lint/okf_lint.py --root examples/network-pilot
 
 ## 扫什么
 
-扫描 `wiki/index.md`、`wiki/log.md`、9 个知识类型目录与 `wiki/_meta/ingest/*.yaml`。不把 `_meta` 当知识正文，也不扫描仓根框架文件和 raw。
+扫描 `wiki/index.md`、`wiki/log.md`、9 个知识类型目录（含 `基础知识/`、`资源注册表/` 子目录）与 `wiki/_meta/ingest/*.yaml`。不把 `_meta` 当知识正文，也不扫描仓根框架文件和 raw。

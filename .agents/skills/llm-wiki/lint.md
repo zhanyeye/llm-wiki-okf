@@ -8,7 +8,7 @@
 python tools/okf-lint/okf_lint.py
 ```
 
-先修 **error**：缺 frontmatter/type/id/layer、type 与顶层目录不符、ID 重复、Atomic kind 非法、Registry 缺 asset_kind/technology、关系目标页/标题/块不存在、coverage manifest 处置不完整、`verified.by` 不是 `human:` 前缀。
+先修 **error**：缺 frontmatter/type/id、type 与顶层目录不符、ID 重复、Atomic kind 非法、Registry 缺 asset_kind/technology、关系目标页/标题/块不存在、coverage manifest 处置不完整、`verified.by` 不是 `human:` 前缀。`layer` 若填写则必须与 type 一致。
 
 **warning**：Markdown 断链、过期、Registry 画像字段缺口、L2 缺下层链接、孤儿 Atomic、重复块 ID、来源缺 manifest、index 不一致。不要为消警告编造事实；缺信息应明确写为 gap 并进入审核。
 
