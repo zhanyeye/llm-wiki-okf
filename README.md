@@ -55,8 +55,9 @@
 | [`/query`](.agents/commands/query.md) | 查 wiki、排障 | `/query 磁盘满了怎么处理` |
 | [`/ingest`](.agents/commands/ingest.md) | 入库、迁文档、结案写页 | `/ingest 把 raw/ 里这份工单入库` |
 | [`/lint`](.agents/commands/lint.md) | 体检、断链、过期 | `/lint` |
+| [`/review`](.agents/commands/review.md) | 列未确认页、人工审核标 `verified` | `/review` |
 
-贴公司 wiki 链接时用 `/ingest`（也可以把 URL 直接丢进对话）。不记得命令就原话说，例如「把 inbox 入库」「体检一下 wiki」。下文三条操作各有一组可复制的说法。
+贴公司 wiki 链接时用 `/ingest`（也可以把 URL 直接丢进对话）。不记得命令就原话说，例如「把 inbox 入库」「体检一下 wiki」。下文四条操作各有一组可复制的说法。
 
 ### Ingest（摄入）
 
@@ -71,7 +72,7 @@ https://wiki.example.com/pages/viewpage.action?pageId=12001
 把 inbox 入库。
 ```
 
-公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（一行一个 URL，**只追加、入库不删行**）。对话入库时 Agent 可把新 URL 追加进 inbox。去重看知识页 `sources:` 与 [`wiki/log.md`](wiki/log.md)。Agent 每次默认处理 5 条，导出到 `raw/wiki/archive/<pageId>/`（`page.md` + `images/`）后再蒸馏编译进仓根 `wiki/`；知识页 `sources` 只写原始 URL。新页 `status: draft`，请人抽看后再标 `verified`。
+公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（一行一个 URL，**只追加、入库不删行**）。对话入库时 Agent 可把新 URL 追加进 inbox。去重看知识页 `sources:` 与 [`wiki/log.md`](wiki/log.md)。Agent 每次默认处理 5 条，导出到 `raw/wiki/archive/<pageId>/`（`page.md` + `images/`）后再蒸馏编译进仓根 `wiki/`；知识页 `sources` 只写原始 URL。新页 `status: draft`，请人抽看后再标 `verified`（`/review` 列出待审清单）。
 
 ### Query（查询）
 
@@ -89,6 +90,16 @@ Helm 部署失败怎么排查？
 
 ```bash
 python tools/okf-lint/okf_lint.py
+```
+
+### Review（审核）
+
+编译产物的质量最终由人判断：机器管格式与断链（lint），"内容对不对"由人看完正文说了算。`/review` 列出所有未确认（`status: draft` 或无人工 `verified`）与待复审（`stale_after` 已过）的页面，逐篇请人过目；人说「这篇 OK」才写 `verified` 与 `status: stable`，说「不对」走 ingest 更正。
+
+```text
+哪些还没确认？
+/review
+第 2 篇 OK
 ```
 
 ## wiki 分组

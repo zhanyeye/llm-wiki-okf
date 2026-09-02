@@ -27,13 +27,14 @@
 
 ## 写入前必须读
 
-入库、迁文档、复盘、从零写页、改 index/log、体检时，**先读** Skill [`SKILL.md`](.agents/skills/llm-wiki/SKILL.md) 按意图路由，再读对应文件（勿跳过）：
+入库、迁文档、复盘、从零写页、改 index/log、体检、审核确认时，**先读** Skill [`SKILL.md`](.agents/skills/llm-wiki/SKILL.md) 按意图路由，再读对应文件（勿跳过）：
 
 | 意图 | 必读 |
 |------|------|
 | 入库 / 迁文档 / 故障结案 / 从零写一页 | [`ingest.md`](.agents/skills/llm-wiki/ingest.md) + [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
 | 公司 wiki 增量入库（对话贴链接 / inbox） | [`ingest.md`](.agents/skills/llm-wiki/ingest.md) + [`references/source-wiki-cli.md`](.agents/skills/llm-wiki/references/source-wiki-cli.md) + [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
 | 体检、断链、过期 | [`lint.md`](.agents/skills/llm-wiki/lint.md) |
+| 审核确认 / 列未审清单 | [`review.md`](.agents/skills/llm-wiki/review.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
 
 type、目录、frontmatter、固定正文标题：全部在 [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。
 

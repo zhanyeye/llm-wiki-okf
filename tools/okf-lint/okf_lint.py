@@ -35,7 +35,12 @@ LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 TYPE_RE = re.compile(r"^type:\s*[\"']?([A-Za-z][A-Za-z0-9]*)[\"']?\s*$", re.M)
 TITLE_RE = re.compile(r"^title:\s*(.*)$", re.M)
 CJK_RE = re.compile(r"[\u4e00-\u9fff]")
-STALE_RE = re.compile(r"^stale_after:\s*[\"']?(\d{4}-\d{2}-\d{2})[\"']?\s*$", re.M)
+STALE_RE = re.compile(
+    r"^stale_after:\s*[\"']?(\d{4}-\d{2}-\d{2})(?:[Tt][0-9:.]+(?:[Zz]|[+-]\d{2}:?\d{2})?)?[\"']?\s*$",
+    re.M,
+)
+STATUS_RE = re.compile(r"^status:\s*[\"']?([A-Za-z]+)[\"']?\s*$", re.M)
+VERIFIED_RE = re.compile(r"^verified:\s*\n[ \t]+by:\s*[\"']?([^\s\"']+)", re.M)
 LOG_DATE_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$", re.M)
 LOG_ENTRY_RE = re.compile(
     r"^\* \*\*(Creation|Update|Deprecation|Initialization|Execution)\*\*: "
@@ -205,6 +210,16 @@ def main() -> int:
                 stale = dt.date.fromisoformat(sm.group(1))
                 if today >= stale:
                     warnings.append(f"{rel}: stale_after {stale.isoformat()} (today {today})")
+            stm = STATUS_RE.search(fm)
+            if stm and stm.group(1) not in {"draft", "stable", "deprecated"}:
+                warnings.append(
+                    f"{rel}: unknown status {stm.group(1)!r} (draft|stable|deprecated)"
+                )
+            vm = VERIFIED_RE.search(fm)
+            if vm and not vm.group(1).startswith("human:"):
+                errors.append(
+                    f"{rel}: verified.by must be human:<id>, got {vm.group(1)!r}"
+                )
 
         for raw_href in LINK_RE.findall(text):
             target = resolve_link(path, raw_href)

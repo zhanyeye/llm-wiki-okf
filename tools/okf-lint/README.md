@@ -14,7 +14,7 @@
 python tools/okf-lint/okf_lint.py
 ```
 
-先修 error，再看 warning（断链、过期 `stale_after`、`title`/文件名不含中文等）。
+先修 error（缺 frontmatter/type、`type` 与目录不符、`verified.by` 非 `human:` 前缀），再看 warning（断链、过期 `stale_after`、`status` 非法枚举、`title`/文件名不含中文等）。
 
 ## 扫什么
 

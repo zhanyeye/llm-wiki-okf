@@ -25,6 +25,7 @@
    - **Update** — 合并进已有页
    - **No material** — 无新增知识；只记 log，不强行写页
 3. **Compile**：按 [references/okf.md](references/okf.md) 选 type/目录与固定标题；填 frontmatter（`status: draft`）；`sources` 写字符串数组（原始 URL 或仓内相对路径）。`title` 用人会查找的主题，`description` 说明适用场景/症状与结果，`tags` 收录有区分度的别名、报错码和症状词；只写来源支持的词，不堆整句问法或臆造内网别名。图片进同目录 `attachments/`（见 okf.md）。来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令。不替人写 `verified`。可用 `obsidian-cli` 写页；需要 callout/embed 时读 `obsidian-markdown`（链接风格仍按 okf.md）。
+   **编译后对照来源核对**：每个步骤必须可执行（有命令/链接/参数，一句话标题不合格）；来源中的关键外链（MR/commit/codehub/3ms 引用）保留进对应小节；数字、表格、命令原样保留；来源「待确认/遗留项」逐条照搬（含链接）；空壳小节写「来源未写」。
 4. **脚本提取**（Compile 后、实体注册前）：若正文含**独立可运行脚本**（≥5 行 bash/python，含 shebang 或可保存为文件直接执行），按以下流程提取：
    - 在 `script/<功能名>/` 下创建脚本文件（去掉 markdown 代码围栏，补 shebang 和 `set -euo pipefail` 如缺失）
    - 同目录创建 `README.md`（含：用途、参数说明、用法、退出码、相关 wiki 页链接）
