@@ -1,24 +1,19 @@
 #!/usr/bin/env python3
-"""Lint the OKF knowledge surface under wiki/. Stdlib only. UTF-8 paths.
-
-Scans only wiki/index.md, wiki/log.md and the 8 type directories (allowlist).
-Does not treat repo-root index.md, README.md, AGENTS.md, raw/, script/,
-tools/, etc. as concept pages.
-"""
+"""Lint the layered OKF knowledge graph. Stdlib only."""
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import re
 import sys
+from collections import defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-BUNDLE = ROOT / "wiki"
-
 RESERVED = {"index.md", "log.md"}
-
 TYPE_DIR = {
+    "Atomic": "原子知识",
     "Registry": "资源注册表",
     "Architecture": "系统与架构",
     "Runbook": "操作手册",
@@ -28,19 +23,51 @@ TYPE_DIR = {
     "Incident": "案例与复盘",
     "Onboarding": "新人上手",
 }
+TYPE_LAYER = {
+    "Atomic": "atomic",
+    "Registry": "registry",
+    "Architecture": "operational",
+    "Runbook": "operational",
+    "Playbook": "operational",
+    "Decision": "operational",
+    "FAQ": "operational",
+    "Incident": "operational",
+    "Onboarding": "operational",
+}
+ATOMIC_KINDS = {"concept", "component", "platform", "policy", "capability"}
+ASSET_KINDS = {
+    "cluster",
+    "namespace",
+    "application",
+    "database",
+    "middleware",
+    "domain",
+    "certificate",
+    "bucket",
+    "dashboard",
+    "alert",
+    "network",
+    "storage",
+}
+RELATION_FIELDS = {
+    "technology",
+    "instance_of",
+    "depends_on",
+    "operates_on",
+    "answers_about",
+    "decides_for",
+    "runbooks",
+    "playbooks",
+    "used_by",
+}
+LOWER_LINK_TYPES = {"Atomic", "Registry"}
+STATUS_VALUES = {"draft", "stable", "deprecated"}
 
-KNOWLEDGE_DIRS = frozenset(TYPE_DIR.values())
-
-LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
-TYPE_RE = re.compile(r"^type:\s*[\"']?([A-Za-z][A-Za-z0-9]*)[\"']?\s*$", re.M)
-TITLE_RE = re.compile(r"^title:\s*(.*)$", re.M)
+MD_LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
+WIKILINK_RE = re.compile(r"!?\[\[([^\]]+)\]\]")
+HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*#*\s*$", re.M)
+BLOCK_RE = re.compile(r"(?:^|\s)\^([a-z0-9][a-z0-9-]*)\s*$", re.M)
 CJK_RE = re.compile(r"[\u4e00-\u9fff]")
-STALE_RE = re.compile(
-    r"^stale_after:\s*[\"']?(\d{4}-\d{2}-\d{2})(?:[Tt][0-9:.]+(?:[Zz]|[+-]\d{2}:?\d{2})?)?[\"']?\s*$",
-    re.M,
-)
-STATUS_RE = re.compile(r"^status:\s*[\"']?([A-Za-z]+)[\"']?\s*$", re.M)
-VERIFIED_RE = re.compile(r"^verified:\s*\n[ \t]+by:\s*[\"']?([^\s\"']+)", re.M)
 LOG_DATE_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$", re.M)
 LOG_ENTRY_RE = re.compile(
     r"^\* \*\*(Creation|Update|Deprecation|Initialization|Execution)\*\*: "
@@ -50,71 +77,81 @@ LOG_BAD_COLON_RE = re.compile(
 )
 
 
-def parse_title(fm: str) -> str | None:
-    m = TITLE_RE.search(fm)
-    if not m:
-        return None
-    raw = m.group(1).strip()
-    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in "\"'":
-        raw = raw[1:-1]
-    return raw.strip() or None
+@dataclass
+class Doc:
+    path: Path
+    rel: str
+    text: str
+    fm: str
+    body: str
+    typ: str
+    title: str
+    doc_id: str
+    headings: set[str]
+    blocks: set[str]
 
 
 def split_frontmatter(text: str) -> tuple[str | None, str]:
     if not text.startswith("---"):
         return None, text
-    rest = text[3:]
-    if rest.startswith("\r\n"):
-        rest = rest[2:]
-    elif rest.startswith("\n"):
-        rest = rest[1:]
-    else:
+    match = re.match(r"^---\r?\n(.*?)\r?\n---\r?\n?", text, re.S)
+    if not match:
         return None, text
-    end = rest.find("\n---")
-    if end < 0:
-        return None, text
-    return rest[:end], rest[end + 4 :]
+    return match.group(1), text[match.end() :]
 
 
-def iter_md(bundle: Path) -> list[Path]:
-    """Only wiki index/log and files under the 8 knowledge directories."""
-    out: list[Path] = []
-    for name in RESERVED:
-        p = bundle / name
-        if p.is_file():
-            out.append(p)
-    for dirname in sorted(KNOWLEDGE_DIRS):
-        d = bundle / dirname
-        if not d.is_dir():
+def unquote(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        return value[1:-1]
+    return value
+
+
+def scalar(fm: str, key: str) -> str:
+    match = re.search(rf"^{re.escape(key)}:[ \t]*(.*?)[ \t]*$", fm, re.M)
+    return unquote(match.group(1)) if match else ""
+
+
+def has_key(fm: str, key: str) -> bool:
+    return re.search(rf"^{re.escape(key)}:", fm, re.M) is not None
+
+
+def list_values(fm: str, key: str) -> list[str]:
+    match = re.search(rf"^{re.escape(key)}:[ \t]*(.*?)[ \t]*$", fm, re.M)
+    if not match:
+        return []
+    inline = match.group(1).strip()
+    if inline.startswith("[") and inline.endswith("]"):
+        return [
+            unquote(item.strip())
+            for item in inline[1:-1].split(",")
+            if item.strip()
+        ]
+    values: list[str] = []
+    lines = fm[match.end() :].splitlines()
+    for line in lines:
+        if not line.strip():
             continue
-        out.extend(sorted(p for p in d.rglob("*.md") if p.is_file()))
-    return out
+        item = re.match(r"^\s+-\s+(.*?)\s*$", line)
+        if item:
+            values.append(unquote(item.group(1)))
+            continue
+        if not line.startswith((" ", "\t")):
+            break
+    return values
 
 
-def rel_posix(path: Path) -> str:
-    return path.relative_to(BUNDLE).as_posix()
+def rel_posix(path: Path, bundle: Path) -> str:
+    return path.relative_to(bundle).as_posix()
 
 
-def resolve_link(src: Path, href: str) -> Path | None:
-    href = href.strip()
-    if not href or href.startswith(("#", "mailto:", "http://", "https://")):
-        return None
-    href = href.split("#", 1)[0]
-    if not href:
-        return None
-    if href.startswith("/"):
-        target = BUNDLE / href.lstrip("/")
-    else:
-        target = (src.parent / href).resolve()
-        try:
-            target.relative_to(BUNDLE.resolve())
-        except ValueError:
-            return target
-    if target.is_dir():
-        # Directory TOC link (./分组/): valid if the directory exists.
-        # Group index.md is optional until the first concept page is written.
-        return target
-    return target
+def iter_markdown(bundle: Path) -> list[Path]:
+    paths = [p for p in (bundle / "index.md", bundle / "log.md") if p.is_file()]
+    for dirname in TYPE_DIR.values():
+        directory = bundle / dirname
+        if directory.is_dir():
+            paths.extend(sorted(p for p in directory.rglob("*.md") if p.is_file()))
+    return paths
 
 
 def lint_log(rel: str, text: str, fm: str | None, errors: list[str], warnings: list[str]) -> None:
@@ -127,119 +164,297 @@ def lint_log(rel: str, text: str, fm: str | None, errors: list[str], warnings: l
         errors.append(f"{rel}: date headings must be newest first")
     for line in text.splitlines():
         if LOG_BAD_COLON_RE.match(line):
-            errors.append(f"{rel}: use ASCII colon after **Verb**, not fullwidth ：")
+            errors.append(f"{rel}: use ASCII colon after **Verb**")
         elif line.startswith("* **") and not LOG_ENTRY_RE.match(line):
-            warnings.append(
-                f"{rel}: entry should be '* **Creation**: ...' ({line[:60]})"
+            warnings.append(f"{rel}: invalid log entry ({line[:60]})")
+
+
+def normalize_wikilink(raw: str) -> tuple[str, str]:
+    target = raw.split("|", 1)[0].strip()
+    if "#" in target:
+        page, anchor = target.split("#", 1)
+    else:
+        page, anchor = target, ""
+    return page.strip(), anchor.strip()
+
+
+def resolve_wikipage(
+    page: str,
+    source: Doc | None,
+    bundle: Path,
+    by_stem: dict[str, list[Doc]],
+    by_path: dict[str, Doc],
+) -> tuple[Doc | None, str]:
+    if not page:
+        return source, ""
+    normalized = page.replace("\\", "/").strip("/")
+    if normalized.startswith("wiki/"):
+        normalized = normalized[5:]
+    if normalized.endswith(".md"):
+        normalized = normalized[:-3]
+    if "/" in normalized:
+        found = by_path.get(normalized) or by_path.get(normalized + ".md")
+        return found, "" if found else "missing"
+    matches = by_stem.get(Path(normalized).name.casefold(), [])
+    if len(matches) == 1:
+        return matches[0], ""
+    if not matches:
+        return None, "missing"
+    return None, "ambiguous"
+
+
+def resolve_wikilink(
+    raw: str,
+    source: Doc | None,
+    bundle: Path,
+    by_stem: dict[str, list[Doc]],
+    by_path: dict[str, Doc],
+) -> tuple[Doc | None, str]:
+    page, anchor = normalize_wikilink(raw)
+    target, problem = resolve_wikipage(page, source, bundle, by_stem, by_path)
+    if problem or target is None:
+        return None, problem or "missing"
+    if anchor.startswith("^"):
+        if anchor[1:] not in target.blocks:
+            return None, "missing block"
+    elif anchor and anchor not in target.headings:
+        return None, "missing heading"
+    return target, ""
+
+
+def resolve_markdown_link(href: str, src: Path, root: Path, bundle: Path) -> Path | None:
+    href = href.strip()
+    if not href or href.startswith(("#", "mailto:", "http://", "https://")):
+        return None
+    href = href.split("#", 1)[0]
+    if not href:
+        return None
+    if href.startswith("/wiki/"):
+        return root / href.lstrip("/")
+    if href.startswith("/"):
+        return bundle / href.lstrip("/")
+    return (src.parent / href).resolve()
+
+
+def manifest_items(text: str) -> list[dict[str, str]]:
+    section = re.search(r"(?ms)^items:\s*\n(.*?)(?=^outputs:|\Z)", text)
+    if not section:
+        return []
+    blocks = re.findall(
+        r"(?ms)^  - id:[ \t]*(.*?)\n(.*?)(?=^  - id:|\Z)", section.group(1)
+    )
+    items: list[dict[str, str]] = []
+    for item_id, block in blocks:
+        item = {"id": unquote(item_id)}
+        for key in ("kind", "summary", "disposition", "target", "reason"):
+            match = re.search(
+                rf"^[ \t]+{key}:[ \t]*(.*?)[ \t]*$", block, re.M
             )
+            if match:
+                item[key] = unquote(match.group(1))
+        items.append(item)
+    return items
 
 
-def main() -> int:
+def run(root: Path) -> tuple[list[str], list[str]]:
+    bundle = root / "wiki"
     errors: list[str] = []
     warnings: list[str] = []
-    today = dt.date.today()
-
-    if not BUNDLE.is_dir():
-        print("error: wiki/ not found", file=sys.stderr)
-        return 2
-
-    root_index = BUNDLE / "index.md"
-    if not root_index.is_file():
-        print("error: wiki/index.md not found", file=sys.stderr)
-        return 2
-
-    for dirname in sorted(KNOWLEDGE_DIRS):
-        if not (BUNDLE / dirname).is_dir():
+    if not bundle.is_dir():
+        return [f"wiki/ not found under {root}"], warnings
+    if not (bundle / "index.md").is_file():
+        errors.append("wiki/index.md not found")
+    for dirname in TYPE_DIR.values():
+        if not (bundle / dirname).is_dir():
             errors.append(f"missing knowledge directory: wiki/{dirname}/")
 
-    md_files = iter_md(BUNDLE)
-    existing = {p.resolve() for p in md_files}
+    docs: list[Doc] = []
     dir_indexes: dict[Path, str] = {}
-    concepts: list[Path] = []
-
-    for path in md_files:
+    markdown_files = iter_markdown(bundle)
+    for path in markdown_files:
         text = path.read_text(encoding="utf-8")
-        rel = rel_posix(path)
-        name = path.name
-        fm, _body = split_frontmatter(text)
-
-        if name == "log.md":
-            if path.parent != BUNDLE:
-                errors.append(f"{rel}: log.md must live at wiki/")
+        rel = rel_posix(path, bundle)
+        fm, body = split_frontmatter(text)
+        if path.name == "log.md":
             lint_log(rel, text, fm, errors, warnings)
             continue
-
-        if name == "index.md":
+        if path.name == "index.md":
             dir_indexes[path.parent.resolve()] = text
-            if path.parent == BUNDLE:
-                if fm is None or "okf_version:" not in fm:
-                    errors.append(f"{rel}: wiki/index.md needs okf_version in frontmatter")
+            if path.parent == bundle:
+                if fm is None or not has_key(fm, "okf_version"):
+                    errors.append(f"{rel}: wiki/index.md needs okf_version")
             elif fm is not None:
                 errors.append(f"{rel}: directory index.md must not have frontmatter")
-        else:
-            concepts.append(path)
-            if fm is None:
-                errors.append(f"{rel}: missing YAML frontmatter")
-                continue
-            m = TYPE_RE.search(fm)
-            if not m:
-                errors.append(f"{rel}: frontmatter missing type")
-                continue
-            typ = m.group(1)
-            expected_dir = TYPE_DIR.get(typ)
-            if expected_dir is None:
-                errors.append(f"{rel}: unknown type {typ!r}")
-            else:
-                parent = path.parent.relative_to(BUNDLE).as_posix()
-                if parent != expected_dir:
-                    errors.append(
-                        f"{rel}: type {typ} should live under wiki/{expected_dir}/"
-                    )
-            title = parse_title(fm)
-            if title is None:
-                warnings.append(f"{rel}: frontmatter missing Chinese title")
-            elif not CJK_RE.search(title):
-                warnings.append(f"{rel}: title must be Chinese, got {title!r}")
-            stem = path.stem
-            if stem not in RESERVED and not CJK_RE.search(stem):
-                warnings.append(
-                    f"{rel}: filename should be Chinese, got {path.name!r}"
-                )
-            sm = STALE_RE.search(fm)
-            if sm:
-                stale = dt.date.fromisoformat(sm.group(1))
-                if today >= stale:
-                    warnings.append(f"{rel}: stale_after {stale.isoformat()} (today {today})")
-            stm = STATUS_RE.search(fm)
-            if stm and stm.group(1) not in {"draft", "stable", "deprecated"}:
-                warnings.append(
-                    f"{rel}: unknown status {stm.group(1)!r} (draft|stable|deprecated)"
-                )
-            vm = VERIFIED_RE.search(fm)
-            if vm and not vm.group(1).startswith("human:"):
-                errors.append(
-                    f"{rel}: verified.by must be human:<id>, got {vm.group(1)!r}"
-                )
-
-        for raw_href in LINK_RE.findall(text):
-            target = resolve_link(path, raw_href)
-            if target is None:
-                continue
-            resolved = target.resolve() if target.exists() else target
-            if not target.exists():
-                warnings.append(f"{rel}: broken link ({raw_href})")
-            elif target.suffix == ".md" and resolved not in existing and not target.exists():
-                warnings.append(f"{rel}: broken link ({raw_href})")
-
-    for concept in concepts:
-        idx_text = dir_indexes.get(concept.parent.resolve())
-        idx_rel = rel_posix(concept.parent / "index.md")
-        if idx_text is None:
-            warnings.append(f"{rel_posix(concept)}: directory missing index.md")
             continue
-        if concept.name not in idx_text:
-            warnings.append(f"{idx_rel}: missing entry for {concept.name}")
+        if fm is None:
+            errors.append(f"{rel}: missing YAML frontmatter")
+            continue
+        typ = scalar(fm, "type")
+        title = scalar(fm, "title")
+        doc_id = scalar(fm, "id")
+        headings = {h.strip() for h in HEADING_RE.findall(body)}
+        blocks = set(BLOCK_RE.findall(body))
+        docs.append(Doc(path, rel, text, fm, body, typ, title, doc_id, headings, blocks))
 
+    by_stem: dict[str, list[Doc]] = defaultdict(list)
+    by_path: dict[str, Doc] = {}
+    ids: dict[str, Doc] = {}
+    block_owners: dict[str, list[Doc]] = defaultdict(list)
+    inbound: dict[str, int] = defaultdict(int)
+    manifest_sources: set[str] = set()
+
+    for doc in docs:
+        by_stem[doc.path.stem.casefold()].append(doc)
+        relative = doc.path.relative_to(bundle).as_posix()
+        by_path[relative] = doc
+        by_path[relative.removesuffix(".md")] = doc
+        if not doc.typ:
+            errors.append(f"{doc.rel}: frontmatter missing type")
+        elif doc.typ not in TYPE_DIR:
+            errors.append(f"{doc.rel}: unknown type {doc.typ!r}")
+        else:
+            top = doc.path.relative_to(bundle).parts[0]
+            if top != TYPE_DIR[doc.typ]:
+                errors.append(f"{doc.rel}: type {doc.typ} should live under wiki/{TYPE_DIR[doc.typ]}/")
+        if not doc.doc_id:
+            errors.append(f"{doc.rel}: frontmatter missing stable id")
+        elif doc.doc_id in ids:
+            errors.append(f"{doc.rel}: duplicate id {doc.doc_id!r} (also {ids[doc.doc_id].rel})")
+        else:
+            ids[doc.doc_id] = doc
+        expected_layer = TYPE_LAYER.get(doc.typ)
+        layer = scalar(doc.fm, "layer")
+        if expected_layer and layer != expected_layer:
+            errors.append(f"{doc.rel}: layer must be {expected_layer!r} for {doc.typ}")
+        if not doc.title:
+            warnings.append(f"{doc.rel}: frontmatter missing title")
+        elif not CJK_RE.search(doc.title):
+            warnings.append(f"{doc.rel}: title should contain Chinese")
+        if not CJK_RE.search(doc.path.stem):
+            warnings.append(f"{doc.rel}: filename should contain Chinese")
+        status = scalar(doc.fm, "status")
+        if status and status not in STATUS_VALUES:
+            warnings.append(f"{doc.rel}: unknown status {status!r}")
+        stale = scalar(doc.fm, "stale_after")
+        if stale:
+            try:
+                if dt.date.today() >= dt.date.fromisoformat(stale[:10]):
+                    warnings.append(f"{doc.rel}: stale_after {stale}")
+            except ValueError:
+                errors.append(f"{doc.rel}: invalid stale_after {stale!r}")
+        verified_by = ""
+        verified = re.search(r"^verified:\s*\n\s+by:\s*(.*?)\s*$", doc.fm, re.M)
+        if verified:
+            verified_by = unquote(verified.group(1))
+        if verified_by and not verified_by.startswith("human:"):
+            errors.append(f"{doc.rel}: verified.by must be human:<id>")
+        if doc.typ == "Atomic":
+            kind = scalar(doc.fm, "kind")
+            if kind not in ATOMIC_KINDS:
+                errors.append(f"{doc.rel}: Atomic kind must be one of {sorted(ATOMIC_KINDS)}")
+        if doc.typ == "Registry":
+            asset_kind = scalar(doc.fm, "asset_kind")
+            if asset_kind not in ASSET_KINDS:
+                errors.append(f"{doc.rel}: Registry asset_kind must be one of {sorted(ASSET_KINDS)}")
+            if not list_values(doc.fm, "technology"):
+                errors.append(f"{doc.rel}: Registry needs technology wikilink to Atomic")
+            for key in ("name", "environment", "owner", "entries"):
+                if not has_key(doc.fm, key):
+                    warnings.append(f"{doc.rel}: Registry missing {key}")
+            profile_fields = {
+                "database": ("backup", "retention"),
+                "domain": ("dns", "certificate"),
+                "certificate": ("covered_domains", "expires_at", "runbooks"),
+                "cluster": ("alerts", "runbooks"),
+            }
+            for key in profile_fields.get(asset_kind, ()):
+                if not has_key(doc.fm, key) and key.replace("_", " ") not in doc.body.casefold():
+                    warnings.append(f"{doc.rel}: {asset_kind} profile missing {key} or explicit gap")
+        for block in doc.blocks:
+            block_owners[block].append(doc)
+
+    for block, owners in block_owners.items():
+        if len(owners) > 1:
+            warnings.append(f"duplicate block id ^{block}: {', '.join(d.rel for d in owners)}")
+
+    for doc in docs:
+        lower_links = 0
+        for raw in WIKILINK_RE.findall(doc.text):
+            target, problem = resolve_wikilink(raw, doc, bundle, by_stem, by_path)
+            if problem:
+                errors.append(f"{doc.rel}: invalid wikilink [[{raw}]] ({problem})")
+            elif target:
+                inbound[target.rel] += 1
+                if target.typ in LOWER_LINK_TYPES:
+                    lower_links += 1
+        for field in RELATION_FIELDS:
+            for value in list_values(doc.fm, field):
+                if not WIKILINK_RE.fullmatch(value):
+                    errors.append(f"{doc.rel}: {field} value must be a quoted wikilink ({value})")
+        for href in MD_LINK_RE.findall(doc.text):
+            target = resolve_markdown_link(href, doc.path, root, bundle)
+            if target is not None and not target.exists():
+                warnings.append(f"{doc.rel}: broken markdown link ({href})")
+        if doc.typ in {"Runbook", "Playbook", "FAQ", "Decision", "Architecture"} and lower_links == 0:
+            warnings.append(f"{doc.rel}: operational page has no Atomic/Registry content link")
+        index_text = dir_indexes.get(doc.path.parent.resolve())
+        if index_text is None:
+            warnings.append(f"{doc.rel}: directory missing index.md")
+        elif doc.path.name not in index_text:
+            warnings.append(f"{rel_posix(doc.path.parent / 'index.md', bundle)}: missing entry for {doc.path.name}")
+
+    for doc in docs:
+        if doc.typ == "Atomic" and inbound[doc.rel] == 0:
+            warnings.append(f"{doc.rel}: orphan Atomic page has no inbound content link")
+
+    manifest_dir = bundle / "_meta" / "ingest"
+    for path in sorted(manifest_dir.glob("*.yaml")) if manifest_dir.is_dir() else []:
+        text = path.read_text(encoding="utf-8")
+        rel = rel_posix(path, bundle)
+        source = scalar(text, "source")
+        if source:
+            manifest_sources.add(source)
+        status = scalar(text, "status")
+        if status not in {"compiled", "no-material", "failed", "skipped"}:
+            errors.append(f"{rel}: invalid manifest status {status!r}")
+        items = manifest_items(text)
+        if status == "compiled" and not items:
+            errors.append(f"{rel}: compiled manifest has no items")
+        for item in items:
+            disposition = item.get("disposition", "")
+            if disposition not in {"compiled", "duplicate", "excluded", "gap"}:
+                errors.append(f"{rel}: item {item['id']} has invalid disposition {disposition!r}")
+                continue
+            if disposition in {"compiled", "duplicate"}:
+                target_value = item.get("target", "")
+                match = WIKILINK_RE.fullmatch(target_value)
+                if not match:
+                    errors.append(f"{rel}: item {item['id']} needs wikilink target")
+                else:
+                    _, problem = resolve_wikilink(match.group(1), None, bundle, by_stem, by_path)
+                    if problem:
+                        errors.append(f"{rel}: item {item['id']} target invalid ({problem})")
+            elif not item.get("reason"):
+                errors.append(f"{rel}: item {item['id']} {disposition} needs reason")
+
+    for doc in docs:
+        for source in list_values(doc.fm, "sources"):
+            if source.startswith(("http://", "https://", "raw/")) and source not in manifest_sources:
+                warnings.append(f"{doc.rel}: source has no coverage manifest ({source})")
+
+    return errors, warnings
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=Path(__file__).resolve().parents[2],
+        help="repository root containing wiki/",
+    )
+    args = parser.parse_args(argv)
+    errors, warnings = run(args.root.resolve())
     for line in errors:
         print(f"error: {line}")
     for line in warnings:

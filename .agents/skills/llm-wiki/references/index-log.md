@@ -6,7 +6,7 @@
 
 ## index.md（渐进式索引）
 
-`index.md` 是目录 TOC，不是概念页。
+`index.md` 是目录 TOC，不是概念页。总入口先按 L0 Atomic、L1 Registry、L2 Operational 导航；分组内可继续按领域或资产种类建子目录。
 
 | 位置 | frontmatter | 列什么 |
 |------|-------------|--------|
@@ -23,6 +23,8 @@
 | 分组尚无概念页 | **不需要**。不要为占位单独建空 index；目录可用 `.gitkeep` 保留 |
 | 写入第一篇概念页 | **必须创建** index.md，并列入该页 |
 | 已有 index | 有页必有条目；删页或改 `title`/`description` 时同步改 |
+
+嵌套目录同样遵守“有概念页才建 index”：例如 `wiki/资源注册表/数据库/index.md` 列数据库资产，`wiki/资源注册表/index.md` 链到 `./数据库/`。不要在父 index 复制列出所有子目录资产。
 
 例外：`wiki/故障排查/index.md` 可在尚无正文时存在，用于列「待入库」症状清单（值班入口）。
 
@@ -43,6 +45,7 @@
 - 条目格式：`* [标题](链接) - 短描述`（空格、连字符、空格）。描述取自目标页 `title` / `description`。
 - 同目录概念：`./页名.md`。同目录子文件夹：`./资源注册表/`（目录链接，不要写成 `index.md`）。跨目录：仓根绝对路径 `/wiki/资源注册表/页.md`。
 - 不要把 schema、domain 列表、Skill 说明写进 index。
+- index 只做导航；资产聚合视图可由 Obsidian Base 生成，不能成为第二份事实源。
 
 ### 故障排查/index.md
 

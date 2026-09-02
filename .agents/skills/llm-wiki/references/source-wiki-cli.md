@@ -54,10 +54,10 @@ python tools/wiki-export/wiki_export.py check
 
 按 inbox 从上到下（含刚追加的），过滤掉：
 
-- 已在某知识页 frontmatter `sources[].resource` 中出现过的 URL（精确匹配），除非用户点名「刷新该 url」
+- 已在某知识页 frontmatter `sources` 字符串数组中出现过的 URL（精确匹配），除非用户点名「刷新该 url」
 - `wiki/log.md` 里已记为 `ingest skipped` / `ingest failed` 的 URL，除非用户说重试或刷新
 
-默认取最多 **15** 条；用户指定本批条数则按指定。批处理导出无 token 瓶颈，但编译（triage → 蒸馏 → 写页）每条约需 1 轮对话，过大批次易超上下文，建议 10–20 条。
+默认取最多 **15** 条；用户指定本批条数则按指定。批处理导出无 token 瓶颈，但六阶段语义编译需要逐条核对，过大批次易超上下文，建议 10–20 条。
 
 ## 3. 批量导出（用 wiki_export.py）
 
@@ -94,54 +94,62 @@ raw/wiki/archive/<docKey>/
 
 不满足 → `failed`，不编译。
 
-## 4. 编译（必须串行；质量门）
+## 4. 分层编译（必须串行；质量门）
 
-对每条导出并验收成功的条目，**一条一条**编译（index/log 是共享状态）。「同批」本身不是关联依据；**内容确有关联时可以互链**。禁止默认「1 URL = 1 新页」。
+对每条导出并验收成功的条目，按 [compile.md](compile.md) **一条一条**执行 Extract → Resolve → Plan → Compose → Link → Validate（index/log 是共享状态）。「同批」本身不是关联依据。禁止默认「1 URL = 1 新页」。
 
 ### 4.1 过滤
 
 非运维知识 → `skipped`，写 log（原因），不写知识页。
 
-### 4.2 Triage（与一般摄入相同）
+### 4.2 Extract
 
-以本条 `archive/<docKey>/{标题}.md` 为主；在 `wiki/` 按标题/实体/同义词搜已有页，判定：
+以 `archive/<docKey>/{标题}.md` 为唯一事实来源，提取实体、事实、稳定资产、步骤、问答、决策、症状和事件。先写内存中的提取清单，不直接按原文目录写页。命令、数字、表格、错误原文、限制和遗留项必须有清单项。
 
-- **Update** — 合并进已有页（补 `sources` 写本条原始 wiki URL）
-- **New** — 才新建；一篇来源可拆成多种 type（例如手册 + 注册表）
-- **No material** — 无新增知识；只记 log，不强行写页
+### 4.3 Resolve
 
-需要判断与本批其它条是否相关时，可对照其标题/摘要，不要为凑链通读全文硬凑。
+按稳定 ID、名称、别名、职责和环境搜索现有 Atomic/Registry：
 
-### 4.3 蒸馏验收
+- 同一实体 → Update；补本条原始 URL 到 `sources`。
+- 新的稳定实体 → New；先 Atomic、再 Registry。
+- 无新增知识 → No material；仍更新对应编译清单状态。
+- 无法确认 → gap；说明缺什么，不用模型常识填补。
 
-按 [okf.md](okf.md) 选 type/目录与固定 `##`；写页当时按 §4.3.0 **对照来源核对清单**逐项自检，不通过 → `failed` + log note，不要凑空壳页：
+### 4.4 Plan
 
-- 按 type 固定 `##` 写满；来源没有的小节写「来源未写」，**禁止**用训练数据补集群名、地址、命令
-- 正文自洽，值班打开这一页就能做；不要「详见 raw/archive」
-- 命令进代码块；密钥/token 剥离；占位符用 `<cluster>`、`<namespace>`、`<path>`
-- 只拷对操作有用的图到知识页同目录 `attachments/`，正文 `![](./attachments/<文件名>)`（见 okf.md）；raw 侧仍用 `images/`
-- **交叉引用**：按 [okf.md](okf.md)「按内容关联」——确有依赖/互补/上下游 → 可链；仅因同批 → 不链
-- `status: draft`；**不替人写** `verified`
-- `sources` **只写本条原始 wiki URL**；禁止写 `raw/wiki/archive/...`
+为每个清单项分配 `compiled|duplicate|excluded|gap` 和目标页/标题/块。一篇来源可更新多个层级，多条 URL 也可汇入同一实体。没有分层计划不得 Compose。
 
-可选：按 [obsidian.md](obsidian.md) 用 `obsidian-cli` 创建/更新笔记；失败则回退普通 Write。
+### 4.5 Compose
 
-### 4.3.0 蒸馏核对清单（对照原文逐项过）
+按 L0 Atomic → L1 Registry → L2 Operational 写页；格式见 [okf.md](okf.md)。Registry 使用结构化 frontmatter，`technology` 必须链接 Atomic。上层页引用下层定义和约束，不复制近似版本。
 
-写页后**对照 `archive/<docKey>/{标题}.md` 原文逐项核对**，不通过 → `failed` + log note，不要凑空壳页：
+- 正文自洽；来源没有的小节写「来源未写」或「不适用」。
+- 命令进代码块；密钥/token 剥离；占位符用 `<cluster>`、`<namespace>`、`<path>`。
+- 有用图片拷到知识页同目录 `attachments/`；raw 侧仍用 `images/`。
+- `status: draft`，不替人写 `verified`。
+- `sources` 只写原始 wiki URL，禁止写 `raw/wiki/archive/...`。
 
-- **步骤可执行**：每个步骤必须有命令 / 链接 / 参数等可执行内容；只有一句话标题的步骤不合格
-- **关键外链保留**：来源正文中的 MR / commit / codehub / 3ms 等关键引用链接，保留进对应小节（可追溯）；`sources` 仍只写 wiki URL
-- **数据保留**：数字、表格、命令原样保留，不缩写、不丢行
-- **遗留项保留**：来源的「待确认 / 遗留问题 / 下一步」逐条照搬（含链接）
-- **空壳标注**：来源没有的小节写「来源未写」，禁止留空标题
-- **正文自洽**：值班打开这一页就能做，不依赖 raw
+### 4.6 Link
 
-### 4.3.1 实体注册（资源注册表同步）
+为 `technology`、`depends_on`、`operates_on`、`answers_about`、`decides_for` 建标题级或块级 wikilink。只维护来源支持的有向边；反向关系由 backlinks 派生。仅同批、同目录或同 domain 不构成关系。
 
-按 [ingest.md](../ingest.md) 一般摄入「实体注册」步执行。**写完概念页后立即做，不要等用户提醒。** 本通道 `sources` **只写本条原始 wiki URL**，禁止 `raw/wiki/archive/...`。没有可注册实体、或本条是 skipped / failed / no material → 跳过，不强行建页。交叉引用仍按 [okf.md](okf.md)「按内容关联」，链到 Registry 时放在该 type 的固定相关章节。
+### 4.7 Coverage manifest
 
-### 4.4 index / log
+写 `wiki/_meta/ingest/<docKey>.yaml`，记录每个提取项的处置、目标和 gap 原因。该清单不进知识导航，不包含凭证。
+
+### 4.8 Validate
+
+对照原文与 coverage manifest 逐项验收：
+
+- `compiled/duplicate` 目标存在；`excluded/gap` 有原因。
+- 步骤有前置、参数/命令、验证和必要回滚，不能只有标题。
+- 关键外链、数字、表格、命令、限制和遗留项无静默丢失。
+- Registry 解析到 Atomic 且满足 `asset_kind` 最小画像。
+- 上层关系指向存在的页、标题或块；正文不依赖 raw。
+
+不通过就继续修复；无法修复则记 failed，不得写 `ingest compiled`。
+
+### 4.9 index / log
 
 按 [index-log.md](index-log.md) 更新分组 index（无则创建）与 `wiki/log.md`。公司 wiki 结果用固定句式（便于下次过滤）：
 
@@ -156,11 +164,11 @@ raw/wiki/archive/<docKey>/
 
 汇报：compiled / skipped / failed / no material（各列 url 或 docKey）；inbox 中尚未出现在 `sources:` 且未记 skipped/failed 的剩余大约数量；问是否继续。
 
-列出本批新页/改页路径，并说：「以上为 draft，请抽看；要标 verified 再说一声。」
+列出本批新页/改页和 coverage gap，并说：「以上为 draft，已通过机械门禁；请按 review 流程确认语义质量。」
 
 然后跑 `python tools/okf-lint/okf_lint.py`，先修 error。
 
-存档路径为 `raw/wiki/archive/<docKey>/`。不自动刷新已编译 URL（除非用户点名）。蒸馏编译，不要把 wiki 全文当 OKF 页粘贴。
+存档路径为 `raw/wiki/archive/<docKey>/`。不自动刷新已编译 URL（除非用户点名）。知识编译清单在 `wiki/_meta/ingest/<docKey>.yaml`；不要把 wiki 全文当知识页粘贴。
 
 ---
 
@@ -174,7 +182,7 @@ raw/wiki/archive/<docKey>/
 Step 1: 刷新元数据    wiki_inbox_meta.py fetch + generate
 Step 2: Diff          wiki_refresh.py diff
 Step 3: Re-export     wiki_export.py re-export <受影响 docKey...>
-Step 4: 编译          同 §4（串行 Triage → 蒸馏 → 写页 → log）
+Step 4: 编译          同 §4（Extract → Resolve → Plan → Compose → Link → Validate）
 Step 5: 收尾          同 §5
 ```
 
@@ -227,18 +235,16 @@ python tools/wiki-export/wiki_refresh.py re-export-changed
 
 | | 首次入库 | 增量刷新 |
 |---|---------|---------|
-| Triage | New / Update | **一定是 Update**（已有页） |
-| 编译动作 | 写新页或合并进已有页 | **读 raw 源 + 读现有 OKF 页 → diff → 合并新增内容** |
+| 实体解析 | New / Update | 读取旧 manifest 后重新 Resolve，可能新增 Atomic/Registry |
+| 编译动作 | 写新页或合并进已有页 | **重跑六阶段并更新原有输出与关系** |
 | 不变处理 | N/A | wiki 源无新增知识 → `no material`，不强行改页 |
 
-增量刷新编译时的具体操作：
-1. 读 raw 源文件 `archive/<docKey>/{标题}.md`
-2. 读现有 OKF 页（从 `sources` 反查到对应页）
-3. 对比：
-   - raw 有、OKF 无 → 合并
-   - raw 有变化（步骤/命令/参数更正）→ 更新
-   - raw 无变化 → `no material`
-4. 写页 + 更新 index/log
+增量刷新编译时：
+1. 读 raw 源、旧 `wiki/_meta/ingest/<docKey>.yaml` 和清单列出的现有输出。
+2. 重跑 Extract → Resolve → Plan；不得只 append 新段落。
+3. 更新受影响的 Atomic/Registry/L2 页面及内容级关系；删除知识须有来源证据，不能因新来源未重复旧段落就删除。
+4. 更新同一 manifest；无新增或更正才记 `no material`。
+5. Validate 后更新 index/log。
 
 ### Step 5：收尾
 

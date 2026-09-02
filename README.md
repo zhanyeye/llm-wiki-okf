@@ -1,6 +1,6 @@
 # 基础设施知识库
 
-团队基础设施知识库。人和 Agent 读同一套 Markdown。本仓库是框架；`wiki/` 分组已建好，概念页待入库。
+团队基础设施知识库。人和 Agent 读同一套 Markdown。知识按 **L0 原子知识 → L1 资源注册表 → L2 运行知识** 生长，而不是把来源文档缩写后换目录。
 
 组织方式来自两处：
 
@@ -17,9 +17,11 @@
 ├── wiki/                         # OKF 知识图：Agent 维护
 │   ├── index.md                  # 知识入口：只列分组（可有 okf_version）
 │   ├── log.md                    # 追加式变更日志
-│   ├── 资源注册表/
+│   ├── _meta/ingest/             # 每个来源的提取与覆盖清单
+│   ├── 原子知识/                   # L0：概念、组件、平台、规则、能力
+│   ├── 资源注册表/                 # L1：稳定资产与部署实例
 │   ├── 系统与架构/
-│   ├── 操作手册/                 # 含脚本用法
+│   ├── 操作手册/                   # L2：含脚本用法
 │   ├── 故障排查/                 # 场景预案；值班入口
 │   ├── 架构决策记录/
 │   ├── 常见问题/
@@ -35,6 +37,7 @@
 ├── AGENTS.md                     # 能力索引；细则在 Skill
 ├── CLAUDE.md                     # Claude Code 入口
 ├── .agents/skills/               # 技能实体（Cursor / Codex 扫描）
+├── examples/network-pilot/       # 与正式 wiki 隔离的虚构分层试点
 └── .claude/skills -> .agents/skills  # 软链接，供 Claude `/llm-wiki`
 ```
 
@@ -61,7 +64,7 @@
 
 ### Ingest（摄入）
 
-把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；一般来源 Agent **不改** `raw/`（公司 wiki：可追加 `inbox.md`、写 `archive/`）。故障结论不要只留在聊天里。写入后会更新分组 `index.md`（若无则创建）和 [`wiki/log.md`](wiki/log.md)。空分组可以没有 `index.md`。
+把来源编译进 `wiki/`。人先把工单、纪要、旧文档放进 [`raw/`](raw/)，再让 Agent 入库；一般来源 Agent **不改** `raw/`（公司 wiki：可追加 `inbox.md`、写 `archive/`）。Agent 必须先抽取知识清单、消歧实体和制定分层产出计划，再写 Atomic、Registry 与上层页面；每条有效知识都要有去向，不能无记录缩减。写入后会更新分组 `index.md` 和 [`wiki/log.md`](wiki/log.md)。
 
 ```text
 把 raw/ 里这份工单入库。
@@ -72,7 +75,7 @@ https://wiki.example.com/pages/viewpage.action?pageId=12001
 把 inbox 入库。
 ```
 
-公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（一行一个 URL，**只追加、入库不删行**）。对话入库时 Agent 可把新 URL 追加进 inbox。去重看知识页 `sources:` 与 [`wiki/log.md`](wiki/log.md)。Agent 每次默认处理 5 条，导出到 `raw/wiki/archive/<pageId>/`（`page.md` + `images/`）后再蒸馏编译进仓根 `wiki/`；知识页 `sources` 只写原始 URL。新页 `status: draft`，请人抽看后再标 `verified`（`/review` 列出待审清单）。
+公司 wiki：人对话贴链接，或写 [`raw/wiki/inbox.md`](raw/wiki/inbox.md)（只追加、入库不删行）。导出到 `raw/wiki/archive/<pageId>/` 后，按 **Extract → Resolve → Plan → Compose → Link → Validate** 编译；导出工具只保存来源，不负责知识生成。知识页 `sources` 只写原始 URL。新页 `status: draft`，通过语义审核后再标 `verified`。
 
 ### Query（查询）
 
@@ -107,6 +110,7 @@ python tools/okf-lint/okf_lint.py
 
 | 目录 | `type` | 放什么 |
 | --- | --- | --- |
+| [`原子知识/`](wiki/原子知识/) | `Atomic` | 内部概念、组件、平台、规则、能力；具体标题/块可被上层引用 |
 | [`资源注册表/`](wiki/资源注册表/) | `Registry` | 资源、入口、环境、负责人、依赖、告警。不存凭证 |
 | [`系统与架构/`](wiki/系统与架构/) | `Architecture` | 系统说明、拓扑、请求/数据链路 |
 | [`操作手册/`](wiki/操作手册/) | `Runbook` | 标准操作、配置说明与脚本用法（`.py` 在 `script/`） |
@@ -116,15 +120,15 @@ python tools/okf-lint/okf_lint.py
 | [`案例与复盘/`](wiki/案例与复盘/) | `Incident` | 故障/变更/演练复盘 |
 | [`新人上手/`](wiki/新人上手/) | `Onboarding` | 接手清单、权限申请、首周任务、学习路径 |
 
-业务域（原 00–08）写在 frontmatter 的 `domain`，不当目录。规范、技能地图、脚本说明不再单开目录：必须/禁止写入相关架构或手册页；学习路径写入新人上手；脚本用法写入操作手册（`.py` 仍在 `script/`）。type / frontmatter 见 Skill [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)；入口索引见 [`AGENTS.md`](AGENTS.md)。
+业务域写在 frontmatter 的 `domain`。Registry 可按资产种类建子目录；其它层不因来源文档目录机械复制。语义关系使用 `[[页#标题]]`，关键稳定事实使用 `[[页#^block-id]]`。type / frontmatter / Registry 画像见 Skill [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。
 
 ## 路线图
 
 
 | 阶段              | 做什么                           |
 | --------------- | ----------------------------- |
-| **Phase 0（当前）** | 框架、schema、Skill、校验脚本 |
-| **Phase 1**     | 按痛点补操作手册、故障排查、资源注册表           |
-| **Phase 2**     | 存量文档落入 8 个目录、打 domain、互相链接   |
-| **Phase 3**     | 补齐系统与架构、新人上手；脚本用法写入操作手册       |
-| **Phase 4（可选）** | Obsidian / MkDocs；再加本地搜索      |
+| **Phase 0（当前）** | 分层 schema、编译 Skill、关系与质量门 |
+| **Phase 1**     | 建核心 Atomic/Registry，补高频 Runbook/Playbook |
+| **Phase 2**     | 按六段流水线重编译存量来源并建立内容级关系 |
+| **Phase 3**     | 补齐架构、新人上手、自动化与演练 |
+| **Phase 4** | Obsidian/MkDocs 视图与持续质量治理 |

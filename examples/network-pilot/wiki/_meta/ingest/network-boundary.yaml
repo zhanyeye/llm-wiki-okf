@@ -1,0 +1,47 @@
+source_id: network-boundary
+source: raw/01-网络边界与出口讨论.md
+status: compiled
+entities:
+  - id: demo-yellow-green-model
+    target: "[[虚构黄绿区网络模型]]"
+  - id: demo-unified-egress
+    target: "[[统一出口代理]]"
+items:
+  - id: fact-001
+    kind: fact
+    summary: 黄区仅处理内部请求，绿区仅能通过受控出口外联
+    disposition: compiled
+    target: "[[虚构黄绿区网络模型#定义]]"
+  - id: fact-002
+    kind: fact
+    summary: 两区都禁止直接访问公网
+    disposition: compiled
+    target: "[[虚构黄绿区网络模型#^demo-zone-boundary]]"
+  - id: asset-001
+    kind: asset
+    summary: 虚构代理实例及其健康入口
+    disposition: compiled
+    target: "[[虚构代理实例 demo-egress-proxy-01#入口]]"
+  - id: asset-002
+    kind: asset
+    summary: 虚构绿区 API 域名
+    disposition: compiled
+    target: "[[虚构域名 api.green.demo.example.invalid#资产]]"
+  - id: decision-001
+    kind: decision
+    summary: 采用统一代理并放弃每服务独立 NAT
+    disposition: compiled
+    target: "[[采用统一出口代理承载绿区外联#决策与放弃项]]"
+  - id: fact-003
+    kind: fact
+    summary: 外联同时依赖 DNS、证书信任和代理
+    disposition: compiled
+    target: "[[虚构黄绿区网络模型#关系]]"
+outputs:
+  - "[[虚构黄绿区网络模型]]"
+  - "[[统一出口代理]]"
+  - "[[虚构域名 api.green.demo.example.invalid]]"
+  - "[[虚构代理实例 demo-egress-proxy-01]]"
+  - "[[绿色区域服务访问外部网络]]"
+  - "[[采用统一出口代理承载绿区外联]]"
+validated_at: 2026-09-02T09:47:00Z

@@ -14,8 +14,14 @@
 python tools/okf-lint/okf_lint.py
 ```
 
-先修 error（缺 frontmatter/type、`type` 与目录不符、`verified.by` 非 `human:` 前缀），再看 warning（断链、过期 `stale_after`、`status` 非法枚举、`title`/文件名不含中文等）。
+先修 error（层级/type/id、Atomic/Registry schema、wikilink 目标、coverage manifest、`verified.by`），再看 warning（Registry 画像缺口、孤儿 Atomic、L2 缺下层链接、Markdown 断链、过期和 index 等）。
+
+验证隔离示例库：
+
+```bash
+python tools/okf-lint/okf_lint.py --root examples/network-pilot
+```
 
 ## 扫什么
 
-只扫 `wiki/index.md`、`wiki/log.md` 与各分组目录（以 `wiki/index.md` 为准）。不扫仓根 `index.md`、`README.md`、`raw/`、`script/`、`tools/`。
+扫描 `wiki/index.md`、`wiki/log.md`、9 个知识类型目录与 `wiki/_meta/ingest/*.yaml`。不把 `_meta` 当知识正文，也不扫描仓根框架文件和 raw。

@@ -1,5 +1,9 @@
 # 更新日志
 
+## 2026-09-02
+
+* **Update**: 知识模型改为 L0 原子知识、L1 资源注册表、L2 运行知识，并加入内容级关系与来源覆盖清单。
+
 ## 2026-08-27
 
 * **Update**: 编译 wiki 时按场景主动用 `obsidian-cli` / `obsidian-markdown` / `obsidian-bases` / `json-canvas` / `defuddle`（见 Skill `references/obsidian.md`）；内网 wiki 仍禁 Defuddle。

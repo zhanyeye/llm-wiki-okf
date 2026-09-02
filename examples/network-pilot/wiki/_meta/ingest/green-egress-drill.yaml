@@ -1,0 +1,38 @@
+source_id: green-egress-drill
+source: raw/03-绿区访问演练记录.md
+status: compiled
+entities:
+  - id: demo-egress-proxy-01
+    target: "[[虚构代理实例 demo-egress-proxy-01]]"
+items:
+  - id: asset-001
+    kind: asset
+    summary: 代理配置、观测入口、负责人和生命周期
+    disposition: compiled
+    target: "[[虚构代理实例 demo-egress-proxy-01#生命周期]]"
+  - id: procedure-001
+    kind: procedure
+    summary: 登记目标、设置 HTTPS_PROXY、curl 验证并检查观测
+    disposition: compiled
+    target: "[[绿色区域服务访问外部网络#步骤]]"
+  - id: procedure-002
+    kind: procedure
+    summary: 失败时移除代理变量并撤销目标登记
+    disposition: compiled
+    target: "[[绿色区域服务访问外部网络#回滚]]"
+  - id: question-001
+    kind: question
+    summary: 黄区不能直接套用绿区外联流程
+    disposition: compiled
+    target: "[[黄区服务能否使用绿区外联流程#答案]]"
+  - id: fact-001
+    kind: fact
+    summary: 统一代理实例承载虚构绿区受控出口
+    disposition: compiled
+    target: "[[统一出口代理#公司内使用方式]]"
+outputs:
+  - "[[统一出口代理]]"
+  - "[[虚构代理实例 demo-egress-proxy-01]]"
+  - "[[绿色区域服务访问外部网络]]"
+  - "[[黄区服务能否使用绿区外联流程]]"
+validated_at: 2026-09-02T09:47:00Z

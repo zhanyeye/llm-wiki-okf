@@ -7,8 +7,9 @@
 处理运维知识、值班排查、文档入库或知识库体检时，使用 Skill **llm-wiki**：先读 [`.agents/skills/llm-wiki/SKILL.md`](.agents/skills/llm-wiki/SKILL.md)，按意图只读对应文件（默认 `query.md`）。
 
 - 查询 / 排障：`query.md`
-- 入库 / 迁文档 / 从零写页：`ingest.md` + `references/okf.md` + `references/index-log.md`
+- 入库 / 迁文档 / 从零写页：`ingest.md` + `references/compile.md` + `references/okf.md` + `references/index-log.md`
 - 公司 wiki 链接：另读 `references/source-wiki-cli.md` 与 Skill `wiki-cli`（`/wiki-cli`）
 - 体检：`lint.md`
+- 审核：`review.md` + `references/compile.md`
 
-不要用训练数据填补 wiki 里没有的集群名、地址、凭证、步骤。
+知识按 L0 Atomic → L1 Registry → L2 Operational 编译；不要把来源缩写后机械换目录，也不要用训练数据填补 wiki 里没有的集群名、地址、凭证、步骤。
