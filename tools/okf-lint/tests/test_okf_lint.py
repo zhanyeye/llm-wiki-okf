@@ -37,13 +37,12 @@ class LayeredLintTests(unittest.TestCase):
         (wiki / "基础知识" / "网络规则.md").write_text(
             f"""---
 type: Foundation
-id: foundation:network:zone-rule
-layer: foundation
 kind: policy
 title: 网络区域规则
 description: 虚构网络区域的稳定约束。
-domain: network
 status: draft
+owner: tester
+updated: 2026-09-03
 sources:
   - {source}
 ---
@@ -73,15 +72,13 @@ sources:
         (wiki / "资源目录" / "示例代理.md").write_text(
             f"""---
 type: Registry
-id: asset:network:demo-proxy
-layer: registry
 title: 示例出口代理
 description: 虚构出口代理资产。
-domain: network
 asset_kind: network
 name: demo-proxy
 environment: demo
 owner: demo-team
+updated: 2026-09-03
 technology:
   - "[[网络规则#^green-egress-rule]]"
 entries:
@@ -169,8 +166,11 @@ validated_at: 2026-09-02T09:00:00Z
         root = self.make_repo()
         self.add_valid_graph(root)
         atomic = root / "wiki" / "基础知识" / "网络规则.md"
+        text = atomic.read_text(encoding="utf-8")
+        text = text.replace("type: Foundation\n", "type: Foundation\nid: foundation:network:zone-rule\n", 1)
+        atomic.write_text(text, encoding="utf-8")
         duplicate = root / "wiki" / "基础知识" / "重复规则.md"
-        duplicate.write_text(atomic.read_text(encoding="utf-8"), encoding="utf-8")
+        duplicate.write_text(text, encoding="utf-8")
         errors, _warnings = OKF_LINT.run(root)
         self.assertTrue(any("duplicate id" in error for error in errors))
 

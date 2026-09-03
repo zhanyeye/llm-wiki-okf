@@ -4,4 +4,4 @@ globs:
 alwaysApply: true
 ---
 
-处理本仓库的运维知识、值班排查、文档入库或知识库体检时，使用项目 Skill `llm-wiki`：默认只读 `.agents/skills/llm-wiki/SKILL.md`（§Query）。写入 / 迁文档 / 从零写页时再读 `references/okf.md`；公司 wiki 链接另读 `references/source-wiki-cli.md`。
+处理本仓库的运维知识、文档入库或知识库体检时，使用项目 Skill `llm-wiki`：默认只读 `.agents/skills/llm-wiki/SKILL.md`（§Query）。写入 / 从零写页时再读 `references/okf.md`；公司 wiki 链接另读 `references/source-wiki-cli.md`。

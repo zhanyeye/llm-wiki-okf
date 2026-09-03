@@ -16,7 +16,7 @@ TYPE_DIR = {
     "Foundation": "基础知识",
     "Registry": "资源目录",
     "Runbook": "操作手册",
-    "Decision": "架构决策记录",
+    "ADR": "架构决策记录",
     "FAQ": "常见问题",
     "Incident": "案例与复盘",
 }
@@ -24,7 +24,7 @@ TYPE_LAYER = {
     "Foundation": "foundation",
     "Registry": "registry",
     "Runbook": "operational",
-    "Decision": "operational",
+    "ADR": "operational",
     "FAQ": "operational",
     "Incident": "operational",
 }
@@ -310,12 +310,11 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             top = doc.path.relative_to(bundle).parts[0]
             if top != TYPE_DIR[doc.typ]:
                 errors.append(f"{doc.rel}: type {doc.typ} should live under wiki/{TYPE_DIR[doc.typ]}/")
-        if not doc.doc_id:
-            errors.append(f"{doc.rel}: frontmatter missing stable id")
-        elif doc.doc_id in ids:
-            errors.append(f"{doc.rel}: duplicate id {doc.doc_id!r} (also {ids[doc.doc_id].rel})")
-        else:
-            ids[doc.doc_id] = doc
+        if doc.doc_id:
+            if doc.doc_id in ids:
+                errors.append(f"{doc.rel}: duplicate id {doc.doc_id!r} (also {ids[doc.doc_id].rel})")
+            else:
+                ids[doc.doc_id] = doc
         expected_layer = TYPE_LAYER.get(doc.typ)
         layer = scalar(doc.fm, "layer")
         if layer and expected_layer and layer != expected_layer:
@@ -389,7 +388,7 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             target = resolve_markdown_link(href, doc.path, root, bundle)
             if target is not None and not target.exists():
                 warnings.append(f"{doc.rel}: broken markdown link ({href})")
-        if doc.typ in {"Runbook", "FAQ", "Decision"} and lower_links == 0:
+        if doc.typ in {"Runbook", "FAQ", "ADR"} and lower_links == 0:
             warnings.append(f"{doc.rel}: operational page has no Foundation/Registry content link")
         index_text = dir_indexes.get(doc.path.parent.resolve())
         if index_text is None:

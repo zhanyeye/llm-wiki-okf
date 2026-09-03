@@ -131,7 +131,7 @@ raw/wiki/archive/<docKey>/
 
 ### 4.6 Link
 
-为 `technology`、`depends_on`、`operates_on`、`answers_about`、`decides_for` 建标题级或块级 wikilink。只维护来源支持的有向边；反向关系由 backlinks 派生。仅同批、同目录或同 domain 不构成关系。
+为 `technology`、`depends_on`、`operates_on`、`answers_about`、`decides_for` 建标题级或块级 wikilink。只维护来源支持的有向边；反向关系由 backlinks 派生。仅同批或同目录不构成关系。
 
 ### 4.7 Coverage manifest
 

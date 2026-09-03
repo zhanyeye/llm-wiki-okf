@@ -111,7 +111,7 @@ python tools/okf-lint/okf_lint.py
 | [`资源目录/`](wiki/资源目录/) | `Registry` | 部署实例：哪一套、入口、环境、负责人、依赖、告警。不存凭证 |
 | [`操作手册/`](wiki/操作手册/) | `Runbook` | 标准操作、配置说明与脚本用法（`.py` 在 `script/`） |
 | [`常见问题/`](wiki/常见问题/) | `FAQ` | 短问答、报错释义、按症状排查与止损（值班入口） |
-| [`架构决策记录/`](wiki/架构决策记录/) | `Decision` | 选型、权衡、约束 |
+| [`架构决策记录/`](wiki/架构决策记录/) | `ADR` | 选型、权衡、约束 |
 | [`案例与复盘/`](wiki/案例与复盘/) | `Incident` | 故障/变更/演练复盘 |
 
 业务域写在 frontmatter 的 `domain`。基础知识按能力域分子目录；Registry 按资产种类分子目录。语义关系必须使用 Obsidian `[[页]]` / `[[页#标题]]`，关键稳定事实可用 `[[页#^block-id]]`。type / frontmatter / Registry 画像见 Skill [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。

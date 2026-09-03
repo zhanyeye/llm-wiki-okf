@@ -28,15 +28,14 @@
 
 ## 写入
 
-入库 / 迁文档 / 结案 / 从零写页：读 Skill §Ingest；写页时再读 [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。公司 wiki 链接另读 [`references/source-wiki-cli.md`](.agents/skills/llm-wiki/references/source-wiki-cli.md)。体检与审核见 Skill §Lint。初始化骨架见 Skill §Init。
+入库 / 从零写页：读 Skill §Ingest；写页时再读 [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。公司 wiki 链接另读 [`references/source-wiki-cli.md`](.agents/skills/llm-wiki/references/source-wiki-cli.md)。体检与审核见 Skill §Lint。初始化骨架见 Skill §Init。
 
 L0 目录是 `wiki/基础知识/`（`type: Foundation`）。
 
-## 值班
+## 写回
 
-- 入口是 [`wiki/常见问题/index.md`](wiki/常见问题/index.md)。
-- 故障关闭前：更新或新建 Incident；可复用步骤写入 Runbook 或常见问题（FAQ）。
-- 不要把一次性命令只留在聊天窗口。
+- 有价值的查询综合、步骤与结论应写入对应分组页，不要只留在对话里。
+- 可复用步骤放操作手册或常见问题；一次性事件可放案例与复盘。
 
 ## 路线图
 

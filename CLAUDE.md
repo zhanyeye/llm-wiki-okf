@@ -4,11 +4,11 @@
 
 技能实体在 [`.agents/skills/`](.agents/skills/)。[`.claude/skills`](.claude/skills) 是指向该目录的软链接，因此可以使用 **`/llm-wiki`**。
 
-处理运维知识、值班排查、文档入库或知识库体检时，使用 Skill **llm-wiki**：先读 [`.agents/skills/llm-wiki/SKILL.md`](.agents/skills/llm-wiki/SKILL.md)。默认只读该文件 + `wiki/index.md`。
+处理运维知识、文档入库或知识库体检时，使用 Skill **llm-wiki**：先读 [`.agents/skills/llm-wiki/SKILL.md`](.agents/skills/llm-wiki/SKILL.md)。默认只读该文件 + `wiki/index.md`。
 
-- 查询 / 排障：SKILL.md §Query（全文检索 §Search）
+- 查询：SKILL.md §Query（全文检索 §Search）
 - 初始化骨架：SKILL.md §Init
-- 入库 / 迁文档 / 从零写页：SKILL.md §Ingest + 写页时 `references/okf.md`
+- 入库 / 从零写页：SKILL.md §Ingest + 写页时 `references/okf.md`
 - 公司 wiki 链接：另读 `references/source-wiki-cli.md` 与 Skill `wiki-cli`（`/wiki-cli`）
 - 体检 / 审核：SKILL.md §Lint
 
