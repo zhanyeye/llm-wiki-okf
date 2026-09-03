@@ -52,12 +52,13 @@
 
 | 命令 | 做什么 | 示例 |
 |------|--------|------|
-| [`/query`](.agents/commands/query.md) | 查 wiki、排障 | `/query 磁盘满了怎么处理` |
-| [`/ingest`](.agents/commands/ingest.md) | 入库、迁文档、结案写页 | `/ingest 把 raw/ 里这份工单入库` |
+| [`/query`](.agents/commands/query.md) | 查 wiki、综合作答 | `/query 绿区代理怎么配` |
+| [`/search`](.agents/commands/search.md) | 全文搜索 wiki | `/search NFS 配额` |
+| [`/ingest`](.agents/commands/ingest.md) | 入库、从零写页 | `/ingest 把 raw/ 里这份文档入库` |
 | [`/lint`](.agents/commands/lint.md) | 体检、断链、过期 | `/lint` |
 | [`/review`](.agents/commands/review.md) | 列未确认页、人工审核标 `verified` | `/review` |
 
-贴公司 wiki 链接时用 `/ingest`（也可以把 URL 直接丢进对话）。不记得命令就原话说，例如「把 inbox 入库」「体检一下 wiki」。下文四条操作各有一组可复制的说法。
+贴公司 wiki 链接时用 `/ingest`（也可以把 URL 直接丢进对话）。不记得命令就原话说，例如「把 inbox 入库」「体检一下 wiki」。下文各操作各有一组可复制的说法。
 
 ### Ingest（摄入）
 
