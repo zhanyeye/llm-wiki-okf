@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-wiki_export.py — Batch export example wiki documents via wiki CLI.
+wiki_export.py — Batch export Huawei wiki documents via wiki CLI.
 
 Handles:
   - wiki CLI installation & auth check
@@ -37,8 +37,8 @@ INBOX_FILE = REPO_ROOT / "raw" / "wiki" / "inbox.md"
 WIKI_CLI = "wiki"
 
 # Regex: extract docKey from URL
-# e.g. https://wiki.example.com/domains/4255/wiki/8/WIKI2026080712208286
-#      https://wiki.example.com/...?sn=WIKI202307141560110
+# e.g. https://wiki.huawei.com/domains/4255/wiki/8/WIKI2026080712208286
+#      https://wiki.huawei.com/...?sn=WIKI202307141560110
 RE_DOC_KEY = re.compile(r"(WIKI\d{4,})")
 
 # Regex: find image URLs in markdown content
@@ -48,7 +48,7 @@ RE_HTML_IMAGE = re.compile(r'<img\s+[^>]*src=["\']([^"\']+)["\']', re.IGNORECASE
 
 # Which wiki image domains can be downloaded via wiki CLI
 WIKI_IMAGE_DOMAINS = [
-    "wiki.example.com/vision-file-storage",
+    "wiki.huawei.com/vision-file-storage",
 ]
 
 
@@ -118,9 +118,9 @@ def unique_image_filename(url: str) -> str:
         if re.match(r"^[0-9a-f]{20,}$", part):
             return f"{part}{ext}"
 
-    # For image.example.com/tiny-lts URLs, extract the hash from the filename
+    # For image.huawei.com/tiny-lts URLs, extract the hash from the filename
     # e.g. 5f955002163575a9097ec5e44a175dc5_362x117.png@900-0-90-f.png
-    if "image.example.com" in url:
+    if "image.huawei.com" in url:
         # Strip @suffix and size suffix
         clean = original_name.split("@")[0]
         # Extract the hash part before _
@@ -142,16 +142,33 @@ def can_download_via_wiki_cli(url: str) -> bool:
 
 
 def parse_inbox(inbox_path: Path) -> list[str]:
-    """Parse inbox.md and return list of URLs."""
+    """Parse inbox.md and return list of URLs.
+
+    Supports both plain URL format (one URL per line) and table format:
+        | # | URL | 标题 | 最近更新 | docKey |
+    """
     urls = []
+    seen = set()
     if not inbox_path.exists():
         return urls
     for line in inbox_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
+        # Plain format: line starts with http
         if line.startswith("http"):
-            urls.append(line)
+            if line not in seen:
+                urls.append(line)
+                seen.add(line)
+            continue
+        # Table format: extract URL from pipe-delimited row
+        if line.startswith("|"):
+            # Find http-like URL in the line
+            for match in re.finditer(r"(https?://\S+?)(?:\s*\||$)", line):
+                url = match.group(1).rstrip("|").strip()
+                if url and url not in seen:
+                    urls.append(url)
+                    seen.add(url)
     return urls
 
 
@@ -430,8 +447,8 @@ def cmd_reexport(args):
             urls.append(url_map[dk])
         else:
             # Try to construct URL from common patterns
-            # Default: https://wiki.example.com/domains/4255/wiki/8/<docKey>
-            url = f"https://wiki.example.com/domains/4255/wiki/8/{dk}"
+            # Default: https://wiki.huawei.com/domains/4255/wiki/8/<docKey>
+            url = f"https://wiki.huawei.com/domains/4255/wiki/8/{dk}"
             urls.append(url)
             print(f"[WARN] No inbox URL for {dk}, using constructed URL: {url}")
 
@@ -459,7 +476,7 @@ def cmd_reexport(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Batch export example wiki documents via wiki CLI",
+        description="Batch export Huawei wiki documents via wiki CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )

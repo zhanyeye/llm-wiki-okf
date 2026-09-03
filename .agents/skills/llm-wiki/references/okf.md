@@ -9,7 +9,7 @@
 知识按依赖方向分三层，**不按来源文档分层**，禁止把一篇来源平铺成一页：
 
 1. **L0 基础知识**（`type: Foundation`，目录 `wiki/基础知识/<能力域>/`）：内网特有概念、平台与规则。回答“它是什么、公司如何使用、有哪些稳定约束”。不写某套生产实例的 IP/入口。开源组件通用原理不进本层，除非是公司定制用法。
-2. **L1 资源目录**：稳定、可独立定位和运维的真实部署实例。回答“哪一套、在哪、谁负责、入口和告警是什么”。`technology` 必须 `[[双链]]` 到 L0。
+2. **L1 资源目录**：稳定、可独立定位和运维的真实部署实例。回答”哪一套、在哪、谁负责、入口和告警是什么”。正文「依赖」节用 `[[双链]]` 关联 L0 基础知识。
 3. **运维与设计**：Runbook、FAQ（含短问答与按症状排查）、ADR、Incident。回答“怎么做、怎么查、为什么”。引用 L0/L1，也可以互相双链；不复制下层定义。跨实体拓扑/职责说明写入相关基础知识页或 ADR，不单开「系统与架构」分组。
 
 一页 Foundation 对应一个内部概念或平台（如黄绿区、ROMA、EulerOS）；页内 `##`/`###` 对应可复用知识单元，只有需要被精确复用的稳定事实才加 `^block-id`。不要一条句子建一页，也不要把一篇来源机械变成一页。
@@ -48,8 +48,6 @@ L1 资产类（子目录）：`集群`、`数据库`、`存储`、`中间件`、
 - 保留项：`wiki/index.md`、`wiki/log.md`（不加 `type`），以及 `wiki/_meta/ingest/*.yaml` 编译清单（不属于知识正文、不进导航）。`wiki/index.md` 可有 `okf_version: "0.2"`。
 - 概念页必须放在上表对应分组，不要写在仓库根或 `wiki/` 根。
 - 每个概念 `.md` 必须有可解析 YAML frontmatter，且含非空 `type`。
-- `Foundation` 的 `kind` 必须是 `concept`、`component`、`platform`、`policy`、`capability` 之一。
-- `Registry` 的 `asset_kind` 必填；正式库子目录对应：`cluster`→集群、`database`→数据库、`storage`→存储、`middleware`→中间件、`observability`→可观测。亦支持 `namespace`、`application`、`domain`、`certificate`、`bucket`、`dashboard`、`alert`、`network`。
 - Registry 只登记稳定运维对象。Pod、临时 IP、一次性排查主机等短生命周期对象不入表。
 - `Registry` 不写密码、token、密钥；只写申请途径和找谁。
 - 不要把 `.py` 正文塞进 wiki；脚本用法写 `Runbook`，可执行文件在 `script/`。
@@ -96,20 +94,17 @@ sources:
 | `updated` | 推荐；本页最近更新日期（`YYYY-MM-DD`） |
 | `sources` | 溯源 URL 或 `raw/...` 路径（见下） |
 
-按 type 另加：`Foundation` 要 `kind`；`Registry` 要 `asset_kind` + `technology`（双链基础知识）。`verified`（人工确认）、`automation` 按需，见下文。
+按 type 另加：`verified`（人工确认）、`automation` 按需，见下文。
 
 ### Registry frontmatter
 
-Registry 用 Markdown + frontmatter 记资产事实；`asset_kind` 区分资产种类（`type` 已留给 OKF）。
+Registry 用 Markdown + frontmatter 记资产事实。资产种类由目录路径表达（如 `wiki/资源目录/数据库/`），不需要额外字段。
 
 ```yaml
 ---
 type: Registry
 title: ClickHouse 生产实例 01
 description: 位置、入口、依赖与观测入口。
-asset_kind: database
-technology:
-  - "[[ClickHouse#定义]]"
 status: draft
 owner: 李四
 updated: 2026-09-03
@@ -118,7 +113,7 @@ sources:
 ---
 ```
 
-环境、负责人、入口等写在正文固定标题下。`technology` 必须双链到基础知识页。
+环境、负责人、入口等写在正文固定标题下。「依赖」节用 `[[双链]]` 关联基础知识页（如 `[[ClickHouse#定义]]`）。
 
 ### automation（可选）
 
@@ -162,6 +157,9 @@ wiki/操作手册/attachments/磁盘满-dashboard.png
 
 语义关系**必须**用 Obsidian 双链（领导要求知识相关联，禁止平铺后互不引用）。
 
+> **⚠️ 关键：wikilink 目标 = 文件名（不含 `.md`），不是 frontmatter `title`。**
+> Obsidian 按 basename 解析 `[[...]]`，大小写和空格敏感。例如文件 `harbor镜像仓.md` → `[[harbor镜像仓]]`，不能写 `[[Harbor 镜像仓]]`（这是 title）。建议文件名与 title 保持一致；若不一致，wikilink 永远跟文件名。
+
 
 | 场景         | 规则                                                                              |
 | ---------- | ------------------------------------------------------------------------------- |
@@ -170,16 +168,17 @@ wiki/操作手册/attachments/磁盘满-dashboard.png
 | 关键事实块引用    | `[[页名#^block-id]]`；块 ID 只用小写 ASCII、数字和连字符                                       |
 | 嵌入下层内容     | `![[页名#标题]]` 或 `![[页名#^block-id]]`，仅在确需展示原文时使用                                  |
 | 对话输出引用     | 仓根相对路径 `wiki/操作手册/页.md`                                                         |
-| 禁止         | 不带 `/wiki/` 前缀的 `/操作手册/页.md` 形式；指向不存在 raw 的「去 raw 看步骤」；L0 基础知识页反向依赖 Runbook/FAQ |
+| 禁止         | 不带 `/wiki/` 前缀的 `/操作手册/页.md` 形式；指向不存在 raw 的「去 raw 看步骤」；L0 页**复制/依赖** Runbook/FAQ 的具体步骤（指路链接是允许的，见下） |
 
 
 链接原则：
 
 - 上层页用双链或嵌入引用下层定义/约束，不复制改写同一事实。
 - 标题重命名前先查 backlinks 并同步修改引用；块 ID 一经被引用不得随意改变。
-- frontmatter 中的关系值必须写为带引号的 wikilink，如 `- "[[ClickHouse#定义]]"`。
-- 关系字段只维护有来源的有向边，反向关系由 backlinks/查询派生，避免双写漂移。
-- Registry 的 `technology`、Runbook 的 `operates_on`、FAQ 的 `answers_about`（排查长页也可用 `operates_on`）、ADR 的 `decides_for` 在适用时必须填写双链。
+- 语义关联用正文 `[[双链]]`；反向关系由 Obsidian backlinks 自动派生，不需要在 frontmatter 维护关系字段。
+- 链接是**双向允许**的，区分两种语义：
+  - **依赖/定义引用**：上层（运维层）链下层（L0/L1）——Runbook/FAQ 引用 Registry 或 Foundation 的定义与约束，**不复制内容**。
+  - **指路链接**：下层链上层——Foundation「关系」节可写「相关操作步骤见 [[X]]」指向 Runbook/FAQ 页，**只是指路，不复制步骤内容**。知识互联靠双向互链体现，禁止把下层页写成"孤立无关联"。
 
 ### 交叉引用（按内容关联，禁止瞎链）
 
@@ -221,4 +220,3 @@ wiki/操作手册/attachments/磁盘满-dashboard.png
 - 不是必须有标记；没有标记时 Agent 按固定标题（步骤/验证/回滚）定位。
 - 有标记时 Agent 优先用标记区间提取内容。
 - 标记内不放 `script_ref`；`script_ref` 只在 frontmatter。
-

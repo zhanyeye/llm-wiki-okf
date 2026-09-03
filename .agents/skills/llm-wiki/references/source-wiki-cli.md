@@ -121,7 +121,7 @@ raw/wiki/archive/<docKey>/
 
 ### 4.5 Compose
 
-按 L0 基础知识 → L1 Registry → Runbook/FAQ/ADR 写页；格式见 [okf.md](okf.md)。Registry 使用结构化 frontmatter，`technology` 必须双链 Foundation。上层页引用下层定义和约束，不复制近似版本。L0 不反向依赖 Runbook。
+按 L0 基础知识 → L1 Registry → Runbook/FAQ/ADR 写页；格式见 [okf.md](okf.md)。Registry 的「依赖」节用 `[[双链]]` 关联 Foundation。上层页引用下层定义和约束，不复制近似版本。Foundation 页可在「关系」节用指路链接（「相关操作步骤见 [[X]]」）指向上层页，不复制其步骤。
 
 - 正文自洽；来源没有的小节写「来源未写」或「不适用」。
 - 命令进代码块；密钥/token 剥离；占位符用 `<cluster>`、`<namespace>`、`<path>`。
@@ -131,7 +131,7 @@ raw/wiki/archive/<docKey>/
 
 ### 4.6 Link
 
-为 `technology`、`depends_on`、`operates_on`、`answers_about`、`decides_for` 建标题级或块级 wikilink。只维护来源支持的有向边；反向关系由 backlinks 派生。仅同批或同目录不构成关系。
+在正文相关章节（「关系」「依赖」「相关系统」等）建标题级或块级 `[[wikilink]]`。只维护来源支持的语义关联；反向关系由 Obsidian backlinks 派生。仅同批或同目录不构成关系。
 
 ### 4.7 Coverage manifest
 
@@ -144,7 +144,7 @@ raw/wiki/archive/<docKey>/
 - `compiled/duplicate` 目标存在；`excluded/gap` 有原因。
 - 步骤有前置、参数/命令、验证和必要回滚，不能只有标题。
 - 关键外链、数字、表格、命令、限制和遗留项无静默丢失。
-- Registry 解析到 Foundation 且满足 `asset_kind` 最小画像。
+- Registry 的「依赖」节有 `[[双链]]` 指向 Foundation。
 - 上层关系指向存在的页、标题或块；正文不依赖 raw。
 
 不通过就继续修复；无法修复则记 failed，不得写 `ingest compiled`。

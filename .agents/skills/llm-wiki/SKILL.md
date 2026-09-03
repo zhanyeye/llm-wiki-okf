@@ -16,8 +16,8 @@ description: >-
 
 ## 核心理念
 
-- **Wiki 是持久的**：交叉引用已存在，矛盾会被标出，综合反映已入库内容
-- **LLM 负责记账**：摘要、交叉引用、归档与维护——人容易放弃的琐事
+- **Wiki是持续积累的**：交叉引用已存在，矛盾会被标出，综合反映已入库内容
+- **LLM负责整理维护**：摘要、交叉引用、归档与维护——人容易放弃的琐事
 - **人负责思考**：筛选来源、指导分析、提出好问题、解释含义；人工审核后才 `verified`
 - **安全与接地**：不写密钥；不编造集群名、地址、步骤；答案只来自已打开的 `wiki/` 页
 - **禁止一来源一页**：先拆基础知识 → 资源目录（双链 L0）→ 操作手册 / 常见问题 / ADR / 案例
@@ -91,34 +91,68 @@ repo-root/
 
 **触发分流**
 
-| 触发 | 走 |
-|------|-----|
-| 公司 wiki 链接 / `inbox.md` / 继续下一批 / 增量刷新 | 本节 + [references/source-wiki-cli.md](references/source-wiki-cli.md) |
-| 公网 URL | `defuddle parse <url> --md` 落 `raw/` 后再编译 |
-| raw / 对话存档 / 从零写页 | 本节一般流程 |
-| 用户指出页错误 | 改页 → `status: draft`、清 `verified` → 更新 index/log → lint |
+| 触发 | 走 | 工具 |
+|------|-----|------|
+| 公司 wiki 链接 / `inbox.md` / 继续下一批 / 增量刷新 | 本节 + [references/source-wiki-cli.md](references/source-wiki-cli.md) | `wiki_export.py` + `wiki` CLI |
+| 公网 URL | `defuddle parse <url> --md` 落 `raw/` 后再编译 | Defuddle |
+| raw / 对话存档 / 从零写页 | 本节一般流程 | Read |
+| 用户指出页错误 | 改页 → `status: draft`、清 `verified` → 更新 index/log → lint | Edit |
+
+**⚠️ 公司 wiki 关键约束（容易违反）：**
+- **禁止**用 Read/Defuddle/WebFetch 读取公司 wiki URL — 这些工具无法访问内网
+- **必须**使用 `tools/wiki-export/wiki_export.py` 脚本（内部调用 `wiki` CLI）
+- 具体命令和流程见 [references/source-wiki-cli.md](references/source-wiki-cli.md)
 
 **写入分组（可选）：** 用户用 `wiki/index.md` 里的**分组名**限制本次写入。未指定 = 全部。范围外标 `deferred`。缺下层默认 link-only（标 gap）；仅用户说「缺的也建」才 stub。
 
 **流程：**
-1. **采集时间戳信息：**
+
+1. **读取来源内容（按来源类型选工具）：**
+
+| 来源类型 | 读取工具 | 示例 |
+|----------|----------|------|
+| **公司 wiki 链接** | `python tools/wiki-export/wiki_export.py export <url>` | `python tools/wiki-export/wiki_export.py export "https://wiki.huawei.com/.../WIKI..."` |
+| 公网 URL | `defuddle parse <url> --md` 落 `raw/` | - |
+| 本地文件 | Read | - |
+
+**⚠️ 公司 wiki 必须用 `wiki_export.py`（内部调用 `wiki` CLI），禁止用 Read/Defuddle/WebFetch。**
+
+2. **采集时间戳信息：**
    - 文件最后修改时间（file_modified）
    - 正文/文档中的内容日期（content_date：发布日、变更日等）
    - 若不一致，记在 frontmatter 或汇报里
-2. 仔细阅读来源（不抄密钥；不改 `raw/`，公司 wiki 例外见 source-wiki-cli）
-3. 与用户讨论关键要点（大改或将新建 ≥3 页时先报 Plan）
-4. 写/更新 wiki 页（禁止一来源一页）：
+3. 仔细阅读来源（不抄密钥；不改 `raw/`，公司 wiki 例外见 source-wiki-cli）
+4. 与用户讨论关键要点（大改或将新建 ≥3 页时先报 Plan）
+5. 写/更新 wiki 页（禁止一来源一页）：
    - 定义 → `基础知识/`（`Foundation`）
-   - 实例 → `资源目录/`（`Registry`，`technology` 双链 L0）
+   - 实例 → `资源目录/`（`Registry`，正文「依赖」节 `[[双链]]` L0）
    - 任务 → `操作手册/`；问答/排查 → `常见问题/`；决策 → ADR；事件 → 案例
    - 同实体更新；同名异物换 `id`；先 L0 再 L1 再运维层；新页 `status: draft`
    - 语义关系用 `[[页]]` / `[[页#标题]]`；禁止仅因同批互链
-5. 更新涉及分组的 `index.md` 与 `wiki/log.md`
-6. 标出与既有内容的矛盾（不静默覆盖）
-7. `python tools/okf-lint/okf_lint.py`（先修 error）；人说 OK 才写 `verified`
-8. 有 deferred/gap 或指定了分组时汇报：本次写入 / 延后 / 缺口
+6. **交叉引用编织（强制，不可跳过，全部页写完后统一执行）：**
+   **先写完本次全部页（步骤 5），再统一做这一轮编织**——不要逐页边写边链，否则先写的页看不到后写的页，会误判孤立。
+   - **出链**：对每一页，在新页正文（「关系」节、「依赖」节或其他相关章节）中，用 `[[双链]]` 指向相关已有页（含本次同批写的页）。
+   - **反向补全**：对每一页，Grep `[[本页名]]` 找引用方；同时 Grep 搜索 `wiki/` 中提及本页主题（系统名、概念名、专名、`tags`）的页面；在语义合理处补充 `[[本页名]]` 回链。**被引用必回链**（见步骤 9）。
+   - **同批互链**：本次同时写的多页之间，若内容确有依赖/互补/上下游关系，互相双链（仍遵守「禁止仅因同批互链」）。
+   - **链接方向（双向允许）**：上层链下层用**依赖/定义引用**（引用定义，不复制内容）；下层链上层用**指路链接**（如「相关操作步骤见 [[X]]」）。双向互链是目标，禁止把有关系的页写成孤立。
+   - 判定标准见下方 [交叉引用原则](#交叉引用原则) 与 okf.md「交叉引用」表。没有明确关系 → 省略链接，不要硬凑。
+7. 更新涉及分组的 `index.md` 与 `wiki/log.md`
+8. 标出与既有内容的矛盾（不静默覆盖）
+9. **链接完整性自检：**
+   - **被链必回链**：对每个新页 Grep `[[本页名]]` 找引用方；被引用且语义合理 → 必须回链。例：Runbook 链了 Foundation，Foundation 的「关系」节必须回链该 Runbook（指路）。
+   - 确认每个新页至少有 1 条出链（`[[页]]`），除非**确实孤立**
+   - **「暂无关联」仅限真孤立**：只有 Grep 全库确认**没有任何页面**提及本页主题（含跨目录、同批页）时才允许写「暂无关联」；只要发现 1 个相关页就必须链，禁止用「暂无关联」逃避链接义务
+   - 断链（指向不存在的页）必须修复或移除
+10. `python tools/okf-lint/okf_lint.py`（先修 error）；人说 OK 才写 `verified`
+11. 有 deferred/gap 或指定了分组时汇报：本次写入 / 延后 / 缺口
 
-**提示：** 一次处理一条来源，并让用户参与。公司 wiki：追加 inbox → `wiki_export.py export` → 串行编译；`sources` 只写原始 wiki URL；禁止 WebFetch/Defuddle 拉内网 wiki。细则见 source-wiki-cli.md。
+**公司 wiki 完整流程（详细版）：**
+1. `python tools/wiki-export/wiki_export.py check` — 前置检查 wiki CLI
+2. 追加 URL 到 `raw/wiki/inbox.md`（精确去重）
+3. `python tools/wiki-export/wiki_export.py export <url1> <url2>...` — 批量导出到 `raw/wiki/archive/`
+4. 分层编译：先拆 Foundation → Registry → Runbook/FAQ/ADR
+5. 写页时读 [references/okf.md](references/okf.md) 确保格式正确
+6. 详细流程见 [references/source-wiki-cli.md](references/source-wiki-cli.md) §0-5
 
 ---
 
@@ -139,7 +173,7 @@ repo-root/
    - 短问答 / 报错释义 / 排查 → `常见问题/`
    - 历史事件 / 案例 → `案例与复盘/`
 2. 无命中或跨分组时，搜文件名、frontmatter（`title`/`aliases`/`tags`/`owner`）与正文；命中后再打开 2–5 篇；偏好 `updated` 较新的页
-3. 沿 `technology` / `operates_on` / `answers_about` / `decides_for` 或 backlinks 最多两跳
+3. 沿正文 `[[双链]]` 或 Obsidian backlinks 最多两跳
 4. `wiki/` 不足 → 搜 `raw/`，标注「⚠️ 未编译」；两边都没有 → 说未检索到并建议入库
 5. 综合作答并引用仓根相对路径；末尾「源头链接」取 `sources`；命令/主机名只来自已打开页
 6. 有价值的综合结论主动问是否回写（同意后走 Ingest）
@@ -209,23 +243,25 @@ okf_version: "0.2"
 
 ## L0 基础知识
 
-* [基础知识](./基础知识/) - 内网特有概念与平台
-  * [网络管理](./基础知识/网络管理/) - 黄绿区、证书、DNS…
+* [基础知识](./基础知识/index.md) - 内网特有概念与平台
+  * [网络管理](./基础知识/网络管理/index.md) - 黄绿区、证书、DNS…
 
 ## L1 资源目录（部署实例）
 
-* [资源目录](./资源目录/) - 哪一套、在哪、谁负责
-  * [集群](./资源目录/集群/) - …
+* [资源目录](./资源目录/index.md) - 哪一套、在哪、谁负责
+  * [集群](./资源目录/集群/index.md) - …
 
 ## 运维与设计
 
-* [操作手册](./操作手册/) - …
-* [常见问题](./常见问题/) - 短问答与排查
-* [架构决策记录](./架构决策记录/) - …
-* [案例与复盘](./案例与复盘/) - …
+* [操作手册](./操作手册/index.md) - …
+* [常见问题](./常见问题/index.md) - 短问答与排查
+* [架构决策记录](./架构决策记录/index.md) - …
+* [案例与复盘](./案例与复盘/index.md) - …
 ```
 
-分组 `index.md` 条目：`* [中文 title](./页.md) - 短描述`。有概念页才建分组 index（`常见问题/index.md` 可列「待入库」）。新鲜度看页 frontmatter `updated`；查询时偏好较新页。
+分组 `index.md` 条目：`* [中文 title](./页.md) - 短描述`。
+
+**⚠️ 目录入口链接必须指向 `index.md`，禁止指向目录本身。** Obsidian 的链接解析只认文件，`(./目录名/)` 会显示「未创建」。正确写法：`* [分组名](./分组名/index.md)`。子分组同理：`* [子分组](./子分组/index.md)`。普通知识页仍用 `* [页名](./页名.md)`。
 
 ---
 
@@ -261,7 +297,6 @@ okf_version: "0.2"
 type: Foundation   # 或 Registry | Runbook | FAQ | ADR | Incident
 title: 黄绿区
 description: 内网黄区/绿区划分与访问约束。
-kind: policy
 status: draft
 owner: 张三
 updated: 2026-09-03
@@ -316,7 +351,7 @@ sources:
 
 1. **始终记日志** — 每次 ingest / query / search / lint 都写入 `wiki/log.md`
 2. **维护 index** — 分组 index 与文件一致
-3. **积极双链** — 概念提及用 `[[页]]`；上层链下层
+3. **双链是写入义务** — 每页写完后必须：(a) 新页正文 `[[双链]]` 链向已有页；(b) 已有页回链新页（双向互链）。「暂无关联」**仅限全库确认无任何相关页**时使用，禁止用它逃避链接义务
 4. **标出矛盾** — 不要静默覆盖，展示给用户
 5. **保存有价值输出** — 好的查询综合应变知识页
 6. **尊重来源** — `raw/` 默认不可变（公司 wiki 仅追加 inbox / 写 archive）
@@ -329,19 +364,29 @@ sources:
 
 1. 溯源写在 frontmatter `sources`（公司 wiki = 原始 URL）；正文自洽，查询默认不打开 `raw/`
 2. 新来源优先**更新旧页**，而不是新建近似页
-3. 基础知识页「关系」与上层 `technology` / `operates_on` 等字段形成网络
+3. 基础知识页「关系」节与上层页正文 `[[双链]]` 形成网络
 4. 跨来源主题要标出共用点
 
 **格式：** 语义关联用 `[[页]]` / `[[页#标题]]` / `[[页#^block-id]]`。导航可用 Markdown 链接。
 
-### 知识关联发现
+**⚠️ wikilink 目标必须与文件名精确匹配（含大小写与空格）。** Obsidian 按**文件名**（不含 `.md`）解析 `[[...]]`，而非按 frontmatter `title`。例如文件 `harbor镜像仓.md` 的 wikilink 是 `[[harbor镜像仓]]`，不能写成 `[[Harbor 镜像仓]]`（title 写法）——否则 Obsidian 找不到文件，产生断链。规则：
+- `[[文件名]]`：文件名 = 去掉 `.md` 后的实际 basename（含大小写、空格）
+- `[[文件名#标题]]`：`#` 前必须同上
+- 建议文件名与 `title` 保持一致以减少歧义；若两者不同，wikilink 永远跟文件名
 
-处理第 2+ 条来源时，重点关注：
+### 知识关联发现（操作清单）
 
-- **共同主题**：跨来源重复点 → 收敛到基础知识或资源目录
-- **矛盾观点**：显式标冲突——不要静默覆盖
-- **互补**：新来源只补例子/步骤 → 更新已有页
-- **概念演进**：同一概念侧重点变化 → 综合进 Foundation，上层引用新约束
+处理每条来源时（含第 1 条），按以下清单逐项检查：
+
+- [ ] **概念命中**：Grep `wiki/基础知识/` 中正文和 frontmatter `title`/`aliases`/`tags`，看是否有已入库的同概念页 → 有则更新，不新建近似页
+- [ ] **资产命中**：Grep `wiki/资源目录/` 看是否有同技术栈的 Registry 页 → 有则更新其正文 `[[双链]]`
+- [ ] **运维命中**：Grep `wiki/操作手册/` `wiki/常见问题/` 看是否已有同主题手册/FAQ → 新内容是补充还是替代？
+- [ ] **矛盾扫描**：新事实是否与已有页冲突 → 显式标出，不静默覆盖
+- [ ] **互补扫描**：新内容是否只是补步骤/补例子 → 更新已有页而非新建
+- [ ] **概念演进**：同一概念侧重点变化 → 综合进 Foundation，上层引用新约束
+- [ ] **跨来源收敛**：多条来源的重复点 → 收敛到基础知识或资源目录，不分散在多页
+
+清单执行结果汇入 Ingest 步骤 6（交叉引用编织）。
 
 ---
 
@@ -358,14 +403,27 @@ sources:
 
 ## 工具
 
-- **Read/Write/Edit**：读写 `wiki/`（及公司 wiki 允许的 `raw/wiki/`）
+### 读取来源内容
+
+| 来源 | 工具 | 说明 |
+|------|------|------|
+| **公司 wiki URL** | `python tools/wiki-export/wiki_export.py export <url>` | 通过 `wiki` CLI 导出到 `raw/wiki/archive/`，含图片下载 |
+| 公司 wiki 批量 | `python tools/wiki-export/wiki_export.py export <url1> <url2>...` | 一次导出多条，串行调用 wiki CLI |
+| 公司 wiki 增量刷新 | `wiki_refresh.py diff` + `wiki_export.py re-export` | 见 source-wiki-cli §增量刷新 |
+| 公司 wiki 元数据 | `wiki doc get <url>` | 直接调用 wiki CLI 获取标题/更新时间等 |
+| 公网 URL | `defuddle parse <url> --md` | 落 `raw/` 后编译 |
+| 本地文件 | Read | 直接读取 |
+
+**其他工具：**
+- **Read/Write/Edit**：读写 `wiki/` 知识库页面（及公司 wiki 允许的 `raw/wiki/`）
 - **Glob/Grep**：搜索与导航
-- **defuddle**：公网 URL 入库
-- **wiki-export + wiki-cli**：仅公司内网 wiki（见 source-wiki-cli）；禁止 WebFetch/Defuddle 拉内网 wiki
 - **WebSearch/WebFetch**：补公网缺口（需许可）
 - **okf-lint**：`python tools/okf-lint/okf_lint.py`
 - **qmd / Marp / Dataview / Obsidian CLI**：可选；失败则普通 Read/Write，不阻塞
-- 权威顺序：OKF > 本 Skill > Obsidian 便利
+
+**⚠️ 禁止：** 用 Read/Defuddle/WebFetch 读取公司内网 wiki URL。
+
+权威顺序：OKF > 本 Skill > Obsidian 便利
 
 ---
 
