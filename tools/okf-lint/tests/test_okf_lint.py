@@ -70,7 +70,7 @@ sources:
 """,
             encoding="utf-8",
         )
-        (wiki / "资源注册表" / "示例代理.md").write_text(
+        (wiki / "资源目录" / "示例代理.md").write_text(
             f"""---
 type: Registry
 id: asset:network:demo-proxy
@@ -155,7 +155,7 @@ validated_at: 2026-09-02T09:00:00Z
     def test_missing_block_target_is_error(self) -> None:
         root = self.make_repo()
         self.add_valid_graph(root)
-        registry = root / "wiki" / "资源注册表" / "示例代理.md"
+        registry = root / "wiki" / "资源目录" / "示例代理.md"
         registry.write_text(
             registry.read_text(encoding="utf-8").replace(
                 "^green-egress-rule", "^missing-rule"

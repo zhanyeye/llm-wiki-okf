@@ -14,25 +14,19 @@ from pathlib import Path
 RESERVED = {"index.md", "log.md"}
 TYPE_DIR = {
     "Atomic": "基础知识",
-    "Registry": "资源注册表",
-    "Architecture": "系统与架构",
+    "Registry": "资源目录",
     "Runbook": "操作手册",
-    "Playbook": "故障排查",
     "Decision": "架构决策记录",
     "FAQ": "常见问题",
     "Incident": "案例与复盘",
-    "Onboarding": "新人上手",
 }
 TYPE_LAYER = {
     "Atomic": "atomic",
     "Registry": "registry",
-    "Architecture": "operational",
     "Runbook": "operational",
-    "Playbook": "operational",
     "Decision": "operational",
     "FAQ": "operational",
     "Incident": "operational",
-    "Onboarding": "operational",
 }
 ATOMIC_KINDS = {"concept", "component", "platform", "policy", "capability"}
 ASSET_KINDS = {
@@ -395,7 +389,7 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             target = resolve_markdown_link(href, doc.path, root, bundle)
             if target is not None and not target.exists():
                 warnings.append(f"{doc.rel}: broken markdown link ({href})")
-        if doc.typ in {"Runbook", "Playbook", "FAQ", "Decision", "Architecture"} and lower_links == 0:
+        if doc.typ in {"Runbook", "FAQ", "Decision"} and lower_links == 0:
             warnings.append(f"{doc.rel}: operational page has no Atomic/Registry content link")
         index_text = dir_indexes.get(doc.path.parent.resolve())
         if index_text is None:
