@@ -36,9 +36,9 @@ class LayeredLintTests(unittest.TestCase):
         source = "https://wiki.example.invalid/WIKI-DEMO"
         (wiki / "基础知识" / "网络规则.md").write_text(
             f"""---
-type: Atomic
-id: atomic:network:zone-rule
-layer: atomic
+type: Foundation
+id: foundation:network:zone-rule
+layer: foundation
 kind: policy
 title: 网络区域规则
 description: 虚构网络区域的稳定约束。

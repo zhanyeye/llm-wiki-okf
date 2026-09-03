@@ -1,6 +1,6 @@
 # 基础设施知识库 Schema
 
-本文件是能力索引。人读总览见 [`README.md`](README.md)。执行细节按意图读 [`.agents/skills/llm-wiki/`](.agents/skills/llm-wiki/)，**不要**在纯查询时通读本文件长文或整份 Skill 目录。
+本文件是能力索引。人读总览见 [`README.md`](README.md)。操作细则以 [`.agents/skills/llm-wiki/SKILL.md`](.agents/skills/llm-wiki/SKILL.md) 为准；**不要**在纯查询时通读本文件长文。
 
 ## 权限（三面）
 
@@ -16,27 +16,21 @@
 
 ## 查询
 
+默认只读 Skill [`SKILL.md`](.agents/skills/llm-wiki/SKILL.md) §Query + [`wiki/index.md`](wiki/index.md)。全文检索见 §Search。ingest / query / search / lint 均写 [`wiki/log.md`](wiki/log.md)。
+
 1. 读 [`wiki/index.md`](wiki/index.md)（不要把仓根 index 当知识入口）。
 2. 现象不明时读 [`wiki/常见问题/index.md`](wiki/常见问题/index.md)（若存在）。
 3. 问“是什么/公司怎么用/内部概念”读 `wiki/基础知识/`；问“哪一套/在哪/谁负责”读 `wiki/资源目录/`；问怎么做读操作手册；问为什么读架构决策记录；现象不明或短问答读常见问题。
-4. 按命中打开相关页，并沿 `technology`、`depends_on`、`operates_on` 等关系或 backlinks 定向展开。
-5. 仍不够再搜索 `aliases` / `tags` / `domain` / `title` / `id`。
-6. **禁止**用训练数据填补未写入知识库的集群名、地址、凭证、步骤。缺失就说缺失，并建议入库。`wiki/` 不足时按 query.md 回退搜 `raw/` 并标注「⚠️ 未编译」；不要默认把 `raw/` 当答案，raw 命中后建议入库。
+4. 按命中打开相关页，并沿关系或 backlinks 定向展开。
+5. **禁止**用训练数据填补未写入知识库的集群名、地址、凭证、步骤。缺失就说缺失，并建议入库。`wiki/` 不足时回退搜 `raw/` 并标注「⚠️ 未编译」。
 
-有价值的综合结论应回写成新页。细则见 Skill [`ingest.md`](.agents/skills/llm-wiki/ingest.md) §对话存档。
+有价值的综合结论应回写成新页（见 Skill §Ingest）。
 
-## 写入前必须读
+## 写入
 
-入库、迁文档、复盘、从零写页、改 index/log、体检、审核确认时，**先读** Skill [`SKILL.md`](.agents/skills/llm-wiki/SKILL.md) 按意图路由，再读对应文件（勿跳过）：
+入库 / 迁文档 / 结案 / 从零写页：读 Skill §Ingest；写页时再读 [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。公司 wiki 链接另读 [`references/source-wiki-cli.md`](.agents/skills/llm-wiki/references/source-wiki-cli.md)。体检与审核见 Skill §Lint。初始化骨架见 Skill §Init。
 
-| 意图 | 必读 |
-|------|------|
-| 入库 / 迁文档 / 故障结案 / 从零写一页 | [`ingest.md`](.agents/skills/llm-wiki/ingest.md) + [`references/compile.md`](.agents/skills/llm-wiki/references/compile.md) + [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
-| 公司 wiki 增量入库（对话贴链接 / inbox） | [`ingest.md`](.agents/skills/llm-wiki/ingest.md) + [`references/source-wiki-cli.md`](.agents/skills/llm-wiki/references/source-wiki-cli.md) + [`references/compile.md`](.agents/skills/llm-wiki/references/compile.md) + [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
-| 体检、断链、过期 | [`lint.md`](.agents/skills/llm-wiki/lint.md) |
-| 审核确认 / 列未审清单 | [`review.md`](.agents/skills/llm-wiki/review.md) + [`references/compile.md`](.agents/skills/llm-wiki/references/compile.md) + [`references/index-log.md`](.agents/skills/llm-wiki/references/index-log.md) |
-
-type、层级、目录、frontmatter、Registry 结构和双链：全部在 [`references/okf.md`](.agents/skills/llm-wiki/references/okf.md)。L0 目录是 `wiki/基础知识/`（`type` 仍为 `Atomic`）。
+L0 目录是 `wiki/基础知识/`（`type: Foundation`）。
 
 ## 值班
 

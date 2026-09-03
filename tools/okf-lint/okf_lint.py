@@ -13,7 +13,7 @@ from pathlib import Path
 
 RESERVED = {"index.md", "log.md"}
 TYPE_DIR = {
-    "Atomic": "基础知识",
+    "Foundation": "基础知识",
     "Registry": "资源目录",
     "Runbook": "操作手册",
     "Decision": "架构决策记录",
@@ -21,14 +21,14 @@ TYPE_DIR = {
     "Incident": "案例与复盘",
 }
 TYPE_LAYER = {
-    "Atomic": "atomic",
+    "Foundation": "foundation",
     "Registry": "registry",
     "Runbook": "operational",
     "Decision": "operational",
     "FAQ": "operational",
     "Incident": "operational",
 }
-ATOMIC_KINDS = {"concept", "component", "platform", "policy", "capability"}
+FOUNDATION_KINDS = {"concept", "component", "platform", "policy", "capability"}
 ASSET_KINDS = {
     "cluster",
     "namespace",
@@ -54,7 +54,7 @@ RELATION_FIELDS = {
     "playbooks",
     "used_by",
 }
-LOWER_LINK_TYPES = {"Atomic", "Registry"}
+LOWER_LINK_TYPES = {"Foundation", "Registry"}
 STATUS_VALUES = {"draft", "stable", "deprecated"}
 
 MD_LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
@@ -64,10 +64,10 @@ BLOCK_RE = re.compile(r"(?:^|\s)\^([a-z0-9][a-z0-9-]*)\s*$", re.M)
 CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 LOG_DATE_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$", re.M)
 LOG_ENTRY_RE = re.compile(
-    r"^\* \*\*(Creation|Update|Deprecation|Initialization|Execution)\*\*: "
+    r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*: "
 )
 LOG_BAD_COLON_RE = re.compile(
-    r"^\* \*\*(Creation|Update|Deprecation|Initialization|Execution)\*\*："
+    r"^\* \*\*(Creation|Update|Deprecation|Initialization)\*\*："
 )
 
 
@@ -342,16 +342,16 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             verified_by = unquote(verified.group(1))
         if verified_by and not verified_by.startswith("human:"):
             errors.append(f"{doc.rel}: verified.by must be human:<id>")
-        if doc.typ == "Atomic":
+        if doc.typ == "Foundation":
             kind = scalar(doc.fm, "kind")
-            if kind not in ATOMIC_KINDS:
-                errors.append(f"{doc.rel}: Atomic kind must be one of {sorted(ATOMIC_KINDS)}")
+            if kind not in FOUNDATION_KINDS:
+                errors.append(f"{doc.rel}: Foundation kind must be one of {sorted(FOUNDATION_KINDS)}")
         if doc.typ == "Registry":
             asset_kind = scalar(doc.fm, "asset_kind")
             if asset_kind not in ASSET_KINDS:
                 errors.append(f"{doc.rel}: Registry asset_kind must be one of {sorted(ASSET_KINDS)}")
             if not list_values(doc.fm, "technology"):
-                errors.append(f"{doc.rel}: Registry needs technology wikilink to Atomic")
+                errors.append(f"{doc.rel}: Registry needs technology wikilink to Foundation")
             for key in ("name", "environment", "owner", "entries"):
                 if not has_key(doc.fm, key):
                     warnings.append(f"{doc.rel}: Registry missing {key}")
@@ -390,7 +390,7 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             if target is not None and not target.exists():
                 warnings.append(f"{doc.rel}: broken markdown link ({href})")
         if doc.typ in {"Runbook", "FAQ", "Decision"} and lower_links == 0:
-            warnings.append(f"{doc.rel}: operational page has no Atomic/Registry content link")
+            warnings.append(f"{doc.rel}: operational page has no Foundation/Registry content link")
         index_text = dir_indexes.get(doc.path.parent.resolve())
         if index_text is None:
             warnings.append(f"{doc.rel}: directory missing index.md")
@@ -398,8 +398,8 @@ def run(root: Path) -> tuple[list[str], list[str]]:
             warnings.append(f"{rel_posix(doc.path.parent / 'index.md', bundle)}: missing entry for {doc.path.name}")
 
     for doc in docs:
-        if doc.typ == "Atomic" and inbound[doc.rel] == 0:
-            warnings.append(f"{doc.rel}: orphan Atomic page has no inbound content link")
+        if doc.typ == "Foundation" and inbound[doc.rel] == 0:
+            warnings.append(f"{doc.rel}: orphan Foundation page has no inbound content link")
 
     manifest_dir = bundle / "_meta" / "ingest"
     for path in sorted(manifest_dir.glob("*.yaml")) if manifest_dir.is_dir() else []:

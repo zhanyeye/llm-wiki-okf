@@ -2,6 +2,7 @@
 
 ## 2026-09-03
 
+* **Update**: L0 页 `type` 由 `Atomic` 改为 `Foundation`（目录仍为 [基础知识](/wiki/基础知识/)，`layer: foundation`）。
 * **Update**: L1 分组由「资源注册表」改名为 [资源目录](/wiki/资源目录/)（`type` 仍为 `Registry`）。
 * **Update**: 去掉「系统与架构」分组（`Architecture`）；拓扑/链路写入基础知识或 ADR。基础设施侧后续另有承载。
 * **Update**: 合并原「故障排查」进 [常见问题](/wiki/常见问题/)（`type: FAQ`，含短问答与按症状排查；值班入口）；去掉「新人上手」分组。

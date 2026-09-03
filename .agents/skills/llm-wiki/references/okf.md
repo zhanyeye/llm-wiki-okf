@@ -8,11 +8,11 @@
 
 知识按依赖方向分三层，**不按来源文档分层**，禁止把一篇来源平铺成一页：
 
-1. **L0 基础知识**（`type: Atomic`，目录 `wiki/基础知识/<能力域>/`）：内网特有概念、平台与规则。回答“它是什么、公司如何使用、有哪些稳定约束”。不写某套生产实例的 IP/入口。开源组件通用原理不进本层，除非是公司定制用法。
+1. **L0 基础知识**（`type: Foundation`，目录 `wiki/基础知识/<能力域>/`）：内网特有概念、平台与规则。回答“它是什么、公司如何使用、有哪些稳定约束”。不写某套生产实例的 IP/入口。开源组件通用原理不进本层，除非是公司定制用法。
 2. **L1 资源目录**：稳定、可独立定位和运维的真实部署实例。回答“哪一套、在哪、谁负责、入口和告警是什么”。`technology` 必须 `[[双链]]` 到 L0。
 3. **运维与设计**：Runbook、FAQ（含短问答与按症状排查）、Decision（ADR）、Incident。回答“怎么做、怎么查、为什么”。引用 L0/L1，也可以互相双链；不复制下层定义。跨实体拓扑/职责说明写入相关基础知识页或 ADR，不单开「系统与架构」分组。
 
-一页 Atomic 对应一个内部概念或平台（如黄绿区、ROMA、EulerOS）；页内 `##`/`###` 对应可复用知识单元，只有需要被精确复用的稳定事实才加 `^block-id`。不要一条句子建一页，也不要把一篇来源机械变成一页。
+一页 Foundation 对应一个内部概念或平台（如黄绿区、ROMA、EulerOS）；页内 `##`/`###` 对应可复用知识单元，只有需要被精确复用的稳定事实才加 `^block-id`。不要一条句子建一页，也不要把一篇来源机械变成一页。
 
 L0 能力域（子目录，增删时同步 `wiki/index.md`）：`OS镜像`、`镜像制作`、`构建资源管理`、`网络管理`、`应用服务`、`资源调度`。
 
@@ -34,7 +34,7 @@ L1 资产类（子目录）：`集群`、`数据库`、`存储`、`中间件`、
 
 | type | 目录 | 何时选 | 固定标题（按序，勿改名） |
 |------|------|--------|--------------------------|
-| `Atomic` | `wiki/基础知识/`（按能力域分子目录） | 内网特有概念、平台、规则 | 定义；职责与边界；公司内使用方式；稳定约束；关系 |
+| `Foundation` | `wiki/基础知识/`（按能力域分子目录） | 内网特有概念、平台、规则 | 定义；职责与边界；公司内使用方式；稳定约束；关系 |
 | `Registry` | `wiki/资源目录/`（按资产种类分子目录） | 稳定资产、部署实例、入口、负责人、告警 | 资产；位置与环境；入口；负责人；依赖；观测与告警；生命周期；凭证怎么申请 |
 | `Runbook` | `wiki/操作手册/` | 可重复变更/部署/扩缩容/回滚、改配置，或说明 `script/` 里脚本怎么跑 | 触发条件；何时用 / 何时不用；前置检查；步骤；验证；回滚；相关系统 |
 | `Incident` | `wiki/案例与复盘/` | 就这一次故障/变更/演练 | 时间线；根因；修复；行动项 |
@@ -44,7 +44,7 @@ L1 资产类（子目录）：`集群`、`数据库`、`存储`、`中间件`、
 - 保留项：`wiki/index.md`、`wiki/log.md`（不加 `type`），以及 `wiki/_meta/ingest/*.yaml` 编译清单（不属于知识正文、不进导航）。`wiki/index.md` 可有 `okf_version: "0.2"`。
 - 概念页必须放在上表对应分组，不要写在仓库根或 `wiki/` 根。
 - 每个概念 `.md` 必须有可解析 YAML frontmatter，且含非空 `type`。
-- `Atomic` 的 `kind` 必须是 `concept`、`component`、`platform`、`policy`、`capability` 之一。
+- `Foundation` 的 `kind` 必须是 `concept`、`component`、`platform`、`policy`、`capability` 之一。
 - `Registry` 的 `asset_kind` 必填；正式库子目录对应：`cluster`→集群、`database`→数据库、`storage`→存储、`middleware`→中间件、`observability`→可观测。亦支持 `namespace`、`application`、`domain`、`certificate`、`bucket`、`dashboard`、`alert`、`network`。
 - Registry 只登记稳定运维对象。Pod、临时 IP、一次性排查主机等短生命周期对象不入表。
 - `Registry` 不写密码、token、密钥；只写申请途径和找谁。
@@ -62,7 +62,7 @@ L1 资产类（子目录）：`集群`、`数据库`、`存储`、`中间件`、
 - `title` 写人会查找的主题；`description` 同时说明适用场景/症状与页面能解决什么。
 - `tags` 补正文主题的中文/英文名、产品别名或缩写、稳定的错误码/报错短语、常见症状与操作动词。
 - 只写来源支持且对召回有区分度的词；不要罗列整句问法、通用虚词、未在来源中确认的内网别名，也不要重复 `domain`。
-- 标签不能替代正文。查询会同时搜 frontmatter 与正文全文（见 [query.md](../query.md)）。
+- 标签不能替代正文。查询会同时搜 frontmatter 与正文全文（见 [SKILL.md](../SKILL.md) §Query）。
 
 ## Frontmatter
 
@@ -111,7 +111,7 @@ automation:
 |------|------|
 | `type` | **必填**（OKF 唯一 always-required） |
 | `id` | **必填**；仓内唯一稳定 ID，推荐 `<type>:<domain>:<slug>`，改文件名时不改 ID |
-| `layer` | 推荐；`atomic` \| `registry` \| `operational`，必须与 type 一致 |
+| `layer` | 推荐；`foundation` \| `registry` \| `operational`，必须与 type 一致 |
 | `title` | 推荐；中文 |
 | `description` | 推荐；用于 index 摘要，并说明适用场景/症状与页面能解决什么 |
 | `domain` | 推荐；固定枚举大类（见上） |
@@ -123,11 +123,11 @@ automation:
 | `stale_after` | ISO 8601；默认生成日后 180 天 |
 | `sources` | 溯源；见下 |
 | `automation` | 可选；自动化元数据（见下） |
-| `kind` | Atomic 必填；概念种类 |
+| `kind` | Foundation 必填；概念种类 |
 | `asset_kind` | Registry 必填；资产种类 |
 | `aliases` | 可选；来源明确的中文名、英文名、缩写，不臆造 |
-| `technology` | Registry 必填；至少一个指向 Atomic 标题或块的 wikilink |
-| `depends_on` | 可选；当前页依赖的 Atomic/Registry wikilink 列表 |
+| `technology` | Registry 必填；至少一个指向 Foundation 标题或块的 wikilink |
+| `depends_on` | 可选；当前页依赖的 Foundation/Registry wikilink 列表 |
 | `operates_on` | Runbook 可选；所操作资产或概念的 wikilink 列表。FAQ 长页（排查）也可用 |
 | `answers_about` | FAQ 可选；所回答主题的 wikilink 列表 |
 | `decides_for` | Decision 可选；决策约束对象的 wikilink 列表 |
@@ -207,7 +207,7 @@ sources:
 - 公司 wiki：**只写原始 wiki URL**。禁止写 `raw/wiki/archive/...`。
 - 本地 raw：写仓内相对路径（如 `raw/tickets/disk-full.md`）。
 - Obsidian 会自动将 HTTP 链接渲染为可点击链接，方便追溯。
-- `sources` 只做溯源；正文须自洽，查询默认无需读 raw（`wiki/` 不足时按 query.md 回退搜 raw 并标注「⚠️ 未编译」）。
+- `sources` 只做溯源；正文须自洽，查询默认无需读 raw（`wiki/` 不足时按 SKILL.md §Query 回退搜 raw 并标注「⚠️ 未编译」）。
 
 ### 图片（统一 attachments/）
 

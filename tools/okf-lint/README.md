@@ -14,7 +14,7 @@
 python tools/okf-lint/okf_lint.py
 ```
 
-先修 error（层级/type/id、Atomic/Registry schema、wikilink 目标、coverage manifest、`verified.by`），再看 warning（Registry 画像缺口、孤儿 Atomic、L2 缺下层链接、Markdown 断链、过期和 index 等）。
+先修 error（层级/type/id、Foundation/Registry schema、wikilink 目标、coverage manifest、`verified.by`），再看 warning（Registry 画像缺口、孤儿 Foundation、L2 缺下层链接、Markdown 断链、过期和 index 等）。
 
 验证隔离示例库：
 
